@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜室內裝修需求表</title>
+<style>
+  :root{
+    --ink:#2b2b28;
+    --paper:#faf8f4;
+    --line:#d9d3c7;
+    --accent:#8a6d4b;
+    --accent-light:#f1ebe0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.7;
+  }
+  header{
+    text-align:center;
+    padding:48px 20px 28px;
+    border-bottom:1px solid var(--line);
+  }
+  header h1{
+    font-size:26px;
+    letter-spacing:4px;
+    margin:0 0 6px;
+  }
+  header p{
+    margin:0;
+    color:#7a7468;
+    font-size:14px;
+    letter-spacing:2px;
+  }
+  form{
+    max-width:760px;
+    margin:0 auto;
+    padding:30px 20px 80px;
+  }
+  section{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:26px 28px;
+    margin-bottom:24px;
+  }
+  section h2{
+    font-size:18px;
+    border-left:4px solid var(--accent);
+    padding-left:10px;
+    margin:0 0 18px;
+  }
+  .field{
+    margin-bottom:18px;
+  }
+  label.title{
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+    font-size:14px;
+  }
+  .hint{
+    font-size:12px;
+    color:#999;
+    margin-left:6px;
+    font-weight:400;
+  }
+  input[type=text], input[type=tel], input[type=email], input[type=date], select, textarea{
+    width:100%;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    font-size:14px;
+    background:#fdfcfa;
+    font-family:inherit;
+  }
+  textarea{resize:vertical; min-height:60px;}
+  .row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .row .field{flex:1; min-width:180px;}
+  .options label{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin:0 16px 8px 0;
+    font-size:14px;
+  }
+  .options.block label{display:flex;}
+  .member-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  .member-row input{flex:1;}
+  .space-block{
+    border:1px dashed var(--line);
+    border-radius:6px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .space-block h3{
+    margin:0 0 10px;
+    font-size:15px;
+    color:var(--accent);
+  }
+  .note{
+    font-size:12px;
+    color:#999;
+    margin-top:4px;
+  }
+  .submit-area{
+    text-align:center;
+    margin-top:30px;
+  }
+  button{
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    padding:14px 48px;
+    font-size:16px;
+    letter-spacing:2px;
+    border-radius:30px;
+    cursor:pointer;
+  }
+  button:hover{opacity:.9;}
+  .line-reminder{
+    background:var(--accent-light);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:16px 20px;
+    font-size:14px;
+    text-align:center;
+    margin-bottom:24px;
+  }
+  .line-reminder a{color:var(--accent); font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>禹合制所 YUHE DESIGN</h1>
+  <p>室內裝修需求表 INTERIOR RENOVATION BRIEF</p>
+</header>
+
+<form action="https://formsubmit.co/yuhe.design0220@gmail.com" method="POST">
+  <input type="hidden" name="_subject" value="禹合制所｜新的室內裝修需求表">
+  <input type="hidden" name="_template" value="table">
+  <input type="hidden" name="_captcha" value="false">
+  <input type="hidden" name="_next" value="https://contact.gandandesign.com.tw/">
+
+  <div class="line-reminder" style="margin:24px auto 0; max-width:760px;">
+    表單填寫完成後，請務必加入官方 LINE 並通知客服「已填寫表單」，以利我們安排後續聯繫與丈量規劃。<br>
+    <img src="line-qrcode.png" alt="禹合制所官方LINE QRcode" style="width:160px;height:160px;margin:12px auto 6px;display:block;border:1px solid var(--line);border-radius:6px;">
+    <span style="font-size:12px;color:#888;">掃描加入禹合制所官方 LINE</span><br>
+    <a href="https://line.me/R/ti/p/@yuhedesign" target="_blank" style="font-size:13px;color:var(--accent);font-weight:600;">LINE ID：@yuhedesign</a>
+  </div>
+
+  <!-- 一、基本資料 -->
+  <section>
+    <h2>一、基本資料</h2>
+
+    <div class="row">
+      <div class="field"><label class="title">姓名</label><input type="text" name="name" required></div>
+      <div class="field"><label class="title">年齡</label><input type="text" name="age"></div>
+      <div class="field"><label class="title">職業</label><input type="text" name="job"></div>
+    </div>
+
+    <div class="row">
+      <div class="field"><label class="title">電話</label><input type="tel" name="phone" required></div>
+      <div class="field"><label class="title">Line ID</label><input type="text" name="lineid"></div>
+      <div class="field"><label class="title">Line 名稱</label><input type="text" name="linename"></div>
+    </div>
+
+    <div class="field"><label class="title">Email</label><input type="email" name="email"></div>
+
+    <div class="field">
+      <label class="title">是否有配偶或同住伴侶</label>
+      <div class="options">
+        <label><input type="radio" name="spouse">有</label>
+        <label><input type="radio" name="spouse">無</label>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field"><label class="title">伴侶姓名</label><input type="text" name="spouse_name"></div>
+      <div class="field"><label class="title">伴侶職業</label><input type="text" name="spouse_job"></div>
+      <div class="field"><label class="title">伴侶電話</label><input type="tel" name="spouse_phone"></div>
+    </div>
+
+    <div class="field">
+      <label class="title">居住人數</label>
+      <select name="household_count">
+        <option value="">請選擇</option>
+        <option>1人</option><option>2人</option><option>3人</option><option>4人</option>
+        <option>5人</option><option>6人</option><option>7人</option><option>8人以上</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label class="title">家庭成員及年齡 <span class="hint">(可依需要增填)</span></label>
+      <div class="member-row"><input type="text" placeholder="成員稱謂"><input type="text" placeholder="年齡"></div>
+      <div class="member-row"><input type="text" placeholder="成員稱謂"><input type="text" placeholder="年齡"></div>
+      <div class="member-row"><input type="text" placeholder="成員稱謂"><input type="text" placeholder="年齡"></div>
+      <div class="member-row"><input type="text" placeholder="成員稱謂"><input type="text" placeholder="年齡"></div>
+    </div>
+
+    <div class="field">
+      <label class="title">休假型態</label>
+      <div class="options">
+        <label><input type="radio" name="off_day">週休二日</label>
+        <label><input type="radio" name="off_day">輪班</label>
+        <label><input type="radio" name="off_day">自由工作者</label>
+        <label><input type="radio" name="off_day">已退休</label>
+        <label><input type="radio" name="off_day">其他</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="title">如何認識禹合制所</label>
+      <div class="options">
+        <label><input type="checkbox">親友介紹</label>
+        <label><input type="checkbox">Facebook</label>
+        <label><input type="checkbox">Instagram</label>
+        <label><input type="checkbox">YouTube</label>
+        <label><input type="checkbox">線上賞屋平台</label>
+        <label><input type="checkbox">官網</label>
+        <label><input type="checkbox">路過看到</label>
+        <label><input type="checkbox">其他</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 二、房屋資料 -->
+  <section>
+    <h2>二、房屋資料</h2>
+
+    <div class="field"><label class="title">裝修地址</label><input type="text" name="address"></div>
+
+    <div class="row">
+      <div class="field"><label class="title">社區案名</label><input type="text"></div>
+      <div class="field"><label class="title">屋齡</label><input type="text" placeholder="例：15年"></div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label class="title">外牆是否有漏水或壁癌</label>
+        <div class="options"><label><input type="radio" name="leak">有</label><label><input type="radio" name="leak">無</label></div>
+      </div>
+      <div class="field">
+        <label class="title">是否為預售屋</label>
+        <div class="options"><label><input type="radio" name="presale">是</label><label><input type="radio" name="presale">否</label></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label class="title">是否需要客變</label>
+        <div class="options"><label><input type="radio" name="change">是</label><label><input type="radio" name="change">否</label></div>
+      </div>
+      <div class="field"><label class="title">客變截止日期</label><input type="date"></div>
+      <div class="field"><label class="title">交屋日期</label><input type="date"></div>
+    </div>
+
+    <div class="row">
+      <div class="field"><label class="title">室內實際屋高</label><input type="text" placeholder="公分"></div>
+      <div class="field"><label class="title">室內實坪約</label><input type="text" placeholder="坪"></div>
+      <div class="field"><label class="title">建物登記坪數</label><input type="text" placeholder="坪"></div>
+      <div class="field"><label class="title">權狀坪數(不含車位)</label><input type="text" placeholder="坪"></div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label class="title">是否為毛胚屋</label>
+        <div class="options"><label><input type="radio" name="raw">是</label><label><input type="radio" name="raw">否</label><label><input type="radio" name="raw">其他</label></div>
+      </div>
+      <div class="field">
+        <label class="title">浴室是否重新施作</label>
+        <div class="options"><label><input type="radio" name="bath_redo">是</label><label><input type="radio" name="bath_redo">否</label></div>
+      </div>
+      <div class="field">
+        <label class="title">廚房是否重新施作</label>
+        <div class="options"><label><input type="radio" name="kitchen_redo">是</label><label><input type="radio" name="kitchen_redo">否</label></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label class="title">裝修期望預算</label>
+        <select>
+          <option value="">請選擇</option>
+          <option>150萬以下</option><option>150-300萬</option><option>300-500萬</option>
+          <option>500-800萬</option><option>800-1200萬</option><option>1200-2000萬</option><option>2000萬以上</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="title">預算最高可至</label>
+        <select>
+          <option value="">請選擇</option>
+          <option>150萬以下</option><option>150-300萬</option><option>300-500萬</option>
+          <option>500-800萬</option><option>800-1200萬</option><option>1200-2000萬</option><option>2000萬以上</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label class="title">預算備註</label><textarea></textarea></div>
+  </section>
+
+  <!-- 三、空間配置需求 -->
+  <section>
+    <h2>三、空間配置需求</h2>
+
+    <div class="row">
+      <div class="field"><label class="title">期望完工時間</label><input type="text" placeholder="例：2026年12月"></div>
+      <div class="field"><label class="title">最晚可接受完工時間</label><input type="text"></div>
+    </div>
+    <div class="field"><label class="title">完工日期備註</label><textarea></textarea></div>
+
+    <div class="field">
+      <label class="title">是否已有平面圖CAD檔</label>
+      <div class="options"><label><input type="radio" name="cad">是</label><label><input type="radio" name="cad">否</label></div>
+    </div>
+
+    <div class="field">
+      <label class="title">需要的空間配置 <span class="hint">(可複選)</span></label>
+      <div class="options">
+        <label><input type="checkbox">客廳</label>
+        <label><input type="checkbox">餐廳</label>
+        <label><input type="checkbox">廚房</label>
+        <label><input type="checkbox">浴廁</label>
+        <label><input type="checkbox">主臥房</label>
+        <label><input type="checkbox">小孩房</label>
+        <label><input type="checkbox">客房</label>
+        <label><input type="checkbox">孝親房</label>
+        <label><input type="checkbox">書房</label>
+        <label><input type="checkbox">更衣室</label>
+        <label><input type="checkbox">儲藏室</label>
+        <label><input type="checkbox">和室</label>
+        <label><input type="checkbox">陽台 / 工作陽台</label>
+      </div>
+    </div>
+
+    <div class="field"><label class="title">空間備註</label><textarea placeholder="如各空間使用習慣、特殊需求等"></textarea></div>
+  </section>
+
+  <!-- 四、設計風格 -->
+  <section>
+    <h2>四、期望設計風格</h2>
+    <div class="options">
+      <label><input type="checkbox">北歐風</label>
+      <label><input type="checkbox">無印風</label>
+      <label><input type="checkbox">侘寂風</label>
+      <label><input type="checkbox">美式簡約</label>
+      <label><input type="checkbox">美式古典</label>
+      <label><input type="checkbox">工業風</label>
+      <label><input type="checkbox">飯店風</label>
+      <label><input type="checkbox">輕奢風</label>
+      <label><input type="checkbox">日式風</label>
+      <label><input type="checkbox">現代風</label>
+      <label><input type="checkbox">混搭風</label>
+      <label><input type="checkbox">其他</label>
+    </div>
+    <div class="field" style="margin-top:14px;"><label class="title">喜好顏色 / 材質參考</label><textarea placeholder="如喜歡的色系、木紋、石材、金屬色等"></textarea></div>
+  </section>
+
+  <!-- 五、各空間需求 -->
+  <section>
+    <h2>五、各空間需求詳細設定</h2>
+
+    <div class="space-block">
+      <h3>客廳</h3>
+      <div class="options">
+        <label><input type="checkbox">造型電視牆</label>
+        <label><input type="checkbox">收納櫃</label>
+        <label><input type="checkbox">展示櫃</label>
+        <label><input type="checkbox">L型沙發</label>
+        <label><input type="checkbox">一字型沙發</label>
+        <label><input type="checkbox">其他</label>
+      </div>
+    </div>
+
+    <div class="space-block">
+      <h3>餐廳</h3>
+      <div class="options">
+        <label><input type="checkbox">電器櫃</label>
+        <label><input type="checkbox">餐櫃</label>
+        <label><input type="checkbox">中島</label>
+        <label><input type="checkbox">餐桌（請註明人數）</label>
+        <label><input type="checkbox">卡座 / 一字型沙發</label>
+        <label><input type="checkbox">其他</label>
+      </div>
+    </div>
+
+    <div class="space-block">
+      <h3>廚房</h3>
+      <div class="options">
+        <label><input type="checkbox">電器櫃</label>
+        <label><input type="checkbox">冰箱櫃</label>
+        <label><input type="checkbox">中島</label>
+        <label><input type="checkbox">吧台</label>
+        <label><input type="checkbox">其他</label>
+      </div>
+    </div>
+
+    <div class="space-block">
+      <h3>浴廁</h3>
+      <div class="options">
+        <label><input type="checkbox">主衛浴鏡櫃</label>
+        <label><input type="checkbox">客衛浴鏡櫃</label>
+        <label><input type="checkbox">主衛浴缸</label>
+        <label><input type="checkbox">客衛浴缸</label>
+        <label><input type="checkbox">其他</label>
+      </div>
+    </div>
+
+    <div class="space-block">
+      <h3>主臥房 / 小孩房 / 客房 / 孝親房 / 書房</h3>
+      <div class="field">
+        <label class="title">床型選擇</label>
+        <div class="options">
+          <label><input type="checkbox">標準單人床</label>
+          <label><input type="checkbox">單人加大床</label>
+          <label><input type="checkbox">標準雙人床</label>
+          <label><input type="checkbox">Queen Size</label>
+          <label><input type="checkbox">King Size</label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="title">其他需求</label>
+        <div class="options">
+          <label><input type="checkbox">化妝桌</label>
+          <label><input type="checkbox">書桌</label>
+          <label><input type="checkbox">更衣室</label>
+          <label><input type="checkbox">電視</label>
+          <label><input type="checkbox">窗簾需全遮光</label>
+          <label><input type="checkbox">其他</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-block">
+      <h3>和室</h3>
+      <div class="options">
+        <label><input type="checkbox">書桌</label>
+        <label><input type="checkbox">自動升降桌</label>
+        <label><input type="checkbox">活動茶桌</label>
+        <label><input type="checkbox">電視</label>
+        <label><input type="checkbox">收納櫃</label>
+        <label><input type="checkbox">其他</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 六、其他備註 -->
+  <section>
+    <h2>六、其他備註與特殊需求</h2>
+    <div class="field"><label class="title">寵物 / 過敏 / 無障礙等特殊考量</label><textarea></textarea></div>
+    <div class="field"><label class="title">其他想補充說明的事項</label><textarea></textarea></div>
+  </section>
+
+  <div class="submit-area">
+    <button type="submit">送出需求表</button>
+    <p class="note">送出後請記得通知官方 LINE 客服已完成填寫，我們將盡快與您聯繫安排丈量。</p>
+  </div>
+
+</form>
+</body>
+</html>
