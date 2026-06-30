@@ -74,7 +74,10 @@
     </div>
     <div class="field">
       <label class="title">是否有配偶或同住伴侶</label>
-      <div class="options"><label><input type="radio" name="spouse">有</label><label><input type="radio" name="spouse">無</label></div>
+      <div class="options">
+        <label><input type="radio" name="spouse" value="有">有</label>
+        <label><input type="radio" name="spouse" value="無">無</label>
+      </div>
     </div>
     <div class="field">
       <label class="title">居住人數</label>
@@ -87,11 +90,11 @@
     <div class="field">
       <label class="title">休假型態</label>
       <div class="options">
-        <label><input type="radio" name="off_day">週休二日</label>
-        <label><input type="radio" name="off_day">輪班</label>
-        <label><input type="radio" name="off_day">自由工作者</label>
-        <label><input type="radio" name="off_day">已退休</label>
-        <label><input type="radio" name="off_day">其他</label>
+        <label><input type="radio" name="off_day" value="週休二日">週休二日</label>
+        <label><input type="radio" name="off_day" value="輪班">輪班</label>
+        <label><input type="radio" name="off_day" value="自由工作者">自由工作者</label>
+        <label><input type="radio" name="off_day" value="已退休">已退休</label>
+        <label><input type="radio" name="off_day" value="其他">其他</label>
       </div>
     </div>
   </section>
@@ -107,9 +110,9 @@
     <div class="field" style="margin-top:18px;"><label class="title">裝修地址 <span class="tag todo">待確認</span></label><input type="text" name="address" placeholder="完整地址（含樓層/戶別）"></div>
 
     <div class="row">
-      <div class="field"><label class="title">建物登記坪數 <span class="tag todo">待確認</span></label><input type="text" placeholder="坪（與實內坪數可能不同）"></div>
-      <div class="field"><label class="title">權狀坪數(不含車位) <span class="tag todo">待確認</span></label><input type="text" placeholder="坪"></div>
-      <div class="field"><label class="title">室內實際屋高 <span class="tag todo">待確認</span></label><input type="text" placeholder="公分"></div>
+      <div class="field"><label class="title">建物登記坪數 <span class="tag todo">待確認</span></label><input type="text" name="building_area" placeholder="坪（與實內坪數可能不同）"></div>
+      <div class="field"><label class="title">權狀坪數(不含車位) <span class="tag todo">待確認</span></label><input type="text" name="title_area" placeholder="坪"></div>
+      <div class="field"><label class="title">室內實際屋高 <span class="tag todo">待確認</span></label><input type="text" name="ceiling_height" placeholder="公分"></div>
     </div>
 
     <div class="row">
@@ -124,15 +127,27 @@
       <div class="row">
         <div class="field">
           <label class="title">廚具（檯面／櫥櫃／水槽／爐具）</label>
-          <div class="options"><label><input type="radio" name="kitchen_provided">建商已附</label><label><input type="radio" name="kitchen_provided">無，需自理</label><label><input type="radio" name="kitchen_provided">待向建商確認</label></div>
+          <div class="options">
+            <label><input type="radio" name="kitchen_provided" value="建商已附">建商已附</label>
+            <label><input type="radio" name="kitchen_provided" value="無，需自理">無，需自理</label>
+            <label><input type="radio" name="kitchen_provided" value="待向建商確認">待向建商確認</label>
+          </div>
         </div>
         <div class="field">
           <label class="title">衛浴設備（馬桶／面盆／淋浴或浴缸）</label>
-          <div class="options"><label><input type="radio" name="bath_provided">建商已附</label><label><input type="radio" name="bath_provided">無，需自理</label><label><input type="radio" name="bath_provided">待向建商確認</label></div>
+          <div class="options">
+            <label><input type="radio" name="bath_provided" value="建商已附">建商已附</label>
+            <label><input type="radio" name="bath_provided" value="無，需自理">無，需自理</label>
+            <label><input type="radio" name="bath_provided" value="待向建商確認">待向建商確認</label>
+          </div>
         </div>
         <div class="field">
           <label class="title">空調（主機／室內機）</label>
-          <div class="options"><label><input type="radio" name="ac_provided">建商已附</label><label><input type="radio" name="ac_provided">無，需自理</label><label><input type="radio" name="ac_provided">待向建商確認</label></div>
+          <div class="options">
+            <label><input type="radio" name="ac_provided" value="建商已附">建商已附</label>
+            <label><input type="radio" name="ac_provided" value="無，需自理">無，需自理</label>
+            <label><input type="radio" name="ac_provided" value="待向建商確認">待向建商確認</label>
+          </div>
         </div>
         <div class="field">
           <label class="title">其他（室內門、地壁磚、衛浴防水、對講機等）</label>
@@ -154,12 +169,12 @@
     <div class="field">
       <label class="title">預算範圍是否包含空調、廚具、衛浴設備 <span class="tag todo">待確認</span></label>
       <div class="options">
-        <label><input type="radio" name="budget_scope">全含</label>
-        <label><input type="radio" name="budget_scope">不含空調</label>
-        <label><input type="radio" name="budget_scope">不含廚具</label>
-        <label><input type="radio" name="budget_scope">不含衛浴設備</label>
-        <label><input type="radio" name="budget_scope">皆不含（僅裝修工程）</label>
-        <label><input type="radio" name="budget_scope">請設計師建議</label>
+        <label><input type="radio" name="budget_scope" value="全含">全含</label>
+        <label><input type="radio" name="budget_scope" value="不含空調">不含空調</label>
+        <label><input type="radio" name="budget_scope" value="不含廚具">不含廚具</label>
+        <label><input type="radio" name="budget_scope" value="不含衛浴設備">不含衛浴設備</label>
+        <label><input type="radio" name="budget_scope" value="皆不含（僅裝修工程）">皆不含（僅裝修工程）</label>
+        <label><input type="radio" name="budget_scope" value="請設計師建議">請設計師建議</label>
       </div>
     </div>
     <div class="field"><label class="title">預算備註</label><textarea name="budget_note" placeholder="如有特定品牌偏好或已自購設備，請說明"></textarea></div>
@@ -181,40 +196,40 @@
     <div class="field">
       <label class="title">需要的空間配置 <span class="tag todo">待確認</span> <span class="hint">(可複選，並請註明間數)</span></label>
       <div class="options">
-        <label><input type="checkbox">客廳</label>
-        <label><input type="checkbox">餐廳</label>
-        <label><input type="checkbox">廚房</label>
-        <label><input type="checkbox">主衛浴</label>
-        <label><input type="checkbox">客衛浴</label>
-        <label><input type="checkbox">主臥房</label>
-        <label><input type="checkbox">小孩房</label>
-        <label><input type="checkbox">客房</label>
-        <label><input type="checkbox">書房</label>
-        <label><input type="checkbox">更衣室</label>
-        <label><input type="checkbox">儲藏室</label>
-        <label><input type="checkbox">和室</label>
-        <label><input type="checkbox">陽台／工作陽台</label>
+        <label><input type="checkbox" name="rooms[]" value="客廳">客廳</label>
+        <label><input type="checkbox" name="rooms[]" value="餐廳">餐廳</label>
+        <label><input type="checkbox" name="rooms[]" value="廚房">廚房</label>
+        <label><input type="checkbox" name="rooms[]" value="主衛浴">主衛浴</label>
+        <label><input type="checkbox" name="rooms[]" value="客衛浴">客衛浴</label>
+        <label><input type="checkbox" name="rooms[]" value="主臥房">主臥房</label>
+        <label><input type="checkbox" name="rooms[]" value="小孩房">小孩房</label>
+        <label><input type="checkbox" name="rooms[]" value="客房">客房</label>
+        <label><input type="checkbox" name="rooms[]" value="書房">書房</label>
+        <label><input type="checkbox" name="rooms[]" value="更衣室">更衣室</label>
+        <label><input type="checkbox" name="rooms[]" value="儲藏室">儲藏室</label>
+        <label><input type="checkbox" name="rooms[]" value="和室">和室</label>
+        <label><input type="checkbox" name="rooms[]" value="陽台／工作陽台">陽台／工作陽台</label>
       </div>
     </div>
     <div class="field">
       <label class="title">是否希望玄關設置落塵區 <span class="tag todo">待確認</span></label>
       <div class="options">
-        <label><input type="radio" name="dust_zone">需要</label>
-        <label><input type="radio" name="dust_zone">不需要</label>
-        <label><input type="radio" name="dust_zone">請設計師建議</label>
+        <label><input type="radio" name="dust_zone" value="需要">需要</label>
+        <label><input type="radio" name="dust_zone" value="不需要">不需要</label>
+        <label><input type="radio" name="dust_zone" value="請設計師建議">請設計師建議</label>
       </div>
     </div>
 
     <div class="field">
       <label class="title">主要地坪材質偏好 <span class="tag todo">待確認</span> <span class="hint">(可複選，並可註明欲使用空間)</span></label>
       <div class="options">
-        <label><input type="checkbox">木地板</label>
-        <label><input type="checkbox">超耐磨地板</label>
-        <label><input type="checkbox">SPC石塑地板</label>
-        <label><input type="checkbox">磁磚</label>
-        <label><input type="checkbox">石材</label>
-        <label><input type="checkbox">水磨石</label>
-        <label><input type="checkbox">無特別偏好，交給設計師</label>
+        <label><input type="checkbox" name="floor_types[]" value="木地板">木地板</label>
+        <label><input type="checkbox" name="floor_types[]" value="超耐磨地板">超耐磨地板</label>
+        <label><input type="checkbox" name="floor_types[]" value="SPC石塑地板">SPC石塑地板</label>
+        <label><input type="checkbox" name="floor_types[]" value="磁磚">磁磚</label>
+        <label><input type="checkbox" name="floor_types[]" value="石材">石材</label>
+        <label><input type="checkbox" name="floor_types[]" value="水磨石">水磨石</label>
+        <label><input type="checkbox" name="floor_types[]" value="無特別偏好，交給設計師">無特別偏好，交給設計師</label>
       </div>
       <textarea name="floor_note" placeholder="如：臥室木地板、公共區域磁磚等"></textarea>
     </div>
@@ -228,33 +243,33 @@
     <div class="field">
       <label class="title">電子衣櫥</label>
       <div class="options">
-        <label><input type="radio" name="smart_wardrobe">需要</label>
-        <label><input type="radio" name="smart_wardrobe">不需要</label>
-        <label><input type="radio" name="smart_wardrobe">考慮中</label>
+        <label><input type="radio" name="smart_wardrobe" value="需要">需要</label>
+        <label><input type="radio" name="smart_wardrobe" value="不需要">不需要</label>
+        <label><input type="radio" name="smart_wardrobe" value="考慮中">考慮中</label>
       </div>
       <textarea name="smart_wardrobe_note" placeholder="如預計設置位置（主臥更衣室等）、尺寸或品牌偏好"></textarea>
     </div>
     <div class="field" style="margin-top:14px;">
       <label class="title">掃地／拖地機器人</label>
       <div class="options">
-        <label><input type="radio" name="robot_vacuum">需要</label>
-        <label><input type="radio" name="robot_vacuum">不需要</label>
-        <label><input type="radio" name="robot_vacuum">考慮中</label>
+        <label><input type="radio" name="robot_vacuum" value="需要">需要</label>
+        <label><input type="radio" name="robot_vacuum" value="不需要">不需要</label>
+        <label><input type="radio" name="robot_vacuum" value="考慮中">考慮中</label>
       </div>
       <textarea name="robot_vacuum_note" placeholder="如已購買機型（需預留基地台位置/插座）、是否需配合地坪材質規劃門檻高低差"></textarea>
     </div>
     <div class="field" style="margin-top:14px;">
       <label class="title">智能家居需求 <span class="hint">(可複選)</span></label>
       <div class="options">
-        <label><input type="checkbox">智能燈控（情境燈光）</label>
-        <label><input type="checkbox">智能窗簾</label>
-        <label><input type="checkbox">智能門鎖</label>
-        <label><input type="checkbox">智能監控攝影機</label>
-        <label><input type="checkbox">智能音箱／語音控制</label>
-        <label><input type="checkbox">智能空調控制</label>
-        <label><input type="checkbox">全屋智能整合系統</label>
-        <label><input type="checkbox">不需要</label>
-        <label><input type="checkbox">其他</label>
+        <label><input type="checkbox" name="smart_home[]" value="智能燈控（情境燈光）">智能燈控（情境燈光）</label>
+        <label><input type="checkbox" name="smart_home[]" value="智能窗簾">智能窗簾</label>
+        <label><input type="checkbox" name="smart_home[]" value="智能門鎖">智能門鎖</label>
+        <label><input type="checkbox" name="smart_home[]" value="智能監控攝影機">智能監控攝影機</label>
+        <label><input type="checkbox" name="smart_home[]" value="智能音箱／語音控制">智能音箱／語音控制</label>
+        <label><input type="checkbox" name="smart_home[]" value="智能空調控制">智能空調控制</label>
+        <label><input type="checkbox" name="smart_home[]" value="全屋智能整合系統">全屋智能整合系統</label>
+        <label><input type="checkbox" name="smart_home[]" value="不需要">不需要</label>
+        <label><input type="checkbox" name="smart_home[]" value="其他">其他</label>
       </div>
       <textarea name="smart_home_note" placeholder="如已選定品牌系統（如Apple HomeKit/小米/Loxone等）、預算範圍、優先導入空間等"></textarea>
     </div>
@@ -267,18 +282,18 @@
     <div class="field" style="margin-top:14px;">
       <label class="title">是否有其他想混搭或排除的風格元素 <span class="tag todo">待確認</span></label>
       <div class="options">
-        <label><input type="checkbox">北歐風</label>
-        <label><input type="checkbox">無印風</label>
-        <label><input type="checkbox">侘寂風</label>
-        <label><input type="checkbox">美式簡約</label>
-        <label><input type="checkbox">工業風</label>
-        <label><input type="checkbox">飯店風</label>
-        <label><input type="checkbox">輕奢風</label>
-        <label><input type="checkbox">日式風</label>
-        <label><input type="checkbox">無特別偏好，交給設計師</label>
+        <label><input type="checkbox" name="style_mix[]" value="北歐風">北歐風</label>
+        <label><input type="checkbox" name="style_mix[]" value="無印風">無印風</label>
+        <label><input type="checkbox" name="style_mix[]" value="侘寂風">侘寂風</label>
+        <label><input type="checkbox" name="style_mix[]" value="美式簡約">美式簡約</label>
+        <label><input type="checkbox" name="style_mix[]" value="工業風">工業風</label>
+        <label><input type="checkbox" name="style_mix[]" value="飯店風">飯店風</label>
+        <label><input type="checkbox" name="style_mix[]" value="輕奢風">輕奢風</label>
+        <label><input type="checkbox" name="style_mix[]" value="日式風">日式風</label>
+        <label><input type="checkbox" name="style_mix[]" value="無特別偏好，交給設計師">無特別偏好，交給設計師</label>
       </div>
     </div>
-    <div class="field"><label class="title">喜好顏色／材質參考 <span class="tag todo">待確認</span></label><textarea placeholder="如喜歡的色系、木紋、石材、金屬色等"></textarea></div>
+    <div class="field"><label class="title">喜好顏色／材質參考 <span class="tag todo">待確認</span></label><textarea name="color_note" placeholder="如喜歡的色系、木紋、石材、金屬色等"></textarea></div>
   </section>
 
   <!-- 五、各空間需求 -->
@@ -288,53 +303,57 @@
     <div class="space-block">
       <h3>客廳</h3>
       <div class="options">
-        <label><input type="checkbox">造型電視牆</label>
-        <label><input type="checkbox">收納櫃</label>
-        <label><input type="checkbox">展示櫃</label>
-        <label><input type="checkbox">L型沙發</label>
-        <label><input type="checkbox">一字型沙發</label>
-        <label><input type="checkbox">投影機／劇院需求</label>
-        <label><input type="checkbox">其他</label>
+        <label><input type="checkbox" name="living_room[]" value="造型電視牆">造型電視牆</label>
+        <label><input type="checkbox" name="living_room[]" value="收納櫃">收納櫃</label>
+        <label><input type="checkbox" name="living_room[]" value="展示櫃">展示櫃</label>
+        <label><input type="checkbox" name="living_room[]" value="L型沙發">L型沙發</label>
+        <label><input type="checkbox" name="living_room[]" value="一字型沙發">一字型沙發</label>
+        <label><input type="checkbox" name="living_room[]" value="投影機／劇院需求">投影機／劇院需求</label>
+        <label><input type="checkbox" name="living_room[]" value="其他">其他</label>
       </div>
     </div>
 
     <div class="space-block">
       <h3>餐廳</h3>
       <div class="options">
-        <label><input type="checkbox">電器櫃</label>
-        <label><input type="checkbox">餐櫃</label>
-        <label><input type="checkbox">中島</label>
-        <label><input type="checkbox">餐桌（請註明人數）</label>
-        <label><input type="checkbox">其他</label>
+        <label><input type="checkbox" name="dining_room[]" value="電器櫃">電器櫃</label>
+        <label><input type="checkbox" name="dining_room[]" value="餐櫃">餐櫃</label>
+        <label><input type="checkbox" name="dining_room[]" value="中島">中島</label>
+        <label><input type="checkbox" name="dining_room[]" value="餐桌（請註明人數）">餐桌（請註明人數）</label>
+        <label><input type="checkbox" name="dining_room[]" value="其他">其他</label>
       </div>
     </div>
 
     <div class="space-block">
       <h3>廚房</h3>
       <div class="options">
-        <label><input type="checkbox">電器櫃</label>
-        <label><input type="checkbox">冰箱櫃</label>
-        <label><input type="checkbox">中島</label>
-        <label><input type="checkbox">吧台</label>
-        <label><input type="checkbox">開放式廚房</label>
-        <label><input type="checkbox">封閉式廚房</label>
-        <label><input type="checkbox">其他</label>
+        <label><input type="checkbox" name="kitchen[]" value="電器櫃">電器櫃</label>
+        <label><input type="checkbox" name="kitchen[]" value="冰箱櫃">冰箱櫃</label>
+        <label><input type="checkbox" name="kitchen[]" value="中島">中島</label>
+        <label><input type="checkbox" name="kitchen[]" value="吧台">吧台</label>
+        <label><input type="checkbox" name="kitchen[]" value="開放式廚房">開放式廚房</label>
+        <label><input type="checkbox" name="kitchen[]" value="封閉式廚房">封閉式廚房</label>
+        <label><input type="checkbox" name="kitchen[]" value="其他">其他</label>
       </div>
       <div class="field"><label class="title">烹飪習慣</label>
-        <div class="options"><label><input type="radio" name="cooking">經常開伙</label><label><input type="radio" name="cooking">偶爾開伙</label><label><input type="radio" name="cooking">幾乎不開伙</label></div>
+        <div class="options">
+          <label><input type="radio" name="cooking" value="經常開伙">經常開伙</label>
+          <label><input type="radio" name="cooking" value="偶爾開伙">偶爾開伙</label>
+          <label><input type="radio" name="cooking" value="幾乎不開伙">幾乎不開伙</label>
+        </div>
       </div>
     </div>
 
     <div class="space-block">
       <h3>浴廁（主衛／客衛）</h3>
       <div class="options">
-        <label><input type="checkbox">主衛鏡櫃</label>
-        <label><input type="checkbox">客衛鏡櫃</label>
-        <label><input type="checkbox">主衛浴缸</label>
-        <label><input type="checkbox">客衛浴缸</label>
-        <label><input type="checkbox">乾濕分離</label>
-        <label><input type="checkbox">免治馬桶</label>
-        <label><input type="checkbox">其他</label>
+        <label><input type="checkbox" name="bathroom[]" value="主衛鏡櫃">主衛鏡櫃</label>
+        <label><input type="checkbox" name="bathroom[]" value="客衛鏡櫃">客衛鏡櫃</label>
+        <label><input type="checkbox" name="bathroom[]" value="主衛浴缸">主衛浴缸</label>
+        <label><input type="checkbox" name="bathroom[]" value="客衛浴缸">客衛浴缸</label>
+        <label><input type="checkbox" name="bathroom[]" value="乾濕分離">乾濕分離</label>
+        <label><input type="checkbox" name="bathroom[]" value="免治馬桶">免治馬桶</label>
+        <label><input type="checkbox" name="bathroom[]" value="其他">其他</label>
       </div>
     </div>
 
@@ -343,32 +362,32 @@
       <div class="field">
         <label class="title">床型選擇</label>
         <div class="options">
-          <label><input type="checkbox">標準單人床</label>
-          <label><input type="checkbox">單人加大床</label>
-          <label><input type="checkbox">標準雙人床</label>
-          <label><input type="checkbox">Queen Size</label>
-          <label><input type="checkbox">King Size</label>
+          <label><input type="checkbox" name="bed_type[]" value="標準單人床">標準單人床</label>
+          <label><input type="checkbox" name="bed_type[]" value="單人加大床">單人加大床</label>
+          <label><input type="checkbox" name="bed_type[]" value="標準雙人床">標準雙人床</label>
+          <label><input type="checkbox" name="bed_type[]" value="Queen Size">Queen Size</label>
+          <label><input type="checkbox" name="bed_type[]" value="King Size">King Size</label>
         </div>
       </div>
       <div class="options">
-        <label><input type="checkbox">化妝桌</label>
-        <label><input type="checkbox">書桌</label>
-        <label><input type="checkbox">更衣室</label>
-        <label><input type="checkbox">電視</label>
-        <label><input type="checkbox">窗簾需全遮光</label>
-        <label><input type="checkbox">其他</label>
+        <label><input type="checkbox" name="bedroom[]" value="化妝桌">化妝桌</label>
+        <label><input type="checkbox" name="bedroom[]" value="書桌">書桌</label>
+        <label><input type="checkbox" name="bedroom[]" value="更衣室">更衣室</label>
+        <label><input type="checkbox" name="bedroom[]" value="電視">電視</label>
+        <label><input type="checkbox" name="bedroom[]" value="窗簾需全遮光">窗簾需全遮光</label>
+        <label><input type="checkbox" name="bedroom[]" value="其他">其他</label>
       </div>
     </div>
 
     <div class="space-block">
       <h3>和室／工作陽台</h3>
       <div class="options">
-        <label><input type="checkbox">書桌</label>
-        <label><input type="checkbox">自動升降桌</label>
-        <label><input type="checkbox">洗衣機／烘衣機</label>
-        <label><input type="checkbox">曬衣空間</label>
-        <label><input type="checkbox">儲物空間</label>
-        <label><input type="checkbox">其他</label>
+        <label><input type="checkbox" name="tatami_balcony[]" value="書桌">書桌</label>
+        <label><input type="checkbox" name="tatami_balcony[]" value="自動升降桌">自動升降桌</label>
+        <label><input type="checkbox" name="tatami_balcony[]" value="洗衣機／烘衣機">洗衣機／烘衣機</label>
+        <label><input type="checkbox" name="tatami_balcony[]" value="曬衣空間">曬衣空間</label>
+        <label><input type="checkbox" name="tatami_balcony[]" value="儲物空間">儲物空間</label>
+        <label><input type="checkbox" name="tatami_balcony[]" value="其他">其他</label>
       </div>
     </div>
   </section>
