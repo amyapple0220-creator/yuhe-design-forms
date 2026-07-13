@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜3D渲染比對 3D RENDER</title>
+<style>
+  :root{
+    --ink:#2b2b28;
+    --paper:#faf8f4;
+    --line:#d9d3c7;
+    --accent:#8a6d4b;
+    --accent-light:#f1ebe0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.7;
+  }
+  header{
+    text-align:center;
+    padding:56px 20px 32px;
+    border-bottom:1px solid var(--line);
+  }
+  header .en{
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:34px;
+    letter-spacing:6px;
+    margin:0 0 8px;
+  }
+  header h1{
+    font-size:20px;
+    font-weight:500;
+    letter-spacing:6px;
+    margin:0 0 14px;
+  }
+  header p{
+    margin:0 auto;
+    max-width:560px;
+    color:#7a7468;
+    font-size:14px;
+    letter-spacing:1px;
+  }
+  main{
+    max-width:960px;
+    margin:0 auto;
+    padding:40px 20px 90px;
+  }
+  .project-title{
+    text-align:center;
+    margin:10px 0 34px;
+  }
+  .project-title h2{
+    font-size:22px;
+    font-weight:600;
+    letter-spacing:2px;
+    margin:0 0 6px;
+  }
+  .project-title .sub{
+    font-family:Georgia,serif;
+    color:#7a7468;
+    font-size:15px;
+    letter-spacing:1px;
+  }
+  .project-title .sub::before,
+  .project-title .sub::after{
+    content:"—";
+    color:var(--line);
+    margin:0 10px;
+  }
+
+  /* ===== 比對滑桿元件 ===== */
+  figure.compare-block{
+    margin:0 0 56px;
+  }
+  .compare{
+    position:relative;
+    width:100%;
+    overflow:hidden;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:#e8e4dc;
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action:pan-y;          /* 保留頁面直向捲動，水平拖曳給滑桿 */
+    cursor:ew-resize;
+  }
+  .compare img{
+    display:block;
+    width:100%;
+    height:auto;
+    pointer-events:none;
+  }
+  .compare .before-wrap{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    width:var(--pos,50%);
+  }
+  .compare .before-wrap img{
+    position:absolute;
+    inset:0;
+    width:auto;
+    height:100%;
+    max-width:none;
+  }
+  .compare .divider{
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:var(--pos,50%);
+    width:2px;
+    background:#fff;
+    box-shadow:0 0 6px rgba(0,0,0,.35);
+    transform:translateX(-1px);
+  }
+  .compare .handle{
+    position:absolute;
+    top:50%;
+    left:var(--pos,50%);
+    transform:translate(-50%,-50%);
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 2px 10px rgba(0,0,0,.28);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    color:var(--ink);
+    font-size:15px;
+    border:none;
+    cursor:ew-resize;
+    padding:0;
+  }
+  .compare .handle:focus-visible{
+    outline:3px solid var(--accent);
+    outline-offset:2px;
+  }
+  .compare .tag{
+    position:absolute;
+    bottom:14px;
+    background:rgba(255,255,255,.92);
+    color:var(--ink);
+    font-size:12px;
+    letter-spacing:1px;
+    padding:4px 12px;
+    border-radius:3px;
+    opacity:0;
+    transition:opacity .25s;
+    pointer-events:none;
+  }
+  .compare .tag.before{left:14px;}
+  .compare .tag.after{right:14px;}
+  .compare.show-before .tag.before,
+  .compare.show-after .tag.after{opacity:1;}
+
+  figcaption{
+    text-align:center;
+    margin-top:16px;
+    font-size:17px;
+    letter-spacing:3px;
+  }
+  figcaption .en{
+    display:block;
+    font-family:Georgia,serif;
+    font-size:12px;
+    letter-spacing:2px;
+    color:#9a917f;
+    margin-top:2px;
+  }
+
+  footer{
+    border-top:1px solid var(--line);
+    text-align:center;
+    padding:30px 20px 44px;
+    font-size:13px;
+    color:#7a7468;
+    letter-spacing:1px;
+  }
+  footer .brand{
+    font-size:15px;
+    color:var(--ink);
+    letter-spacing:3px;
+    margin-bottom:4px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="en">3D RENDER</p>
+  <h1>3D渲染比對</h1>
+  <p>渲染圖，是我們與業主一同構築藍圖的起點。<br>
+     從模擬到落成，拖曳滑桿，看見設計如何被如實兌現。</p>
+</header>
+
+<main>
+
+  <div class="project-title">
+    <h2>渲染圖對比｜桃園・藝文特區案</h2>
+    <span class="sub">3D Render vs. Reality</span>
+  </div>
+
+  <!--
+    ★ 換圖方式 ★
+    每個 figure.compare-block 是一組比對。
+    第 1 張 img（before-wrap 內）= 3D 渲染圖
+    第 2 張 img = 完工實景照
+    兩張圖請裁成「相同尺寸、相同視角」效果最好，建議寬 1600px、JPG 80% 品質。
+    把 src 換成你的圖片網址或相對路徑即可，其他都不用改。
+  -->
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221600%22%20height%3D%221067%22%20viewBox%3D%220%200%201600%201067%22%3E%0A%3Crect%20width%3D%221600%22%20height%3D%221067%22%20fill%3D%22%23efeae0%22%2F%3E%0A%3Crect%20x%3D%220%22%20y%3D%22720%22%20width%3D%221600%22%20height%3D%22347%22%20fill%3D%22%23ddd4c4%22%2F%3E%0A%3Crect%20x%3D%22120%22%20y%3D%22180%22%20width%3D%22420%22%20height%3D%22540%22%20fill%3D%22%23ddd4c4%22%20opacity%3D%220.7%22%2F%3E%0A%3Crect%20x%3D%22620%22%20y%3D%22260%22%20width%3D%22360%22%20height%3D%22460%22%20rx%3D%226%22%20fill%3D%22%238a6d4b%22%20opacity%3D%220.25%22%2F%3E%0A%3Crect%20x%3D%221080%22%20y%3D%22200%22%20width%3D%22400%22%20height%3D%22520%22%20fill%3D%22%23ddd4c4%22%20opacity%3D%220.5%22%2F%3E%0A%3Ccircle%20cx%3D%22800%22%20cy%3D%22160%22%20r%3D%2246%22%20fill%3D%22%238a6d4b%22%20opacity%3D%220.35%22%2F%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22520%22%20font-family%3D%22%27Noto%20Sans%20TC%27%2Csans-serif%22%20font-size%3D%2286%22%20fill%3D%22%238a6d4b%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3E%E5%AE%8C%E5%B7%A5%E5%AF%A6%E6%99%AF%3C%2Ftext%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22600%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2244%22%20fill%3D%22%238a6d4b%22%20text-anchor%3D%22middle%22%20opacity%3D%220.75%22%3EAFTER%20%E2%80%94%20REALITY%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="玄關 完工實景">
+      <div class="before-wrap">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221600%22%20height%3D%221067%22%20viewBox%3D%220%200%201600%201067%22%3E%0A%3Crect%20width%3D%221600%22%20height%3D%221067%22%20fill%3D%22%23cfc4b0%22%2F%3E%0A%3Crect%20x%3D%220%22%20y%3D%22720%22%20width%3D%221600%22%20height%3D%22347%22%20fill%3D%22%23bfb29a%22%2F%3E%0A%3Crect%20x%3D%22120%22%20y%3D%22180%22%20width%3D%22420%22%20height%3D%22540%22%20fill%3D%22%23bfb29a%22%20opacity%3D%220.7%22%2F%3E%0A%3Crect%20x%3D%22620%22%20y%3D%22260%22%20width%3D%22360%22%20height%3D%22460%22%20rx%3D%226%22%20fill%3D%22%236b5537%22%20opacity%3D%220.25%22%2F%3E%0A%3Crect%20x%3D%221080%22%20y%3D%22200%22%20width%3D%22400%22%20height%3D%22520%22%20fill%3D%22%23bfb29a%22%20opacity%3D%220.5%22%2F%3E%0A%3Ccircle%20cx%3D%22800%22%20cy%3D%22160%22%20r%3D%2246%22%20fill%3D%22%236b5537%22%20opacity%3D%220.35%22%2F%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22520%22%20font-family%3D%22%27Noto%20Sans%20TC%27%2Csans-serif%22%20font-size%3D%2286%22%20fill%3D%22%236b5537%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3E3D%20%E6%B8%B2%E6%9F%93%E5%9C%96%3C%2Ftext%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22600%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2244%22%20fill%3D%22%236b5537%22%20text-anchor%3D%22middle%22%20opacity%3D%220.75%22%3EBEFORE%20%E2%80%94%203D%20RENDER%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="玄關 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>玄關<span class="en">ENTRYWAY</span></figcaption>
+  </figure>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221600%22%20height%3D%221067%22%20viewBox%3D%220%200%201600%201067%22%3E%0A%3Crect%20width%3D%221600%22%20height%3D%221067%22%20fill%3D%22%23efeae0%22%2F%3E%0A%3Crect%20x%3D%220%22%20y%3D%22720%22%20width%3D%221600%22%20height%3D%22347%22%20fill%3D%22%23ddd4c4%22%2F%3E%0A%3Crect%20x%3D%22120%22%20y%3D%22180%22%20width%3D%22420%22%20height%3D%22540%22%20fill%3D%22%23ddd4c4%22%20opacity%3D%220.7%22%2F%3E%0A%3Crect%20x%3D%22620%22%20y%3D%22260%22%20width%3D%22360%22%20height%3D%22460%22%20rx%3D%226%22%20fill%3D%22%238a6d4b%22%20opacity%3D%220.25%22%2F%3E%0A%3Crect%20x%3D%221080%22%20y%3D%22200%22%20width%3D%22400%22%20height%3D%22520%22%20fill%3D%22%23ddd4c4%22%20opacity%3D%220.5%22%2F%3E%0A%3Ccircle%20cx%3D%22800%22%20cy%3D%22160%22%20r%3D%2246%22%20fill%3D%22%238a6d4b%22%20opacity%3D%220.35%22%2F%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22520%22%20font-family%3D%22%27Noto%20Sans%20TC%27%2Csans-serif%22%20font-size%3D%2286%22%20fill%3D%22%238a6d4b%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3E%E5%AE%8C%E5%B7%A5%E5%AF%A6%E6%99%AF%3C%2Ftext%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22600%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2244%22%20fill%3D%22%238a6d4b%22%20text-anchor%3D%22middle%22%20opacity%3D%220.75%22%3EAFTER%20%E2%80%94%20REALITY%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="開放空間 完工實景">
+      <div class="before-wrap">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221600%22%20height%3D%221067%22%20viewBox%3D%220%200%201600%201067%22%3E%0A%3Crect%20width%3D%221600%22%20height%3D%221067%22%20fill%3D%22%23cfc4b0%22%2F%3E%0A%3Crect%20x%3D%220%22%20y%3D%22720%22%20width%3D%221600%22%20height%3D%22347%22%20fill%3D%22%23bfb29a%22%2F%3E%0A%3Crect%20x%3D%22120%22%20y%3D%22180%22%20width%3D%22420%22%20height%3D%22540%22%20fill%3D%22%23bfb29a%22%20opacity%3D%220.7%22%2F%3E%0A%3Crect%20x%3D%22620%22%20y%3D%22260%22%20width%3D%22360%22%20height%3D%22460%22%20rx%3D%226%22%20fill%3D%22%236b5537%22%20opacity%3D%220.25%22%2F%3E%0A%3Crect%20x%3D%221080%22%20y%3D%22200%22%20width%3D%22400%22%20height%3D%22520%22%20fill%3D%22%23bfb29a%22%20opacity%3D%220.5%22%2F%3E%0A%3Ccircle%20cx%3D%22800%22%20cy%3D%22160%22%20r%3D%2246%22%20fill%3D%22%236b5537%22%20opacity%3D%220.35%22%2F%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22520%22%20font-family%3D%22%27Noto%20Sans%20TC%27%2Csans-serif%22%20font-size%3D%2286%22%20fill%3D%22%236b5537%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3E3D%20%E6%B8%B2%E6%9F%93%E5%9C%96%3C%2Ftext%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22600%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2244%22%20fill%3D%22%236b5537%22%20text-anchor%3D%22middle%22%20opacity%3D%220.75%22%3EBEFORE%20%E2%80%94%203D%20RENDER%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="開放空間 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>開放空間<span class="en">LIVING AREA</span></figcaption>
+  </figure>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221600%22%20height%3D%221067%22%20viewBox%3D%220%200%201600%201067%22%3E%0A%3Crect%20width%3D%221600%22%20height%3D%221067%22%20fill%3D%22%23efeae0%22%2F%3E%0A%3Crect%20x%3D%220%22%20y%3D%22720%22%20width%3D%221600%22%20height%3D%22347%22%20fill%3D%22%23ddd4c4%22%2F%3E%0A%3Crect%20x%3D%22120%22%20y%3D%22180%22%20width%3D%22420%22%20height%3D%22540%22%20fill%3D%22%23ddd4c4%22%20opacity%3D%220.7%22%2F%3E%0A%3Crect%20x%3D%22620%22%20y%3D%22260%22%20width%3D%22360%22%20height%3D%22460%22%20rx%3D%226%22%20fill%3D%22%238a6d4b%22%20opacity%3D%220.25%22%2F%3E%0A%3Crect%20x%3D%221080%22%20y%3D%22200%22%20width%3D%22400%22%20height%3D%22520%22%20fill%3D%22%23ddd4c4%22%20opacity%3D%220.5%22%2F%3E%0A%3Ccircle%20cx%3D%22800%22%20cy%3D%22160%22%20r%3D%2246%22%20fill%3D%22%238a6d4b%22%20opacity%3D%220.35%22%2F%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22520%22%20font-family%3D%22%27Noto%20Sans%20TC%27%2Csans-serif%22%20font-size%3D%2286%22%20fill%3D%22%238a6d4b%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3E%E5%AE%8C%E5%B7%A5%E5%AF%A6%E6%99%AF%3C%2Ftext%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22600%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2244%22%20fill%3D%22%238a6d4b%22%20text-anchor%3D%22middle%22%20opacity%3D%220.75%22%3EAFTER%20%E2%80%94%20REALITY%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="用餐區 完工實景">
+      <div class="before-wrap">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221600%22%20height%3D%221067%22%20viewBox%3D%220%200%201600%201067%22%3E%0A%3Crect%20width%3D%221600%22%20height%3D%221067%22%20fill%3D%22%23cfc4b0%22%2F%3E%0A%3Crect%20x%3D%220%22%20y%3D%22720%22%20width%3D%221600%22%20height%3D%22347%22%20fill%3D%22%23bfb29a%22%2F%3E%0A%3Crect%20x%3D%22120%22%20y%3D%22180%22%20width%3D%22420%22%20height%3D%22540%22%20fill%3D%22%23bfb29a%22%20opacity%3D%220.7%22%2F%3E%0A%3Crect%20x%3D%22620%22%20y%3D%22260%22%20width%3D%22360%22%20height%3D%22460%22%20rx%3D%226%22%20fill%3D%22%236b5537%22%20opacity%3D%220.25%22%2F%3E%0A%3Crect%20x%3D%221080%22%20y%3D%22200%22%20width%3D%22400%22%20height%3D%22520%22%20fill%3D%22%23bfb29a%22%20opacity%3D%220.5%22%2F%3E%0A%3Ccircle%20cx%3D%22800%22%20cy%3D%22160%22%20r%3D%2246%22%20fill%3D%22%236b5537%22%20opacity%3D%220.35%22%2F%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22520%22%20font-family%3D%22%27Noto%20Sans%20TC%27%2Csans-serif%22%20font-size%3D%2286%22%20fill%3D%22%236b5537%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3E3D%20%E6%B8%B2%E6%9F%93%E5%9C%96%3C%2Ftext%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22600%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2244%22%20fill%3D%22%236b5537%22%20text-anchor%3D%22middle%22%20opacity%3D%220.75%22%3EBEFORE%20%E2%80%94%203D%20RENDER%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="用餐區 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>用餐區<span class="en">DINING AREA</span></figcaption>
+  </figure>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221600%22%20height%3D%221067%22%20viewBox%3D%220%200%201600%201067%22%3E%0A%3Crect%20width%3D%221600%22%20height%3D%221067%22%20fill%3D%22%23efeae0%22%2F%3E%0A%3Crect%20x%3D%220%22%20y%3D%22720%22%20width%3D%221600%22%20height%3D%22347%22%20fill%3D%22%23ddd4c4%22%2F%3E%0A%3Crect%20x%3D%22120%22%20y%3D%22180%22%20width%3D%22420%22%20height%3D%22540%22%20fill%3D%22%23ddd4c4%22%20opacity%3D%220.7%22%2F%3E%0A%3Crect%20x%3D%22620%22%20y%3D%22260%22%20width%3D%22360%22%20height%3D%22460%22%20rx%3D%226%22%20fill%3D%22%238a6d4b%22%20opacity%3D%220.25%22%2F%3E%0A%3Crect%20x%3D%221080%22%20y%3D%22200%22%20width%3D%22400%22%20height%3D%22520%22%20fill%3D%22%23ddd4c4%22%20opacity%3D%220.5%22%2F%3E%0A%3Ccircle%20cx%3D%22800%22%20cy%3D%22160%22%20r%3D%2246%22%20fill%3D%22%238a6d4b%22%20opacity%3D%220.35%22%2F%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22520%22%20font-family%3D%22%27Noto%20Sans%20TC%27%2Csans-serif%22%20font-size%3D%2286%22%20fill%3D%22%238a6d4b%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3E%E5%AE%8C%E5%B7%A5%E5%AF%A6%E6%99%AF%3C%2Ftext%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22600%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2244%22%20fill%3D%22%238a6d4b%22%20text-anchor%3D%22middle%22%20opacity%3D%220.75%22%3EAFTER%20%E2%80%94%20REALITY%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="主臥室 完工實景">
+      <div class="before-wrap">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221600%22%20height%3D%221067%22%20viewBox%3D%220%200%201600%201067%22%3E%0A%3Crect%20width%3D%221600%22%20height%3D%221067%22%20fill%3D%22%23cfc4b0%22%2F%3E%0A%3Crect%20x%3D%220%22%20y%3D%22720%22%20width%3D%221600%22%20height%3D%22347%22%20fill%3D%22%23bfb29a%22%2F%3E%0A%3Crect%20x%3D%22120%22%20y%3D%22180%22%20width%3D%22420%22%20height%3D%22540%22%20fill%3D%22%23bfb29a%22%20opacity%3D%220.7%22%2F%3E%0A%3Crect%20x%3D%22620%22%20y%3D%22260%22%20width%3D%22360%22%20height%3D%22460%22%20rx%3D%226%22%20fill%3D%22%236b5537%22%20opacity%3D%220.25%22%2F%3E%0A%3Crect%20x%3D%221080%22%20y%3D%22200%22%20width%3D%22400%22%20height%3D%22520%22%20fill%3D%22%23bfb29a%22%20opacity%3D%220.5%22%2F%3E%0A%3Ccircle%20cx%3D%22800%22%20cy%3D%22160%22%20r%3D%2246%22%20fill%3D%22%236b5537%22%20opacity%3D%220.35%22%2F%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22520%22%20font-family%3D%22%27Noto%20Sans%20TC%27%2Csans-serif%22%20font-size%3D%2286%22%20fill%3D%22%236b5537%22%20text-anchor%3D%22middle%22%20font-weight%3D%22600%22%3E3D%20%E6%B8%B2%E6%9F%93%E5%9C%96%3C%2Ftext%3E%0A%3Ctext%20x%3D%22800%22%20y%3D%22600%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2244%22%20fill%3D%22%236b5537%22%20text-anchor%3D%22middle%22%20opacity%3D%220.75%22%3EBEFORE%20%E2%80%94%203D%20RENDER%3C%2Ftext%3E%0A%3C%2Fsvg%3E" alt="主臥室 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>主臥室<span class="en">MASTER BEDROOM</span></figcaption>
+  </figure>
+
+</main>
+
+<footer>
+  <div class="brand">禹合制所 YUHE DESIGN</div>
+  桃園市桃園區藝文一街86之2號4樓
+</footer>
+
+<script>
+(function(){
+  document.querySelectorAll('.compare').forEach(function(box){
+    var handle = box.querySelector('.handle');
+    var beforeImg = box.querySelector('.before-wrap img');
+    var pos = 50;
+    var dragging = false;
+
+    // before 圖的寬度要跟容器一致，才不會隨裁切變形
+    function syncWidth(){
+      beforeImg.style.width = box.clientWidth + 'px';
+      beforeImg.style.height = 'auto';
+    }
+    window.addEventListener('resize', syncWidth);
+    if (beforeImg.complete) syncWidth(); else beforeImg.addEventListener('load', syncWidth);
+
+    function setPos(p){
+      pos = Math.min(96, Math.max(4, p));
+      box.style.setProperty('--pos', pos + '%');
+      box.classList.toggle('show-before', pos > 60);
+      box.classList.toggle('show-after', pos < 40);
+    }
+
+    function posFromEvent(e){
+      var rect = box.getBoundingClientRect();
+      var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      setPos(x / rect.width * 100);
+    }
+
+    box.addEventListener('pointerdown', function(e){
+      dragging = true;
+      box.setPointerCapture(e.pointerId);
+      posFromEvent(e);
+    });
+    box.addEventListener('pointermove', function(e){
+      if (dragging) posFromEvent(e);
+    });
+    box.addEventListener('pointerup', function(){ dragging = false; });
+    box.addEventListener('pointercancel', function(){ dragging = false; });
+
+    handle.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowLeft'){ setPos(pos - 3); e.preventDefault(); }
+      if (e.key === 'ArrowRight'){ setPos(pos + 3); e.preventDefault(); }
+    });
+
+    setPos(50);
+    syncWidth();
+  });
+})();
+</script>
+
+</body>
+</html>
