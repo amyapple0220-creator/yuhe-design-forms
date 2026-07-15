@@ -468,11 +468,21 @@
       method:'POST', body:fd,
       headers:{'Accept':'application/json'},
       signal:ctrl?ctrl.signal:undefined
-    }).then(function(r){return r.json();}).then(function(res){
+    }).then(function(r){
+      if(!r.ok){
+        return r.text().then(function(t){
+          var snippet=(t||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,150);
+          throw new Error('HTTP '+r.status+(snippet?'：'+snippet:''));
+        });
+      }
+      return r.json();
+    }).then(function(res){
       if(timer)clearTimeout(timer);
       if(res&&(res.success===true||res.success==='true')){showSuccess();}
-      else{fail(res&&res.message);}
-    }).catch(function(){fail();});
+      else{fail((res&&res.message)||'伺服器回應異常');}
+    }).catch(function(err){
+      fail(err&&err.name==='AbortError'?'連線逾時':(err&&err.message)||'網路錯誤');
+    });
   });
 })();
 </script>
