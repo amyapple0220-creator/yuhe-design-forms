@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜工程進度甘特圖</title>
+<style>
+  :root{
+    --bg:#161512;
+    --card:#201e19;
+    --card2:#282520;
+    --line:#3a362d;
+    --yellow:#f2c230;
+    --yellow-dim:#8a7530;
+    --text:#f0ede6;
+    --muted:#9a958a;
+    --red:#ff6b6b;
+    --red-bg:#3a2222;
+    --green:#67c587;
+    --green-bg:#22352a;
+    --row-h:64px;
+    --col-w:38px;
+    --left-w:190px;
+    --radius:12px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:20px 14px 90px;}
+
+  /* ── 頁首 ── */
+  .crumb{font-size:12px; color:var(--muted); letter-spacing:2px; margin-bottom:2px;}
+  .head{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+  .head h1{
+    font-size:26px; margin:0; letter-spacing:1px;
+    outline:none; border-radius:6px; padding:0 4px;
+  }
+  .head h1:focus{background:var(--card2);}
+  .head .sub{font-size:13px; color:var(--muted); margin:2px 0 0 4px;}
+  .btn{
+    border:none; cursor:pointer; font-family:inherit;
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:14px; font-weight:700; letter-spacing:1px;
+    padding:10px 18px; border-radius:10px;
+    background:var(--yellow); color:#1c1a14;
+  }
+  .btn.ghost{
+    background:transparent; color:var(--yellow);
+    border:1px solid var(--yellow-dim); font-weight:500;
+  }
+  .btn:active{transform:scale(.97);}
+
+  /* ── 進度摘要卡 ── */
+  .summary{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px 20px; margin:16px 0;
+  }
+  .summary .top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;}
+  .delay-pill{white-space:nowrap;}
+  .summary .label{font-size:13px; color:var(--muted); letter-spacing:1px;}
+  .summary .pct{font-size:40px; font-weight:800; line-height:1.1;}
+  .summary .pct small{font-size:20px; font-weight:700;}
+  .delay-pill{
+    display:none; align-items:center; gap:5px;
+    background:var(--red-bg); color:var(--red);
+    font-size:13px; font-weight:700;
+    padding:6px 12px; border-radius:9px;
+  }
+  .delay-pill.show{display:inline-flex;}
+  .count-note{font-size:12px; color:var(--muted); text-align:right; margin-top:6px;}
+  .bar-track{
+    height:8px; background:var(--card2); border-radius:99px; margin-top:12px; overflow:hidden;
+  }
+  .bar-fill{height:100%; width:0%; background:var(--yellow); border-radius:99px; transition:width .4s;}
+
+  /* ── 工具列 ── */
+  .toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
+  .seg{
+    display:inline-flex; background:var(--card); border:1px solid var(--line);
+    border-radius:10px; padding:3px; gap:2px;
+  }
+  .seg button{
+    border:none; background:transparent; color:var(--muted); cursor:pointer;
+    font-family:inherit; font-size:13px; font-weight:600; letter-spacing:1px;
+    padding:7px 14px; border-radius:8px;
+  }
+  .seg button.on{background:var(--yellow); color:#1c1a14;}
+  .toolbar .spacer{flex:1;}
+  .chip-note{font-size:12px; color:var(--muted);}
+
+  /* ── 甘特圖 ── */
+  .gantt-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .gantt{display:flex; align-items:stretch;}
+  .g-left{flex:none; width:var(--left-w); border-right:1px solid var(--line); background:var(--card); z-index:2;}
+  .g-right{flex:1; min-width:0; overflow-x:auto; overscroll-behavior-x:contain;}
+  .g-canvas{position:relative;}
+
+  .g-head{height:58px; border-bottom:1px solid var(--line);}
+  .g-left .g-head{
+    display:flex; align-items:flex-end; padding:0 12px 8px;
+    font-size:12px; color:var(--muted); letter-spacing:1px;
+  }
+  .month-row{position:absolute; top:0; left:0; height:26px;}
+  .month-cell{
+    position:absolute; top:4px; font-size:12px; font-weight:700; color:var(--text);
+    border-left:1px solid var(--line); height:20px; white-space:nowrap;
+    display:flex; overflow:hidden;
+  }
+  .month-cell span{position:sticky; left:8px; padding-left:8px;}
+  .day-row{position:absolute; top:26px; left:0; height:32px;}
+  .day-cell{
+    position:absolute; width:var(--col-w); text-align:center;
+    font-size:11px; color:var(--muted); line-height:26px;
+  }
+  .day-cell.weekend{color:#c96a5a;}
+  .day-cell.today{color:#1c1a14; font-weight:800; z-index:1;}
+  .day-cell.today::before{
+    content:""; position:absolute; left:50%; top:2px; transform:translateX(-50%);
+    width:24px; height:22px; background:var(--yellow); border-radius:7px; z-index:-1;
+  }
+
+  .g-row{
+    height:var(--row-h); border-bottom:1px solid var(--line);
+    display:flex; flex-direction:column; justify-content:center;
+    padding:0 12px; cursor:pointer;
+  }
+  .g-row:hover{background:var(--card2);}
+  .g-row .name{
+    font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    display:flex; align-items:center; gap:6px;
+  }
+  .dot{width:7px; height:7px; border-radius:50%; background:var(--yellow); flex:none;}
+  .g-row .meta{display:flex; gap:5px; margin-top:3px; flex-wrap:nowrap; overflow:hidden;}
+  .tag{
+    font-size:10.5px; padding:1px 7px; border-radius:6px; white-space:nowrap;
+    background:var(--card2); color:var(--muted); border:1px solid var(--line);
+  }
+  .tag.vendor{color:var(--yellow); border-color:var(--yellow-dim);}
+  .tag.st-0{color:var(--muted);}
+  .tag.st-1{background:#3a331d; color:var(--yellow); border-color:var(--yellow-dim);}
+  .tag.st-2{background:var(--green-bg); color:var(--green); border-color:#3a5c46;}
+  .tag.late{background:var(--red-bg); color:var(--red); border-color:#6b3a3a;}
+
+  .grid-row{height:var(--row-h); border-bottom:1px solid var(--line);}
+  .v-grid{position:absolute; top:0; bottom:0; width:1px; background:var(--line); opacity:.45;}
+  .weekend-band{position:absolute; top:58px; bottom:0; background:rgba(255,255,255,.025);}
+  .today-line{
+    position:absolute; top:58px; bottom:0; width:2px; background:var(--yellow); opacity:.85; z-index:1;
+  }
+
+  .g-bar{
+    position:absolute; height:34px; border-radius:9px; z-index:1; cursor:pointer;
+    border:1.5px solid var(--yellow-dim); background:#2a2617; overflow:hidden;
+    display:flex; align-items:center;
+  }
+  .g-bar .fill{position:absolute; left:0; top:0; bottom:0; background:var(--yellow); opacity:.9;}
+  .g-bar .txt{
+    position:relative; z-index:1; font-size:11.5px; font-weight:700; color:#1c1a14;
+    padding:0 8px; white-space:nowrap;
+  }
+  .g-bar .txt.on-dark{color:var(--text);}
+  .g-bar.done{border-color:#3a5c46; background:var(--green-bg);}
+  .g-bar.done .fill{background:var(--green); opacity:.85;}
+  .g-bar.late{border-color:var(--red);}
+  .g-bar.notstart{background:transparent;}
+
+  /* ── 列表視圖 ── */
+  .list{display:none; flex-direction:column; gap:10px;}
+  .list.show{display:flex;}
+  .l-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; cursor:pointer;
+  }
+  .l-card:active{background:var(--card2);}
+  .l-top{display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .l-top .name{font-size:15px; font-weight:700;}
+  .l-meta{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; align-items:center;}
+  .l-dates{font-size:12px; color:var(--muted);}
+  .l-bar{height:6px; background:var(--card2); border-radius:99px; margin-top:10px; overflow:hidden;}
+  .l-bar i{display:block; height:100%; background:var(--yellow); border-radius:99px;}
+  .l-bar.done i{background:var(--green);}
+  .l-pct{font-size:12px; color:var(--muted); margin-top:4px; text-align:right;}
+
+  /* ── 空狀態 ── */
+  .empty{
+    display:none; text-align:center; padding:70px 20px;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  }
+  .empty.show{display:block;}
+  .empty .icon{font-size:44px; opacity:.4;}
+  .empty p{color:var(--muted); margin:10px 0 22px;}
+  .empty .btns{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+
+  /* ── Modal ── */
+  .overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.6);
+    z-index:10; align-items:flex-end; justify-content:center;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--card); border:1px solid var(--line);
+    border-radius:18px 18px 0 0; width:100%; max-width:560px;
+    padding:22px 20px 30px; max-height:88vh; overflow-y:auto;
+  }
+  @media(min-width:640px){
+    .overlay{align-items:center;}
+    .modal{border-radius:18px; padding-bottom:22px;}
+  }
+  .modal h3{margin:0 0 16px; font-size:18px; letter-spacing:1px;}
+  .f{margin-bottom:14px;}
+  .f label{display:block; font-size:12.5px; color:var(--muted); margin-bottom:5px; letter-spacing:1px;}
+  .f input[type=text], .f input[type=date]{
+    width:100%; padding:11px 12px; font-size:15px; font-family:inherit;
+    background:var(--card2); border:1px solid var(--line); border-radius:9px; color:var(--text);
+    color-scheme:dark;
+  }
+  .f input:focus{outline:none; border-color:var(--yellow);}
+  .f-row{display:flex; gap:10px;}
+  .f-row .f{flex:1;}
+  .prog-line{display:flex; align-items:center; gap:12px;}
+  .prog-line input[type=range]{flex:1; accent-color:var(--yellow);}
+  .prog-val{font-size:16px; font-weight:800; width:52px; text-align:right; color:var(--yellow);}
+  .m-btns{display:flex; gap:10px; margin-top:20px;}
+  .m-btns .btn{flex:1; justify-content:center; padding:13px;}
+  .btn.danger{background:transparent; color:var(--red); border:1px solid #6b3a3a; flex:0 0 auto;}
+
+  @media(max-width:520px){
+    :root{--left-w:148px; --col-w:34px; --row-h:60px;}
+    .head h1{font-size:22px;}
+    .summary .pct{font-size:34px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crumb">工程進度總覽</div>
+  <div class="head">
+    <div>
+      <h1 id="projName" contenteditable="true" spellcheck="false">未命名專案</h1>
+      <div class="sub" id="updatedAt"></div>
+    </div>
+    <button class="btn" id="btnAdd">＋ 新增工項</button>
+  </div>
+
+  <div class="summary">
+    <div class="top">
+      <div>
+        <div class="label">整體施工進度</div>
+        <div class="pct"><span id="pctNum">0</span><small> %</small></div>
+      </div>
+      <div>
+        <span class="delay-pill" id="delayPill">⚠ <span id="delayNum">0</span> 項延誤</span>
+        <div class="count-note" id="taskCount">共 0 項工項</div>
+      </div>
+    </div>
+    <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="seg" id="viewSeg">
+      <button class="on" data-v="gantt">📊 甘特圖</button>
+      <button data-v="list">☰ 列表視圖</button>
+    </div>
+    <button class="btn ghost" id="btnTpl">⬒ 套用範本</button>
+    <div class="spacer"></div>
+    <div class="chip-note">點工項可編輯</div>
+  </div>
+
+  <div class="empty" id="empty">
+    <div class="icon">📊</div>
+    <p>尚無工項資料</p>
+    <div class="btns">
+      <button class="btn" id="btnAdd2">＋ 新增工項</button>
+      <button class="btn ghost" id="btnTpl2">⬒ 套用範本</button>
+    </div>
+  </div>
+
+  <div class="gantt-card" id="ganttCard">
+    <div class="gantt">
+      <div class="g-left" id="gLeft"></div>
+      <div class="g-right" id="gRight"><div class="g-canvas" id="gCanvas"></div></div>
+    </div>
+  </div>
+
+  <div class="list" id="listView"></div>
+
+</div>
+
+<!-- 編輯 / 新增工項 -->
+<div class="overlay" id="editOverlay">
+  <div class="modal">
+    <h3 id="editTitle">新增工項</h3>
+    <div class="f"><label>工項名稱</label><input type="text" id="eName" placeholder="例：水電配管"></div>
+    <div class="f-row">
+      <div class="f"><label>負責廠商 / 師傅</label><input type="text" id="eVendor" placeholder="例：穩達水電"></div>
+      <div class="f"><label>區域 / 樓層</label><input type="text" id="eArea" placeholder="例：全室"></div>
+    </div>
+    <div class="f-row">
+      <div class="f"><label>開始日期</label><input type="date" id="eStart"></div>
+      <div class="f"><label>結束日期</label><input type="date" id="eEnd"></div>
+    </div>
+    <div class="f">
+      <label>完成進度</label>
+      <div class="prog-line">
+        <input type="range" id="eProg" min="0" max="100" step="5" value="0">
+        <span class="prog-val" id="eProgVal">0%</span>
+      </div>
+    </div>
+    <div class="m-btns">
+      <button class="btn danger" id="eDelete">刪除</button>
+      <button class="btn ghost" id="eCancel">取消</button>
+      <button class="btn" id="eSave">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 套用範本 -->
+<div class="overlay" id="tplOverlay">
+  <div class="modal">
+    <h3>套用室內裝修工序範本</h3>
+    <p style="font-size:13px;color:var(--muted);margin:0 0 16px;">
+      將依標準裝修流程（保護 → 拆除 → 水電 → 泥作 → 木作 → 油漆 → 安裝 → 清潔驗收）自動排入 13 項工項，之後可自由調整。
+    </p>
+    <div class="f"><label>開工日期</label><input type="date" id="tplStart"></div>
+    <div class="m-btns">
+      <button class="btn ghost" id="tplCancel">取消</button>
+      <button class="btn" id="tplApply">套用範本</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY='yuhe_gantt_v1';
+  var COL=38, ROW=64, HEAD=58;
+  function readCssVars(){
+    var cs=getComputedStyle(document.documentElement);
+    COL=parseInt(cs.getPropertyValue('--col-w'))||38;
+    ROW=parseInt(cs.getPropertyValue('--row-h'))||64;
+  }
+
+  /* ── 日期工具 ── */
+  function parse(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
+  function fmt(d){
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  function addDays(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x;}
+  function dayDiff(a,b){return Math.round((b-a)/864e5);}
+  var today=new Date(); today=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+
+  /* ── 資料 ── */
+  var state={projectName:'未命名專案',tasks:[]};
+  function load(){
+    try{
+      var raw=localStorage.getItem(KEY);
+      if(raw){var d=JSON.parse(raw); if(d&&d.tasks) state=d;}
+    }catch(e){}
+  }
+  function save(){
+    try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+  }
+  function uid(){return 't'+(++state._seq||(state._seq=1));}
+
+  var TEMPLATE=[
+    ['保護工程',2,'全室'],['拆除工程',5,'全室'],['水電配管',10,'全室'],
+    ['泥作工程',12,'全室'],['浴室防水',3,'衛浴'],['鋁窗工程',3,'全室'],
+    ['木作工程',15,'全室'],['油漆工程',10,'全室'],['系統櫃安裝',5,'各房'],
+    ['廚具衛浴安裝',4,'廚房/衛浴'],['燈具五金安裝',3,'全室'],
+    ['細部清潔',2,'全室'],['完工驗收',1,'全室']
+  ];
+  function applyTemplate(startStr){
+    var cur=parse(startStr);
+    TEMPLATE.forEach(function(t){
+      var end=addDays(cur,t[1]-1);
+      state.tasks.push({id:uid(),name:t[0],vendor:'',area:t[2],start:fmt(cur),end:fmt(end),progress:0});
+      cur=addDays(end,1);
+    });
+    save(); render();
+  }
+
+  /* ── 狀態判斷 ── */
+  function statusOf(t){
+    if(t.progress>=100)return 2;      // 完成
+    if(t.progress>0)return 1;         // 進行中
+    return 0;                         // 未開始
+  }
+  var ST_TXT=['未開始','進行中','完成'];
+  function isLate(t){return statusOf(t)!==2 && parse(t.end)<today;}
+
+  /* ── DOM ── */
+  function $(id){return document.getElementById(id);}
+  var gLeft=$('gLeft'),gCanvas=$('gCanvas'),gRight=$('gRight');
+
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+  function render(){
+    readCssVars();
+    var tasks=state.tasks.slice().sort(function(a,b){
+      return a.start<b.start?-1:a.start>b.start?1:0;
+    });
+    $('projName').textContent=state.projectName;
+    var wk=['日','一','二','三','四','五','六'];
+    $('updatedAt').textContent='更新於 '+String(today.getMonth()+1).padStart(2,'0')+'/'+String(today.getDate()).padStart(2,'0')+' ・ 星期'+wk[today.getDay()];
+
+    /* 摘要 */
+    var n=tasks.length;
+    var pct=n?Math.round(tasks.reduce(function(s,t){return s+t.progress;},0)/n):0;
+    $('pctNum').textContent=pct;
+    $('barFill').style.width=pct+'%';
+    $('taskCount').textContent='共 '+n+' 項工項';
+    var late=tasks.filter(isLate).length;
+    $('delayNum').textContent=late;
+    $('delayPill').classList.toggle('show',late>0);
+
+    /* 空狀態 */
+    var hasData=n>0;
+    $('empty').classList.toggle('show',!hasData);
+    $('ganttCard').style.display=(hasData&&view==='gantt')?'':'none';
+    $('listView').classList.toggle('show',hasData&&view==='list');
+    if(!hasData)return;
+
+    if(view==='gantt')renderGantt(tasks); else renderList(tasks);
+  }
+
+  function renderGantt(tasks){
+    var min=parse(tasks[0].start),max=parse(tasks[0].end);
+    tasks.forEach(function(t){
+      var s=parse(t.start),e=parse(t.end);
+      if(s<min)min=s; if(e>max)max=e;
+    });
+    if(today<min)min=today; if(today>max)max=today;
+    var t0=addDays(min,-3), t1=addDays(max,7);
+    var days=dayDiff(t0,t1)+1, W=days*COL;
+
+    /* 左欄 */
+    var lh='<div class="g-head">任務 / 工項</div>';
+    tasks.forEach(function(t){
+      var st=statusOf(t), late=isLate(t);
+      lh+='<div class="g-row" data-id="'+t.id+'">'
+        +'<div class="name"><span class="dot"></span>'+esc(t.name)+'</div>'
+        +'<div class="meta">'
+        +(t.vendor?'<span class="tag vendor">'+esc(t.vendor)+'</span>':'')
+        +(t.area?'<span class="tag">'+esc(t.area)+'</span>':'')
+        +(late?'<span class="tag late">⚠ 落後</span>':'<span class="tag st-'+st+'">'+ST_TXT[st]+'</span>')
+        +'</div></div>';
+    });
+    gLeft.innerHTML=lh;
+
+    /* 右側畫布 */
+    var h='';
+    /* 月份列 */
+    h+='<div class="month-row">';
+    var d=new Date(t0);
+    while(d<=t1){
+      var mEnd=new Date(d.getFullYear(),d.getMonth()+1,0);
+      if(mEnd>t1)mEnd=t1;
+      var x=dayDiff(t0,d)*COL, mw=(dayDiff(d,mEnd)+1)*COL;
+      h+='<div class="month-cell" style="left:'+x+'px;width:'+mw+'px"><span>'+d.getFullYear()+'年'+(d.getMonth()+1)+'月</span></div>';
+      d=new Date(d.getFullYear(),d.getMonth()+1,1);
+    }
+    h+='</div><div class="day-row">';
+    for(var i=0;i<days;i++){
+      var dd=addDays(t0,i), cls='day-cell';
+      if(dd.getDay()===0||dd.getDay()===6)cls+=' weekend';
+      if(dd.getTime()===today.getTime())cls+=' today';
+      h+='<div class="'+cls+'" style="left:'+i*COL+'px">'+dd.getDate()+'</div>';
+    }
+    h+='</div>';
+    /* 週末底色與格線 */
+    for(var i=0;i<days;i++){
+      var dd=addDays(t0,i);
+      if(dd.getDay()===0||dd.getDay()===6)
+        h+='<div class="weekend-band" style="left:'+i*COL+'px;width:'+COL+'px"></div>';
+      h+='<div class="v-grid" style="left:'+i*COL+'px;top:'+HEAD+'px;bottom:0"></div>';
+    }
+    /* 今日線 */
+    var tx=dayDiff(t0,today)*COL+COL/2;
+    h+='<div class="today-line" style="left:'+tx+'px"></div>';
+    /* 列底線 + 長條 */
+    tasks.forEach(function(t,idx){
+      var top=HEAD+idx*ROW;
+      h+='<div class="grid-row" style="position:absolute;left:0;width:'+W+'px;top:'+top+'px"></div>';
+      var s=parse(t.start),e=parse(t.end);
+      var x=dayDiff(t0,s)*COL+2, w=(dayDiff(s,e)+1)*COL-4;
+      var st=statusOf(t), cls='g-bar';
+      if(st===2)cls+=' done'; else if(st===0)cls+=' notstart';
+      if(isLate(t))cls+=' late';
+      var txtCls='txt', txtStyle='';
+      if(st===0){txtCls+=' on-dark';}
+      else if(st===1&&t.progress<60){txtCls+=' on-dark'; txtStyle='margin-left:'+t.progress+'%;';}
+      h+='<div class="'+cls+'" data-id="'+t.id+'" style="left:'+x+'px;width:'+w+'px;top:'+(top+(ROW-34)/2)+'px">'
+        +'<div class="fill" style="width:'+t.progress+'%"></div>'
+        +'<span class="'+txtCls+'" style="'+txtStyle+'">'+esc(t.name)+(t.progress>0&&t.progress<100?' '+t.progress+'%':'')+'</span>'
+        +'</div>';
+    });
+    gCanvas.style.width=W+'px';
+    gCanvas.style.height=(HEAD+tasks.length*ROW)+'px';
+    gCanvas.innerHTML=h;
+
+    /* 捲到今天附近 */
+    var target=tx-gRight.clientWidth*0.3;
+    if(target>0)gRight.scrollLeft=target;
+  }
+
+  function renderList(tasks){
+    var h='';
+    tasks.forEach(function(t){
+      var st=statusOf(t), late=isLate(t);
+      h+='<div class="l-card" data-id="'+t.id+'">'
+        +'<div class="l-top"><span class="name">'+esc(t.name)+'</span>'
+        +(late?'<span class="tag late">⚠ 落後</span>':'<span class="tag st-'+st+'">'+ST_TXT[st]+'</span>')
+        +'</div><div class="l-meta">'
+        +(t.vendor?'<span class="tag vendor">'+esc(t.vendor)+'</span>':'')
+        +(t.area?'<span class="tag">'+esc(t.area)+'</span>':'')
+        +'<span class="l-dates">'+t.start.slice(5).replace('-','/')+' – '+t.end.slice(5).replace('-','/')+'</span>'
+        +'</div>'
+        +'<div class="l-bar'+(st===2?' done':'')+'"><i style="width:'+t.progress+'%"></i></div>'
+        +'<div class="l-pct">'+t.progress+'%</div>'
+        +'</div>';
+    });
+    $('listView').innerHTML=h;
+  }
+
+  /* ── 視圖切換 ── */
+  var view='gantt';
+  $('viewSeg').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    view=b.dataset.v;
+    this.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});
+    render();
+  });
+
+  /* ── 編輯 modal ── */
+  var editing=null;
+  function openEdit(t){
+    editing=t;
+    $('editTitle').textContent=t?'編輯工項':'新增工項';
+    $('eName').value=t?t.name:'';
+    $('eVendor').value=t?t.vendor:'';
+    $('eArea').value=t?t.area:'';
+    $('eStart').value=t?t.start:fmt(today);
+    $('eEnd').value=t?t.end:fmt(addDays(today,4));
+    $('eProg').value=t?t.progress:0;
+    $('eProgVal').textContent=(t?t.progress:0)+'%';
+    $('eDelete').style.display=t?'':'none';
+    $('editOverlay').classList.add('show');
+  }
+  $('eProg').addEventListener('input',function(){$('eProgVal').textContent=this.value+'%';});
+  $('eCancel').onclick=function(){$('editOverlay').classList.remove('show');};
+  $('eSave').onclick=function(){
+    var name=$('eName').value.trim();
+    if(!name){$('eName').focus();return;}
+    var s=$('eStart').value, e=$('eEnd').value;
+    if(!s||!e){return;}
+    if(parse(e)<parse(s)){var tmp=s;s=e;e=tmp;}
+    var data={name:name,vendor:$('eVendor').value.trim(),area:$('eArea').value.trim(),
+              start:s,end:e,progress:+$('eProg').value};
+    if(editing){Object.assign(editing,data);}
+    else{data.id=uid();state.tasks.push(data);}
+    save();$('editOverlay').classList.remove('show');render();
+  };
+  $('eDelete').onclick=function(){
+    if(editing&&confirm('確定刪除「'+editing.name+'」？')){
+      state.tasks=state.tasks.filter(function(t){return t!==editing;});
+      save();$('editOverlay').classList.remove('show');render();
+    }
+  };
+  $('btnAdd').onclick=$('btnAdd2').onclick=function(){openEdit(null);};
+
+  function findTask(id){return state.tasks.find(function(t){return t.id===id;});}
+  document.addEventListener('click',function(e){
+    var el=e.target.closest('.g-row,.g-bar,.l-card');
+    if(el&&el.dataset.id){openEdit(findTask(el.dataset.id));}
+  });
+  document.querySelectorAll('.overlay').forEach(function(o){
+    o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('show');});
+  });
+
+  /* ── 範本 ── */
+  $('btnTpl').onclick=$('btnTpl2').onclick=function(){
+    $('tplStart').value=fmt(today);
+    $('tplOverlay').classList.add('show');
+  };
+  $('tplCancel').onclick=function(){$('tplOverlay').classList.remove('show');};
+  $('tplApply').onclick=function(){
+    var s=$('tplStart').value; if(!s)return;
+    applyTemplate(s);
+    $('tplOverlay').classList.remove('show');
+  };
+
+  /* ── 專案名稱 ── */
+  $('projName').addEventListener('blur',function(){
+    state.projectName=this.textContent.trim()||'未命名專案';
+    this.textContent=state.projectName;
+    save();
+  });
+  $('projName').addEventListener('keydown',function(e){
+    if(e.key==='Enter'){e.preventDefault();this.blur();}
+  });
+
+  window.addEventListener('resize',render);
+
+  /* ── Demo 模式（#demo 預覽用，不寫入儲存）── */
+  if(location.hash==='#demo'){
+    save=function(){};
+    state.projectName='青田家';
+    var demoStart=addDays(today,-18);
+    applyTemplate(fmt(demoStart));
+    var progs=[100,100,80,45,0,0,0,0,0,0,0,0,0];
+    state.tasks.forEach(function(t,i){t.progress=progs[i]||0;});
+    state.tasks[0].vendor='禹合工務'; state.tasks[1].vendor='昌益拆除';
+    state.tasks[2].vendor='穩達水電'; state.tasks[3].vendor='邵睿泥作';
+    render();
+  }else{
+    load(); render();
+  }
+})();
+</script>
+</body>
+</html>
