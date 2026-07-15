@@ -218,7 +218,7 @@
   <input type="hidden" name="_subject" value="禹合制所｜新的室內裝修需求表">
   <input type="hidden" name="_template" value="table">
   <input type="hidden" name="_captcha" value="false">
-  <input type="hidden" name="_next" value="https://contact.gandandesign.com.tw/">
+  <input type="hidden" name="_next" value="https://amyapple0220-creator.github.io/yuhe-design-forms/thanks.html">
 
   <!-- ═══ 步驟 1：基本資料 ═══ -->
   <div class="step on" data-title="基本資料">
@@ -580,6 +580,7 @@
     <button type="submit" class="btn-submit" id="btnSubmit" style="display:none;">送出需求表</button>
   </div>
   <p class="step-hint" id="stepHint">共 6 個步驟，約需 5–8 分鐘</p>
+  <p style="text-align:center;margin-top:6px;"><button type="button" id="lineFallback" style="background:none;border:none;color:var(--accent-deep);text-decoration:underline;font-size:13px;cursor:pointer;font-family:inherit;display:none;">送出遇到問題？點此複製填寫內容，改用 LINE 傳給我們</button></p>
 
 </form>
 
@@ -615,6 +616,8 @@
     btnPrev.style.visibility=i===0?'hidden':'visible';
     btnNext.style.display=i===steps.length-1?'none':'';
     btnSubmit.style.display=i===steps.length-1?'':'none';
+    var fb2=document.getElementById('lineFallback');
+    if(fb2)fb2.style.display=i===steps.length-1?'':'none';
     document.getElementById('stepHint').textContent=
       i===steps.length-1?'送出後請記得通知官方 LINE 客服已完成填寫':'共 6 個步驟，約需 5–8 分鐘';
     window.scrollTo({top:0,behavior:'smooth'});
@@ -641,7 +644,7 @@
     }
   });
 
-  /* ── 背景送出（不跳頁，避免卡住）── */
+  /* ── 送出：原生表單送出（已驗證信箱），成功導回感謝頁 ── */
   function fieldLabel(el){
     var f=el.closest('.field');
     if(f){var t=f.querySelector('label.title');if(t)return t.childNodes[0].textContent.trim();}
@@ -670,66 +673,22 @@
       },function(){prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);});
     }else{prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);}
   }
-  function showSuccess(){
-    document.querySelector('.progress').style.display='none';
-    document.getElementById('briefForm').style.display='none';
-    var d=document.createElement('div');
-    d.style.cssText='max-width:720px;margin:30px auto 80px;padding:40px 24px;text-align:center;';
-    d.innerHTML='<div style="font-size:56px;line-height:1;">✅</div>'
-      +'<h2 style="letter-spacing:2px;margin:16px 0 8px;">需求表已送出</h2>'
-      +'<p style="color:var(--muted);font-size:14.5px;">我們已收到您的資料，<br>請加入官方 LINE 並通知客服「已填寫表單」，我們會盡快與您聯繫安排丈量。</p>';
-    document.getElementById('briefForm').parentNode.appendChild(d);
-    window.scrollTo(0,0);
-  }
-  function doSubmit(form){
-    var btnSubmit=document.getElementById('btnSubmit');
-    btnSubmit.disabled=true; btnSubmit.textContent='送出中…';
-    var fd=new FormData(form);
-    var body=new URLSearchParams();
-    fd.forEach(function(v,k){if(k!=='_next')body.append(k,v);});
-    var ctrl=('AbortController' in window)?new AbortController():null;
-    var timer=ctrl?setTimeout(function(){ctrl.abort();},20000):null;
-    function fail(msg){
-      if(timer)clearTimeout(timer);
-      btnSubmit.disabled=false; btnSubmit.textContent='送出需求表';
-      var text=buildSummary(form);
-      if(confirm('線上送出失敗'+(msg?'（'+msg+'）':'')+'。\n\n按「確定」複製您填寫的內容，直接貼到 LINE 給我們即可，資料不會白填！')){
-        copyText(text);
-      }
-    }
-    fetch('https://formsubmit.co/ajax/yuhe.design0220@gmail.com',{
-      method:'POST', body:body,
-      headers:{'Accept':'application/json'},
-      signal:ctrl?ctrl.signal:undefined
-    }).then(function(r){
-      if(!r.ok){
-        return r.text().then(function(t){
-          var snippet=(t||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,150);
-          throw new Error('HTTP '+r.status+(snippet?'：'+snippet:''));
-        });
-      }
-      return r.json();
-    }).then(function(res){
-      if(timer)clearTimeout(timer);
-      if(res&&(res.success===true||res.success==='true')){showSuccess();}
-      else{fail((res&&res.message)||'伺服器回應異常');}
-    }).catch(function(err){
-      fail(err&&err.name==='AbortError'?'連線逾時':(err&&err.message)||'網路錯誤');
-    });
-  }
+  var fb=document.getElementById('lineFallback');
+  if(fb)fb.onclick=function(){copyText(buildSummary(document.getElementById('briefForm')));};
   document.getElementById('briefForm').addEventListener('submit',function(e){
-    e.preventDefault();
     for(var i=0;i<steps.length;i++){
       var fields=steps[i].querySelectorAll('input,select,textarea');
       for(var k=0;k<fields.length;k++){
         if(!fields[k].checkValidity()){
+          e.preventDefault();
           show(i);
           fields[k].reportValidity();
           return;
         }
       }
     }
-    doSubmit(this);
+    var b=document.getElementById('btnSubmit');
+    b.textContent='送出中…';
   });
 
   /* 伴侶欄位連動 */

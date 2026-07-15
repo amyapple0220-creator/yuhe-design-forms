@@ -58,6 +58,7 @@
   <input type="hidden" name="_subject" value="禹合制所｜忠泰湛案需求表">
   <input type="hidden" name="_template" value="table">
   <input type="hidden" name="_captcha" value="false">
+  <input type="hidden" name="_next" value="https://amyapple0220-creator.github.io/yuhe-design-forms/thanks.html">
 
   <!-- 一、基本資料 -->
   <section>
@@ -402,6 +403,7 @@
   <div class="submit-area">
     <button type="submit" id="btnSubmit">送出需求表</button>
     <p style="font-size:12px;color:#999;">送出後我們將盡快與您聯繫，並安排現場丈量與初步配置規劃。</p>
+    <p><button type="button" id="lineFallback" style="background:none;border:none;color:#6f563a;text-decoration:underline;font-size:13px;cursor:pointer;font-family:inherit;padding:0;">送出遇到問題？點此複製填寫內容，改用 LINE 傳給我們</button></p>
   </div>
 
 </form>
@@ -448,42 +450,11 @@
     form.parentNode.appendChild(d);
     window.scrollTo(0,0);
   }
+  var fb=document.getElementById('lineFallback');
+  if(fb)fb.onclick=function(){copyText(buildSummary());};
   form.addEventListener('submit',function(e){
-    e.preventDefault();
-    if(!form.checkValidity()){form.reportValidity();return;}
-    btn.disabled=true; btn.textContent='送出中…';
-    var fd=new FormData(form);
-    var body=new URLSearchParams();
-    fd.forEach(function(v,k){if(k!=='_next')body.append(k,v);});
-    var ctrl=('AbortController' in window)?new AbortController():null;
-    var timer=ctrl?setTimeout(function(){ctrl.abort();},20000):null;
-    function fail(msg){
-      if(timer)clearTimeout(timer);
-      btn.disabled=false; btn.textContent='送出需求表';
-      var text=buildSummary();
-      if(confirm('線上送出失敗'+(msg?'（'+msg+'）':'')+'。\n\n按「確定」複製您填寫的內容，直接貼到 LINE 給我們即可，資料不會白填！')){
-        copyText(text);
-      }
-    }
-    fetch('https://formsubmit.co/ajax/yuhe.design0220@gmail.com',{
-      method:'POST', body:body,
-      headers:{'Accept':'application/json'},
-      signal:ctrl?ctrl.signal:undefined
-    }).then(function(r){
-      if(!r.ok){
-        return r.text().then(function(t){
-          var snippet=(t||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,150);
-          throw new Error('HTTP '+r.status+(snippet?'：'+snippet:''));
-        });
-      }
-      return r.json();
-    }).then(function(res){
-      if(timer)clearTimeout(timer);
-      if(res&&(res.success===true||res.success==='true')){showSuccess();}
-      else{fail((res&&res.message)||'伺服器回應異常');}
-    }).catch(function(err){
-      fail(err&&err.name==='AbortError'?'連線逾時':(err&&err.message)||'網路錯誤');
-    });
+    if(!form.checkValidity()){e.preventDefault();form.reportValidity();return;}
+    btn.textContent='送出中…';
   });
 })();
 </script>
