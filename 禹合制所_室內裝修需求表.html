@@ -6,468 +6,739 @@
 <title>禹合制所 YUHE DESIGN｜室內裝修需求表</title>
 <style>
   :root{
-    --ink:#2b2b28;
     --paper:#faf8f4;
-    --line:#d9d3c7;
+    --card:#ffffff;
+    --ink:#2b2b28;
+    --line:#ddd6c9;
     --accent:#8a6d4b;
+    --accent-deep:#6f563a;
     --accent-light:#f1ebe0;
+    --muted:#8b8578;
+    --on-accent:#ffffff;
+    --shadow:0 1px 3px rgba(60,50,30,.06);
   }
-  *{box-sizing:border-box;}
+  html[data-theme="dark"]{
+    --paper:#1c1a17;
+    --card:#26231e;
+    --ink:#ece7dd;
+    --line:#423b2f;
+    --accent:#c9a15f;
+    --accent-deep:#d9b476;
+    --accent-light:#332d24;
+    --muted:#9a917f;
+    --on-accent:#241d12;
+    --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   body{
     margin:0;
     font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
     background:var(--paper);
     color:var(--ink);
     line-height:1.7;
+    transition:background .25s,color .25s;
   }
+
+  /* ── 頁首 ── */
   header{
     text-align:center;
-    padding:48px 20px 28px;
+    padding:44px 20px 24px;
+    position:relative;
+  }
+  header h1{font-size:25px; letter-spacing:4px; margin:0 0 4px;}
+  header p{margin:0; color:var(--muted); font-size:13.5px; letter-spacing:2px;}
+  .theme-btn{
+    position:absolute; top:18px; right:16px;
+    width:42px; height:42px; border-radius:50%;
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    font-size:18px; cursor:pointer; box-shadow:var(--shadow);
+  }
+
+  /* ── 進度列（黏在頂端）── */
+  .progress{
+    position:sticky; top:0; z-index:5;
+    background:var(--paper);
     border-bottom:1px solid var(--line);
+    padding:10px 20px 12px;
   }
-  header h1{
-    font-size:26px;
-    letter-spacing:4px;
-    margin:0 0 6px;
+  .progress .inner{max-width:720px; margin:0 auto;}
+  .progress .row1{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:13px; color:var(--muted);
   }
-  header p{
-    margin:0;
-    color:#7a7468;
-    font-size:14px;
-    letter-spacing:2px;
+  .progress .row1 b{font-size:15px; color:var(--ink); letter-spacing:1px;}
+  .p-track{
+    height:6px; background:var(--accent-light); border-radius:99px;
+    margin-top:8px; overflow:hidden;
   }
-  form{
-    max-width:760px;
-    margin:0 auto;
-    padding:30px 20px 80px;
+  .p-fill{
+    height:100%; width:0%; background:var(--accent);
+    border-radius:99px; transition:width .35s ease;
   }
+
+  /* ── 表單主體 ── */
+  form{max-width:720px; margin:0 auto; padding:26px 18px 80px;}
+  .step{display:none; animation:fadein .3s ease;}
+  .step.on{display:block;}
+  @keyframes fadein{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+
   section{
-    background:#fff;
+    background:var(--card);
     border:1px solid var(--line);
-    border-radius:6px;
-    padding:26px 28px;
-    margin-bottom:24px;
+    border-radius:14px;
+    padding:24px 22px;
+    margin-bottom:18px;
+    box-shadow:var(--shadow);
   }
   section h2{
-    font-size:18px;
+    font-size:18px; letter-spacing:1px;
     border-left:4px solid var(--accent);
-    padding-left:10px;
-    margin:0 0 18px;
+    padding-left:12px; margin:0 0 20px;
   }
-  .field{
-    margin-bottom:18px;
+  section h3{
+    margin:0 0 12px; font-size:15.5px; color:var(--accent-deep); letter-spacing:1px;
   }
+  .space-block{
+    border:1px dashed var(--line); border-radius:12px;
+    padding:16px 16px 8px; margin-bottom:14px;
+  }
+
+  .field{margin-bottom:20px;}
   label.title{
-    display:block;
-    font-weight:600;
-    margin-bottom:6px;
-    font-size:14px;
+    display:block; font-weight:600; margin-bottom:8px; font-size:14.5px;
   }
-  .hint{
-    font-size:12px;
-    color:#999;
-    margin-left:6px;
-    font-weight:400;
-  }
+  .hint{font-size:12px; color:var(--muted); margin-left:6px; font-weight:400;}
+  .req{color:#c0563c; margin-left:2px;}
   input[type=text], input[type=tel], input[type=email], input[type=date], select, textarea{
     width:100%;
-    padding:9px 10px;
-    border:1px solid var(--line);
-    border-radius:4px;
-    font-size:14px;
-    background:#fdfcfa;
-    font-family:inherit;
-  }
-  textarea{resize:vertical; min-height:60px;}
-  .row{
-    display:flex;
-    gap:14px;
-    flex-wrap:wrap;
-  }
-  .row .field{flex:1; min-width:180px;}
-  .options label{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    margin:0 16px 8px 0;
-    font-size:14px;
-  }
-  .options.block label{display:flex;}
-  .member-row{
-    display:flex;
-    gap:10px;
-    margin-bottom:8px;
-  }
-  .member-row input{flex:1;}
-  .space-block{
-    border:1px dashed var(--line);
-    border-radius:6px;
-    padding:16px;
-    margin-bottom:14px;
-  }
-  .space-block h3{
-    margin:0 0 10px;
-    font-size:15px;
-    color:var(--accent);
-  }
-  .note{
-    font-size:12px;
-    color:#999;
-    margin-top:4px;
-  }
-  .submit-area{
-    text-align:center;
-    margin-top:30px;
-  }
-  button{
-    background:var(--accent);
-    color:#fff;
-    border:none;
-    padding:14px 48px;
+    padding:13px 14px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
     font-size:16px;
-    letter-spacing:2px;
-    border-radius:30px;
-    cursor:pointer;
+    background:var(--card);
+    color:var(--ink);
+    font-family:inherit;
+    color-scheme:light;
   }
-  button:hover{opacity:.9;}
+  html[data-theme="dark"] input, html[data-theme="dark"] select, html[data-theme="dark"] textarea{
+    color-scheme:dark;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline:none; border-color:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  textarea{resize:vertical; min-height:76px;}
+  .row{display:flex; gap:12px; flex-wrap:wrap;}
+  .row .field{flex:1; min-width:170px;}
+  .note{font-size:12.5px; color:var(--muted); margin-top:6px;}
+
+  /* ── 藥丸選項 ── */
+  .pills{display:flex; flex-wrap:wrap; gap:9px;}
+  .pill{position:relative; display:inline-flex;}
+  .pill input{position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer;}
+  .pill span{
+    display:inline-flex; align-items:center;
+    padding:10px 18px;
+    border:1.5px solid var(--line);
+    border-radius:99px;
+    font-size:14.5px;
+    background:var(--card);
+    color:var(--ink);
+    cursor:pointer;
+    user-select:none;
+    transition:background .15s, border-color .15s, color .15s;
+  }
+  .pill input:checked + span{
+    background:var(--accent); border-color:var(--accent); color:var(--on-accent);
+    font-weight:600;
+  }
+  .pill input[type=checkbox]:checked + span::before{content:"✓"; margin-right:6px; font-weight:800;}
+  .pill input:focus-visible + span{box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);}
+  @media(hover:hover){
+    .pill input:not(:checked) + span:hover{border-color:var(--accent); color:var(--accent-deep);}
+  }
+
+  .member-row{display:flex; gap:10px; margin-bottom:10px;}
+  .member-row input{flex:1;}
+
+  /* ── 精靈導覽 ── */
+  .wiz-nav{display:flex; gap:12px; margin-top:8px;}
+  .wiz-nav button{
+    flex:1;
+    border:none; cursor:pointer; font-family:inherit;
+    font-size:16px; font-weight:700; letter-spacing:2px;
+    padding:15px 10px; border-radius:12px;
+  }
+  .btn-next, .btn-submit{background:var(--accent); color:var(--on-accent);}
+  .btn-next:active, .btn-submit:active{transform:scale(.98);}
+  .btn-prev{
+    background:transparent; color:var(--muted);
+    border:1.5px solid var(--line); flex:0 0 32%;
+  }
+  .step-hint{text-align:center; font-size:12.5px; color:var(--muted); margin-top:12px;}
+
+  /* ── LINE 提醒 ── */
   .line-reminder{
     background:var(--accent-light);
     border:1px solid var(--line);
-    border-radius:6px;
-    padding:16px 20px;
+    border-radius:14px;
+    padding:20px;
     font-size:14px;
     text-align:center;
-    margin-bottom:24px;
+    margin-bottom:18px;
   }
-  .line-reminder a{color:var(--accent); font-weight:600;}
+  .line-reminder img{
+    width:150px; height:150px; margin:12px auto 6px; display:block;
+    border:1px solid var(--line); border-radius:10px; background:#fff;
+  }
+  .line-reminder a{color:var(--accent-deep); font-weight:700;}
+  .line-reminder .small{font-size:12px; color:var(--muted);}
 </style>
 </head>
 <body>
+
+<button class="theme-btn" id="themeBtn" type="button" title="切換深淺色">🌙</button>
 
 <header>
   <h1>禹合制所 YUHE DESIGN</h1>
   <p>室內裝修需求表 INTERIOR RENOVATION BRIEF</p>
 </header>
 
-<form action="https://formsubmit.co/yuhe.design0220@gmail.com" method="POST">
-  <input type="hidden" name="_subject" value="禹合制所｜新的室內裝修需求表">
-  <input type="hidden" name="_template" value="table">
-  <input type="hidden" name="_captcha" value="false">
-  <input type="hidden" name="_next" value="https://contact.gandandesign.com.tw/">
+<div class="progress">
+  <div class="inner">
+    <div class="row1">
+      <b id="stepTitle">基本資料</b>
+      <span>第 <span id="stepNow">1</span> / 6 步</span>
+    </div>
+    <div class="p-track"><div class="p-fill" id="pFill"></div></div>
+  </div>
+</div>
 
-  <div class="line-reminder" style="margin:24px auto 0; max-width:760px;">
-    表單填寫完成後，請務必加入官方 LINE 並通知客服「已填寫表單」，以利我們安排後續聯繫與丈量規劃。<br>
-    <img src="line-qrcode.png" alt="禹合制所官方LINE QRcode" style="width:160px;height:160px;margin:12px auto 6px;display:block;border:1px solid var(--line);border-radius:6px;">
-    <span style="font-size:12px;color:#888;">掃描加入禹合制所官方 LINE</span><br>
-    <a href="https://line.me/R/ti/p/@yuhedesign" target="_blank" style="font-size:13px;color:var(--accent);font-weight:600;">LINE ID：@yuhedesign</a>
+<form id="briefForm" action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="access_key" value="d0792706-dda7-4d46-9be3-bef7d4dc6554">
+  <input type="hidden" name="subject" value="禹合制所｜新的室內裝修需求表">
+  <input type="hidden" name="from_name" value="禹合制所 網站需求表">
+  <input type="hidden" name="redirect" value="https://amyapple0220-creator.github.io/yuhe-design-forms/thanks.html">
+  <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
+
+  <!-- ═══ 步驟 1：基本資料 ═══ -->
+  <div class="step on" data-title="基本資料">
+    <section>
+      <h2>一、基本資料</h2>
+
+      <div class="row">
+        <div class="field"><label class="title">姓名<span class="req">＊</span></label><input type="text" name="name" required></div>
+        <div class="field"><label class="title">年齡</label><input type="text" name="age" inputmode="numeric"></div>
+        <div class="field"><label class="title">職業</label><input type="text" name="job"></div>
+      </div>
+
+      <div class="row">
+        <div class="field"><label class="title">電話<span class="req">＊</span></label><input type="tel" name="phone" required></div>
+        <div class="field"><label class="title">Line ID</label><input type="text" name="lineid"></div>
+        <div class="field"><label class="title">Line 名稱</label><input type="text" name="linename"></div>
+      </div>
+
+      <div class="field"><label class="title">Email</label><input type="email" name="email"></div>
+
+      <div class="field">
+        <label class="title">是否有配偶或同住伴侶</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="spouse" value="有"><span>有</span></label>
+          <label class="pill"><input type="radio" name="spouse" value="無"><span>無</span></label>
+        </div>
+      </div>
+
+      <div id="spouseFields" style="display:none;">
+        <div class="row">
+          <div class="field"><label class="title">伴侶姓名</label><input type="text" name="spouse_name"></div>
+          <div class="field"><label class="title">伴侶職業</label><input type="text" name="spouse_job"></div>
+          <div class="field"><label class="title">伴侶電話</label><input type="tel" name="spouse_phone"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="title">居住人數</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="household_count" value="1人"><span>1人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="2人"><span>2人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="3人"><span>3人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="4人"><span>4人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="5人"><span>5人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="6人"><span>6人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="7人"><span>7人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="8人以上"><span>8人以上</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="title">家庭成員及年齡 <span class="hint">(可依需要增填)</span></label>
+        <div class="member-row"><input type="text" name="member1_role" placeholder="成員稱謂"><input type="text" name="member1_age" placeholder="年齡" inputmode="numeric"></div>
+        <div class="member-row"><input type="text" name="member2_role" placeholder="成員稱謂"><input type="text" name="member2_age" placeholder="年齡" inputmode="numeric"></div>
+        <div class="member-row"><input type="text" name="member3_role" placeholder="成員稱謂"><input type="text" name="member3_age" placeholder="年齡" inputmode="numeric"></div>
+        <div class="member-row"><input type="text" name="member4_role" placeholder="成員稱謂"><input type="text" name="member4_age" placeholder="年齡" inputmode="numeric"></div>
+      </div>
+
+      <div class="field">
+        <label class="title">休假型態</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="off_day" value="週休二日"><span>週休二日</span></label>
+          <label class="pill"><input type="radio" name="off_day" value="輪班"><span>輪班</span></label>
+          <label class="pill"><input type="radio" name="off_day" value="自由工作者"><span>自由工作者</span></label>
+          <label class="pill"><input type="radio" name="off_day" value="已退休"><span>已退休</span></label>
+          <label class="pill"><input type="radio" name="off_day" value="其他"><span>其他</span></label>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:4px;">
+        <label class="title">如何認識禹合制所 <span class="hint">(可複選)</span></label>
+        <div class="pills">
+          <label class="pill"><input type="checkbox" name="how_found[]" value="親友介紹"><span>親友介紹</span></label>
+          <label class="pill"><input type="checkbox" name="how_found[]" value="Facebook"><span>Facebook</span></label>
+          <label class="pill"><input type="checkbox" name="how_found[]" value="Instagram"><span>Instagram</span></label>
+          <label class="pill"><input type="checkbox" name="how_found[]" value="YouTube"><span>YouTube</span></label>
+          <label class="pill"><input type="checkbox" name="how_found[]" value="線上賞屋平台"><span>線上賞屋平台</span></label>
+          <label class="pill"><input type="checkbox" name="how_found[]" value="官網"><span>官網</span></label>
+          <label class="pill"><input type="checkbox" name="how_found[]" value="路過看到"><span>路過看到</span></label>
+          <label class="pill"><input type="checkbox" name="how_found[]" value="其他"><span>其他</span></label>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <!-- 一、基本資料 -->
-  <section>
-    <h2>一、基本資料</h2>
+  <!-- ═══ 步驟 2:房屋資料 ═══ -->
+  <div class="step" data-title="房屋資料">
+    <section>
+      <h2>二、房屋資料</h2>
 
-    <div class="row">
-      <div class="field"><label class="title">姓名</label><input type="text" name="name" required></div>
-      <div class="field"><label class="title">年齡</label><input type="text" name="age"></div>
-      <div class="field"><label class="title">職業</label><input type="text" name="job"></div>
-    </div>
+      <div class="field"><label class="title">裝修地址</label><input type="text" name="address"></div>
 
-    <div class="row">
-      <div class="field"><label class="title">電話</label><input type="tel" name="phone" required></div>
-      <div class="field"><label class="title">Line ID</label><input type="text" name="lineid"></div>
-      <div class="field"><label class="title">Line 名稱</label><input type="text" name="linename"></div>
-    </div>
-
-    <div class="field"><label class="title">Email</label><input type="email" name="email"></div>
-
-    <div class="field">
-      <label class="title">是否有配偶或同住伴侶</label>
-      <div class="options">
-        <label><input type="radio" name="spouse">有</label>
-        <label><input type="radio" name="spouse">無</label>
+      <div class="row">
+        <div class="field"><label class="title">社區案名</label><input type="text" name="community"></div>
+        <div class="field"><label class="title">屋齡</label><input type="text" name="house_age" placeholder="例：15年"></div>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="field"><label class="title">伴侶姓名</label><input type="text" name="spouse_name"></div>
-      <div class="field"><label class="title">伴侶職業</label><input type="text" name="spouse_job"></div>
-      <div class="field"><label class="title">伴侶電話</label><input type="tel" name="spouse_phone"></div>
-    </div>
-
-    <div class="field">
-      <label class="title">居住人數</label>
-      <select name="household_count">
-        <option value="">請選擇</option>
-        <option>1人</option><option>2人</option><option>3人</option><option>4人</option>
-        <option>5人</option><option>6人</option><option>7人</option><option>8人以上</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label class="title">家庭成員及年齡 <span class="hint">(可依需要增填)</span></label>
-      <div class="member-row"><input type="text" placeholder="成員稱謂"><input type="text" placeholder="年齡"></div>
-      <div class="member-row"><input type="text" placeholder="成員稱謂"><input type="text" placeholder="年齡"></div>
-      <div class="member-row"><input type="text" placeholder="成員稱謂"><input type="text" placeholder="年齡"></div>
-      <div class="member-row"><input type="text" placeholder="成員稱謂"><input type="text" placeholder="年齡"></div>
-    </div>
-
-    <div class="field">
-      <label class="title">休假型態</label>
-      <div class="options">
-        <label><input type="radio" name="off_day">週休二日</label>
-        <label><input type="radio" name="off_day">輪班</label>
-        <label><input type="radio" name="off_day">自由工作者</label>
-        <label><input type="radio" name="off_day">已退休</label>
-        <label><input type="radio" name="off_day">其他</label>
+      <div class="row">
+        <div class="field">
+          <label class="title">外牆是否有漏水或壁癌</label>
+          <div class="pills">
+            <label class="pill"><input type="radio" name="leak" value="有"><span>有</span></label>
+            <label class="pill"><input type="radio" name="leak" value="無"><span>無</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label class="title">是否為預售屋</label>
+          <div class="pills">
+            <label class="pill"><input type="radio" name="presale" value="是"><span>是</span></label>
+            <label class="pill"><input type="radio" name="presale" value="否"><span>否</span></label>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="field">
-      <label class="title">如何認識禹合制所</label>
-      <div class="options">
-        <label><input type="checkbox">親友介紹</label>
-        <label><input type="checkbox">Facebook</label>
-        <label><input type="checkbox">Instagram</label>
-        <label><input type="checkbox">YouTube</label>
-        <label><input type="checkbox">線上賞屋平台</label>
-        <label><input type="checkbox">官網</label>
-        <label><input type="checkbox">路過看到</label>
-        <label><input type="checkbox">其他</label>
-      </div>
-    </div>
-  </section>
-
-  <!-- 二、房屋資料 -->
-  <section>
-    <h2>二、房屋資料</h2>
-
-    <div class="field"><label class="title">裝修地址</label><input type="text" name="address"></div>
-
-    <div class="row">
-      <div class="field"><label class="title">社區案名</label><input type="text"></div>
-      <div class="field"><label class="title">屋齡</label><input type="text" placeholder="例：15年"></div>
-    </div>
-
-    <div class="row">
-      <div class="field">
-        <label class="title">外牆是否有漏水或壁癌</label>
-        <div class="options"><label><input type="radio" name="leak">有</label><label><input type="radio" name="leak">無</label></div>
-      </div>
-      <div class="field">
-        <label class="title">是否為預售屋</label>
-        <div class="options"><label><input type="radio" name="presale">是</label><label><input type="radio" name="presale">否</label></div>
-      </div>
-    </div>
-
-    <div class="row">
       <div class="field">
         <label class="title">是否需要客變</label>
-        <div class="options"><label><input type="radio" name="change">是</label><label><input type="radio" name="change">否</label></div>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="change" value="是"><span>是</span></label>
+          <label class="pill"><input type="radio" name="change" value="否"><span>否</span></label>
+        </div>
       </div>
-      <div class="field"><label class="title">客變截止日期</label><input type="date"></div>
-      <div class="field"><label class="title">交屋日期</label><input type="date"></div>
-    </div>
 
-    <div class="row">
-      <div class="field"><label class="title">室內實際屋高</label><input type="text" placeholder="公分"></div>
-      <div class="field"><label class="title">室內實坪約</label><input type="text" placeholder="坪"></div>
-      <div class="field"><label class="title">建物登記坪數</label><input type="text" placeholder="坪"></div>
-      <div class="field"><label class="title">權狀坪數(不含車位)</label><input type="text" placeholder="坪"></div>
-    </div>
+      <div class="row">
+        <div class="field"><label class="title">客變截止日期</label><input type="date" name="change_deadline"></div>
+        <div class="field"><label class="title">交屋日期</label><input type="date" name="handover_date"></div>
+      </div>
 
-    <div class="row">
+      <div class="row">
+        <div class="field"><label class="title">室內實際屋高</label><input type="text" name="ceiling_height" placeholder="公分" inputmode="numeric"></div>
+        <div class="field"><label class="title">室內實坪約</label><input type="text" name="actual_ping" placeholder="坪" inputmode="decimal"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label class="title">建物登記坪數</label><input type="text" name="registered_ping" placeholder="坪" inputmode="decimal"></div>
+        <div class="field"><label class="title">權狀坪數(不含車位)</label><input type="text" name="deed_ping" placeholder="坪" inputmode="decimal"></div>
+      </div>
+
       <div class="field">
         <label class="title">是否為毛胚屋</label>
-        <div class="options"><label><input type="radio" name="raw">是</label><label><input type="radio" name="raw">否</label><label><input type="radio" name="raw">其他</label></div>
-      </div>
-      <div class="field">
-        <label class="title">浴室是否重新施作</label>
-        <div class="options"><label><input type="radio" name="bath_redo">是</label><label><input type="radio" name="bath_redo">否</label></div>
-      </div>
-      <div class="field">
-        <label class="title">廚房是否重新施作</label>
-        <div class="options"><label><input type="radio" name="kitchen_redo">是</label><label><input type="radio" name="kitchen_redo">否</label></div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="field">
-        <label class="title">裝修期望預算</label>
-        <select>
-          <option value="">請選擇</option>
-          <option>150萬以下</option><option>150-300萬</option><option>300-500萬</option>
-          <option>500-800萬</option><option>800-1200萬</option><option>1200-2000萬</option><option>2000萬以上</option>
-        </select>
-      </div>
-      <div class="field">
-        <label class="title">預算最高可至</label>
-        <select>
-          <option value="">請選擇</option>
-          <option>150萬以下</option><option>150-300萬</option><option>300-500萬</option>
-          <option>500-800萬</option><option>800-1200萬</option><option>1200-2000萬</option><option>2000萬以上</option>
-        </select>
-      </div>
-    </div>
-    <div class="field"><label class="title">預算備註</label><textarea></textarea></div>
-  </section>
-
-  <!-- 三、空間配置需求 -->
-  <section>
-    <h2>三、空間配置需求</h2>
-
-    <div class="row">
-      <div class="field"><label class="title">期望完工時間</label><input type="text" placeholder="例：2026年12月"></div>
-      <div class="field"><label class="title">最晚可接受完工時間</label><input type="text"></div>
-    </div>
-    <div class="field"><label class="title">完工日期備註</label><textarea></textarea></div>
-
-    <div class="field">
-      <label class="title">是否已有平面圖CAD檔</label>
-      <div class="options"><label><input type="radio" name="cad">是</label><label><input type="radio" name="cad">否</label></div>
-    </div>
-
-    <div class="field">
-      <label class="title">需要的空間配置 <span class="hint">(可複選)</span></label>
-      <div class="options">
-        <label><input type="checkbox">客廳</label>
-        <label><input type="checkbox">餐廳</label>
-        <label><input type="checkbox">廚房</label>
-        <label><input type="checkbox">浴廁</label>
-        <label><input type="checkbox">主臥房</label>
-        <label><input type="checkbox">小孩房</label>
-        <label><input type="checkbox">客房</label>
-        <label><input type="checkbox">孝親房</label>
-        <label><input type="checkbox">書房</label>
-        <label><input type="checkbox">更衣室</label>
-        <label><input type="checkbox">儲藏室</label>
-        <label><input type="checkbox">和室</label>
-        <label><input type="checkbox">陽台 / 工作陽台</label>
-      </div>
-    </div>
-
-    <div class="field"><label class="title">空間備註</label><textarea placeholder="如各空間使用習慣、特殊需求等"></textarea></div>
-  </section>
-
-  <!-- 四、設計風格 -->
-  <section>
-    <h2>四、期望設計風格</h2>
-    <div class="options">
-      <label><input type="checkbox">北歐風</label>
-      <label><input type="checkbox">無印風</label>
-      <label><input type="checkbox">侘寂風</label>
-      <label><input type="checkbox">美式簡約</label>
-      <label><input type="checkbox">美式古典</label>
-      <label><input type="checkbox">工業風</label>
-      <label><input type="checkbox">飯店風</label>
-      <label><input type="checkbox">輕奢風</label>
-      <label><input type="checkbox">日式風</label>
-      <label><input type="checkbox">現代風</label>
-      <label><input type="checkbox">混搭風</label>
-      <label><input type="checkbox">其他</label>
-    </div>
-    <div class="field" style="margin-top:14px;"><label class="title">喜好顏色 / 材質參考</label><textarea placeholder="如喜歡的色系、木紋、石材、金屬色等"></textarea></div>
-  </section>
-
-  <!-- 五、各空間需求 -->
-  <section>
-    <h2>五、各空間需求詳細設定</h2>
-
-    <div class="space-block">
-      <h3>客廳</h3>
-      <div class="options">
-        <label><input type="checkbox">造型電視牆</label>
-        <label><input type="checkbox">收納櫃</label>
-        <label><input type="checkbox">展示櫃</label>
-        <label><input type="checkbox">L型沙發</label>
-        <label><input type="checkbox">一字型沙發</label>
-        <label><input type="checkbox">其他</label>
-      </div>
-    </div>
-
-    <div class="space-block">
-      <h3>餐廳</h3>
-      <div class="options">
-        <label><input type="checkbox">電器櫃</label>
-        <label><input type="checkbox">餐櫃</label>
-        <label><input type="checkbox">中島</label>
-        <label><input type="checkbox">餐桌（請註明人數）</label>
-        <label><input type="checkbox">卡座 / 一字型沙發</label>
-        <label><input type="checkbox">其他</label>
-      </div>
-    </div>
-
-    <div class="space-block">
-      <h3>廚房</h3>
-      <div class="options">
-        <label><input type="checkbox">電器櫃</label>
-        <label><input type="checkbox">冰箱櫃</label>
-        <label><input type="checkbox">中島</label>
-        <label><input type="checkbox">吧台</label>
-        <label><input type="checkbox">其他</label>
-      </div>
-    </div>
-
-    <div class="space-block">
-      <h3>浴廁</h3>
-      <div class="options">
-        <label><input type="checkbox">主衛浴鏡櫃</label>
-        <label><input type="checkbox">客衛浴鏡櫃</label>
-        <label><input type="checkbox">主衛浴缸</label>
-        <label><input type="checkbox">客衛浴缸</label>
-        <label><input type="checkbox">其他</label>
-      </div>
-    </div>
-
-    <div class="space-block">
-      <h3>主臥房 / 小孩房 / 客房 / 孝親房 / 書房</h3>
-      <div class="field">
-        <label class="title">床型選擇</label>
-        <div class="options">
-          <label><input type="checkbox">標準單人床</label>
-          <label><input type="checkbox">單人加大床</label>
-          <label><input type="checkbox">標準雙人床</label>
-          <label><input type="checkbox">Queen Size</label>
-          <label><input type="checkbox">King Size</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="raw" value="是"><span>是</span></label>
+          <label class="pill"><input type="radio" name="raw" value="否"><span>否</span></label>
+          <label class="pill"><input type="radio" name="raw" value="其他"><span>其他</span></label>
         </div>
       </div>
-      <div class="field">
-        <label class="title">其他需求</label>
-        <div class="options">
-          <label><input type="checkbox">化妝桌</label>
-          <label><input type="checkbox">書桌</label>
-          <label><input type="checkbox">更衣室</label>
-          <label><input type="checkbox">電視</label>
-          <label><input type="checkbox">窗簾需全遮光</label>
-          <label><input type="checkbox">其他</label>
+
+      <div class="row">
+        <div class="field">
+          <label class="title">浴室是否重新施作</label>
+          <div class="pills">
+            <label class="pill"><input type="radio" name="bath_redo" value="是"><span>是</span></label>
+            <label class="pill"><input type="radio" name="bath_redo" value="否"><span>否</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label class="title">廚房是否重新施作</label>
+          <div class="pills">
+            <label class="pill"><input type="radio" name="kitchen_redo" value="是"><span>是</span></label>
+            <label class="pill"><input type="radio" name="kitchen_redo" value="否"><span>否</span></label>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="space-block">
-      <h3>和室</h3>
-      <div class="options">
-        <label><input type="checkbox">書桌</label>
-        <label><input type="checkbox">自動升降桌</label>
-        <label><input type="checkbox">活動茶桌</label>
-        <label><input type="checkbox">電視</label>
-        <label><input type="checkbox">收納櫃</label>
-        <label><input type="checkbox">其他</label>
+      <div class="row">
+        <div class="field">
+          <label class="title">裝修期望預算</label>
+          <select name="budget">
+            <option value="">請選擇</option>
+            <option>150萬以下</option><option>150-300萬</option><option>300-500萬</option>
+            <option>500-800萬</option><option>800-1200萬</option><option>1200-2000萬</option><option>2000萬以上</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="title">預算最高可至</label>
+          <select name="budget_max">
+            <option value="">請選擇</option>
+            <option>150萬以下</option><option>150-300萬</option><option>300-500萬</option>
+            <option>500-800萬</option><option>800-1200萬</option><option>1200-2000萬</option><option>2000萬以上</option>
+          </select>
+        </div>
       </div>
-    </div>
-  </section>
-
-  <!-- 六、其他備註 -->
-  <section>
-    <h2>六、其他備註與特殊需求</h2>
-    <div class="field"><label class="title">寵物 / 過敏 / 無障礙等特殊考量</label><textarea></textarea></div>
-    <div class="field"><label class="title">其他想補充說明的事項</label><textarea></textarea></div>
-  </section>
-
-  <div class="submit-area">
-    <button type="submit">送出需求表</button>
-    <p class="note">送出後請記得通知官方 LINE 客服已完成填寫，我們將盡快與您聯繫安排丈量。</p>
+      <div class="field" style="margin-bottom:4px;"><label class="title">預算備註</label><textarea name="budget_note"></textarea></div>
+    </section>
   </div>
 
+  <!-- ═══ 步驟 3：空間配置 ═══ -->
+  <div class="step" data-title="空間配置">
+    <section>
+      <h2>三、空間配置需求</h2>
+
+      <div class="row">
+        <div class="field"><label class="title">期望完工時間</label><input type="text" name="finish_time" placeholder="例：2026年12月"></div>
+        <div class="field"><label class="title">最晚可接受完工時間</label><input type="text" name="finish_latest"></div>
+      </div>
+      <div class="field"><label class="title">完工日期備註</label><textarea name="finish_note"></textarea></div>
+
+      <div class="field">
+        <label class="title">是否已有平面圖 CAD 檔</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="cad" value="是"><span>是</span></label>
+          <label class="pill"><input type="radio" name="cad" value="否"><span>否</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="title">需要的空間配置 <span class="hint">(可複選)</span></label>
+        <div class="pills">
+          <label class="pill"><input type="checkbox" name="spaces[]" value="客廳"><span>客廳</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="餐廳"><span>餐廳</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="廚房"><span>廚房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="浴廁"><span>浴廁</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="主臥房"><span>主臥房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="小孩房"><span>小孩房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="客房"><span>客房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="孝親房"><span>孝親房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="書房"><span>書房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="更衣室"><span>更衣室</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="儲藏室"><span>儲藏室</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="和室"><span>和室</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="陽台 / 工作陽台"><span>陽台 / 工作陽台</span></label>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:4px;"><label class="title">空間備註</label><textarea name="space_note" placeholder="如各空間使用習慣、特殊需求等"></textarea></div>
+    </section>
+  </div>
+
+  <!-- ═══ 步驟 4：設計風格 ═══ -->
+  <div class="step" data-title="設計風格">
+    <section>
+      <h2>四、期望設計風格 <span class="hint">(可複選)</span></h2>
+      <div class="pills">
+        <label class="pill"><input type="checkbox" name="styles[]" value="北歐風"><span>北歐風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="無印風"><span>無印風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="侘寂風"><span>侘寂風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="美式簡約"><span>美式簡約</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="美式古典"><span>美式古典</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="工業風"><span>工業風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="飯店風"><span>飯店風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="輕奢風"><span>輕奢風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="日式風"><span>日式風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="現代風"><span>現代風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="混搭風"><span>混搭風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="其他"><span>其他</span></label>
+      </div>
+      <div class="field" style="margin:18px 0 4px;"><label class="title">喜好顏色 / 材質參考</label><textarea name="color_material" placeholder="如喜歡的色系、木紋、石材、金屬色等"></textarea></div>
+    </section>
+  </div>
+
+  <!-- ═══ 步驟 5：各空間需求 ═══ -->
+  <div class="step" data-title="各空間需求">
+    <section>
+      <h2>五、各空間需求詳細設定</h2>
+
+      <div class="space-block">
+        <h3>客廳</h3>
+        <div class="pills" style="margin-bottom:14px;">
+          <label class="pill"><input type="checkbox" name="living[]" value="造型電視牆"><span>造型電視牆</span></label>
+          <label class="pill"><input type="checkbox" name="living[]" value="收納櫃"><span>收納櫃</span></label>
+          <label class="pill"><input type="checkbox" name="living[]" value="展示櫃"><span>展示櫃</span></label>
+          <label class="pill"><input type="checkbox" name="living[]" value="L型沙發"><span>L型沙發</span></label>
+          <label class="pill"><input type="checkbox" name="living[]" value="一字型沙發"><span>一字型沙發</span></label>
+          <label class="pill"><input type="checkbox" name="living[]" value="其他"><span>其他</span></label>
+        </div>
+      </div>
+
+      <div class="space-block">
+        <h3>餐廳</h3>
+        <div class="pills" style="margin-bottom:14px;">
+          <label class="pill"><input type="checkbox" name="dining[]" value="電器櫃"><span>電器櫃</span></label>
+          <label class="pill"><input type="checkbox" name="dining[]" value="餐櫃"><span>餐櫃</span></label>
+          <label class="pill"><input type="checkbox" name="dining[]" value="中島"><span>中島</span></label>
+          <label class="pill"><input type="checkbox" name="dining[]" value="餐桌"><span>餐桌</span></label>
+          <label class="pill"><input type="checkbox" name="dining[]" value="卡座 / 一字型沙發"><span>卡座 / 一字型沙發</span></label>
+          <label class="pill"><input type="checkbox" name="dining[]" value="其他"><span>其他</span></label>
+        </div>
+        <div class="field"><label class="title">餐桌人數 <span class="hint">(有勾選餐桌時填寫)</span></label><input type="text" name="dining_seats" placeholder="例：6人" inputmode="numeric"></div>
+      </div>
+
+      <div class="space-block">
+        <h3>廚房</h3>
+        <div class="pills" style="margin-bottom:14px;">
+          <label class="pill"><input type="checkbox" name="kitchen[]" value="電器櫃"><span>電器櫃</span></label>
+          <label class="pill"><input type="checkbox" name="kitchen[]" value="冰箱櫃"><span>冰箱櫃</span></label>
+          <label class="pill"><input type="checkbox" name="kitchen[]" value="中島"><span>中島</span></label>
+          <label class="pill"><input type="checkbox" name="kitchen[]" value="吧台"><span>吧台</span></label>
+          <label class="pill"><input type="checkbox" name="kitchen[]" value="其他"><span>其他</span></label>
+        </div>
+      </div>
+
+      <div class="space-block">
+        <h3>浴廁</h3>
+        <div class="pills" style="margin-bottom:14px;">
+          <label class="pill"><input type="checkbox" name="bathroom[]" value="主衛浴鏡櫃"><span>主衛浴鏡櫃</span></label>
+          <label class="pill"><input type="checkbox" name="bathroom[]" value="客衛浴鏡櫃"><span>客衛浴鏡櫃</span></label>
+          <label class="pill"><input type="checkbox" name="bathroom[]" value="主衛浴缸"><span>主衛浴缸</span></label>
+          <label class="pill"><input type="checkbox" name="bathroom[]" value="客衛浴缸"><span>客衛浴缸</span></label>
+          <label class="pill"><input type="checkbox" name="bathroom[]" value="其他"><span>其他</span></label>
+        </div>
+      </div>
+
+      <div class="space-block">
+        <h3>主臥房 / 小孩房 / 客房 / 孝親房 / 書房</h3>
+        <div class="field">
+          <label class="title">床型選擇 <span class="hint">(可複選)</span></label>
+          <div class="pills">
+            <label class="pill"><input type="checkbox" name="bed_type[]" value="標準單人床"><span>標準單人床</span></label>
+            <label class="pill"><input type="checkbox" name="bed_type[]" value="單人加大床"><span>單人加大床</span></label>
+            <label class="pill"><input type="checkbox" name="bed_type[]" value="標準雙人床"><span>標準雙人床</span></label>
+            <label class="pill"><input type="checkbox" name="bed_type[]" value="Queen Size"><span>Queen Size</span></label>
+            <label class="pill"><input type="checkbox" name="bed_type[]" value="King Size"><span>King Size</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label class="title">其他需求</label>
+          <div class="pills">
+            <label class="pill"><input type="checkbox" name="bedroom[]" value="化妝桌"><span>化妝桌</span></label>
+            <label class="pill"><input type="checkbox" name="bedroom[]" value="書桌"><span>書桌</span></label>
+            <label class="pill"><input type="checkbox" name="bedroom[]" value="更衣室"><span>更衣室</span></label>
+            <label class="pill"><input type="checkbox" name="bedroom[]" value="電視"><span>電視</span></label>
+            <label class="pill"><input type="checkbox" name="bedroom[]" value="窗簾需全遮光"><span>窗簾需全遮光</span></label>
+            <label class="pill"><input type="checkbox" name="bedroom[]" value="其他"><span>其他</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-block">
+        <h3>和室</h3>
+        <div class="pills" style="margin-bottom:14px;">
+          <label class="pill"><input type="checkbox" name="tatami[]" value="書桌"><span>書桌</span></label>
+          <label class="pill"><input type="checkbox" name="tatami[]" value="自動升降桌"><span>自動升降桌</span></label>
+          <label class="pill"><input type="checkbox" name="tatami[]" value="活動茶桌"><span>活動茶桌</span></label>
+          <label class="pill"><input type="checkbox" name="tatami[]" value="電視"><span>電視</span></label>
+          <label class="pill"><input type="checkbox" name="tatami[]" value="收納櫃"><span>收納櫃</span></label>
+          <label class="pill"><input type="checkbox" name="tatami[]" value="其他"><span>其他</span></label>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══ 步驟 6：備註與送出 ═══ -->
+  <div class="step" data-title="備註與送出">
+    <section>
+      <h2>六、其他備註與特殊需求</h2>
+      <div class="field"><label class="title">寵物 / 過敏 / 無障礙等特殊考量</label><textarea name="special_note"></textarea></div>
+      <div class="field" style="margin-bottom:4px;"><label class="title">其他想補充說明的事項</label><textarea name="other_note"></textarea></div>
+    </section>
+
+    <div class="line-reminder">
+      表單送出後，請務必加入官方 LINE 並通知客服「已填寫表單」，<br>以利我們安排後續聯繫與丈量規劃。
+      <img src="line-qrcode.png" alt="禹合制所官方LINE QRcode">
+      <span class="small">掃描加入禹合制所官方 LINE</span><br>
+      <a href="https://line.me/R/ti/p/@yuhedesign" target="_blank">LINE ID：@yuhedesign</a>
+    </div>
+  </div>
+
+  <div class="wiz-nav">
+    <button type="button" class="btn-prev" id="btnPrev" style="visibility:hidden;">上一步</button>
+    <button type="button" class="btn-next" id="btnNext">下一步</button>
+    <button type="submit" class="btn-submit" id="btnSubmit" style="display:none;">送出需求表</button>
+  </div>
+  <p class="step-hint" id="stepHint">共 6 個步驟，約需 5–8 分鐘</p>
+  <p style="text-align:center;margin-top:6px;"><button type="button" id="lineFallback" style="background:none;border:none;color:var(--accent-deep);text-decoration:underline;font-size:13px;cursor:pointer;font-family:inherit;display:none;">送出遇到問題？點此複製填寫內容，改用 LINE 傳給我們</button></p>
+
 </form>
+
+<script>
+(function(){
+  /* ── 深淺色切換 ── */
+  var themeBtn=document.getElementById('themeBtn');
+  function setTheme(t){
+    document.documentElement.setAttribute('data-theme',t);
+    themeBtn.textContent=t==='dark'?'☀️':'🌙';
+    try{localStorage.setItem('yuhe_form_theme',t);}catch(e){}
+  }
+  var saved=null;
+  try{saved=localStorage.getItem('yuhe_form_theme');}catch(e){}
+  setTheme(saved==='dark'?'dark':'light');
+  themeBtn.addEventListener('click',function(){
+    setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  });
+
+  /* ── 步驟精靈 ── */
+  var steps=Array.prototype.slice.call(document.querySelectorAll('.step'));
+  var cur=0;
+  var btnPrev=document.getElementById('btnPrev'),
+      btnNext=document.getElementById('btnNext'),
+      btnSubmit=document.getElementById('btnSubmit');
+
+  function show(i){
+    cur=i;
+    steps.forEach(function(s,k){s.classList.toggle('on',k===i);});
+    document.getElementById('stepTitle').textContent=steps[i].dataset.title;
+    document.getElementById('stepNow').textContent=i+1;
+    document.getElementById('pFill').style.width=((i+1)/steps.length*100)+'%';
+    btnPrev.style.visibility=i===0?'hidden':'visible';
+    btnNext.style.display=i===steps.length-1?'none':'';
+    btnSubmit.style.display=i===steps.length-1?'':'none';
+    var fb2=document.getElementById('lineFallback');
+    if(fb2)fb2.style.display=i===steps.length-1?'':'none';
+    document.getElementById('stepHint').textContent=
+      i===steps.length-1?'送出後請記得通知官方 LINE 客服已完成填寫':'共 6 個步驟，約需 5–8 分鐘';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function validStep(){
+    var fields=steps[cur].querySelectorAll('input,select,textarea');
+    for(var k=0;k<fields.length;k++){
+      if(!fields[k].checkValidity()){fields[k].reportValidity();return false;}
+    }
+    return true;
+  }
+
+  btnNext.addEventListener('click',function(){
+    if(validStep())show(cur+1);
+  });
+  btnPrev.addEventListener('click',function(){show(cur-1);});
+
+  /* Enter 不觸發提早送出（textarea 除外） */
+  document.getElementById('briefForm').addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&e.target.tagName!=='TEXTAREA'&&cur<steps.length-1){
+      e.preventDefault();
+      btnNext.click();
+    }
+  });
+
+  /* ── 送出：原生表單送出（已驗證信箱），成功導回感謝頁 ── */
+  function fieldLabel(el){
+    var f=el.closest('.field');
+    while(f){
+      var t=f.querySelector('label.title');
+      if(t)return t.childNodes[0].textContent.trim();
+      f=f.parentElement?f.parentElement.closest('.field'):null;
+    }
+    var sb=el.closest('.space-block');
+    if(sb){var h3=sb.querySelector('h3');if(h3)return h3.textContent.trim();}
+    var sec=el.closest('section');
+    if(sec){var h2=sec.querySelector('h2');
+      if(h2)return h2.childNodes[0].textContent.trim().replace(/^[一二三四五六七八九十]+、/,'');}
+    return el.name;
+  }
+  function toChinese(form){
+    var seen={},list=[];
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.type==='hidden'||el.tagName==='BUTTON')return;
+      if(el.name==='botcheck')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=(el.value||'').trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(seen[label]!==undefined){list[seen[label]].v+='、'+v;}
+      else{seen[label]=list.length;list.push({k:label,v:v});}
+    });
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.tagName==='BUTTON')return;
+      if(['access_key','subject','from_name','redirect','案名','botcheck'].indexOf(el.name)>=0)return;
+      el.disabled=true; el.setAttribute('data-cndis','1');
+    });
+    list.forEach(function(p){
+      var h=document.createElement('input');
+      h.type='hidden'; h.name=p.k; h.value=p.v; h.setAttribute('data-cnadd','1');
+      form.appendChild(h);
+    });
+  }
+  window.addEventListener('pageshow',function(){
+    document.querySelectorAll('[data-cndis]').forEach(function(el){el.disabled=false;el.removeAttribute('data-cndis');});
+    document.querySelectorAll('[data-cnadd]').forEach(function(el){el.remove();});
+  });
+
+  function buildSummary(form){
+    var lines=['【'+document.title.replace(/.*｜/,'')+'】'],seen={};
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.name.charAt(0)==='_'||el.type==='hidden')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=el.value.trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(el.type==='checkbox'&&seen[el.name]){
+        lines[seen[el.name]-1]+='、'+v;
+      }else{
+        lines.push(label+'：'+v);
+        if(el.type==='checkbox')seen[el.name]=lines.length;
+      }
+    });
+    return lines.join('\n');
+  }
+  function copyText(text){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        alert('已複製！請貼到 LINE 傳給我們。');
+      },function(){prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);});
+    }else{prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);}
+  }
+  var fb=document.getElementById('lineFallback');
+  if(fb)fb.onclick=function(){copyText(buildSummary(document.getElementById('briefForm')));};
+  document.getElementById('briefForm').addEventListener('submit',function(e){
+    for(var i=0;i<steps.length;i++){
+      var fields=steps[i].querySelectorAll('input,select,textarea');
+      for(var k=0;k<fields.length;k++){
+        if(!fields[k].checkValidity()){
+          e.preventDefault();
+          show(i);
+          fields[k].reportValidity();
+          return;
+        }
+      }
+    }
+    toChinese(this);
+    var b=document.getElementById('btnSubmit');
+    b.textContent='送出中…';
+  });
+
+  /* 伴侶欄位連動 */
+  document.querySelectorAll('input[name="spouse"]').forEach(function(r){
+    r.addEventListener('change',function(){
+      document.getElementById('spouseFields').style.display=this.value==='有'?'':'none';
+    });
+  });
+
+  show(0);
+})();
+</script>
+<div style="text-align:center;font-size:10.5px;color:#b5ac9a;padding:0 0 20px;">表單系統版本 v4（中文信件）</div>
 </body>
 </html>

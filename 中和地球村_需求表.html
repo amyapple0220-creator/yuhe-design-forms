@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜中和地球村 需求表</title>
+<style>
+  :root{
+    --paper:#faf8f4;
+    --card:#ffffff;
+    --ink:#2b2b28;
+    --line:#ddd6c9;
+    --accent:#8a6d4b;
+    --accent-deep:#6f563a;
+    --accent-light:#f1ebe0;
+    --muted:#8b8578;
+    --on-accent:#ffffff;
+    --known:#eef3ea;
+    --known-b:#a9c79c;
+    --known-t:#3d5a30;
+    --shadow:0 1px 3px rgba(60,50,30,.06);
+  }
+  html[data-theme="dark"]{
+    --paper:#1c1a17;
+    --card:#26231e;
+    --ink:#ece7dd;
+    --line:#423b2f;
+    --accent:#c9a15f;
+    --accent-deep:#d9b476;
+    --accent-light:#332d24;
+    --muted:#9a917f;
+    --on-accent:#241d12;
+    --known:#243020;
+    --known-b:#4a6b3a;
+    --known-t:#a9c79c;
+    --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.7;
+    transition:background .25s,color .25s;
+  }
+
+  header{text-align:center; padding:44px 20px 20px; position:relative;}
+  header h1{font-size:25px; letter-spacing:4px; margin:0 0 4px;}
+  header p{margin:0; color:var(--muted); font-size:13.5px; letter-spacing:2px;}
+  .theme-btn{
+    position:absolute; top:18px; right:16px;
+    width:42px; height:42px; border-radius:50%;
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    font-size:18px; cursor:pointer; box-shadow:var(--shadow);
+  }
+  .legend{text-align:center; font-size:12px; color:var(--muted); padding:0 16px 14px;}
+  .tag{display:inline-block; padding:1px 9px; border-radius:10px; font-size:11px; margin:0 4px 0 8px; font-weight:400; vertical-align:1px;}
+  .tag.known{background:var(--known); border:1px solid var(--known-b); color:var(--known-t);}
+  .tag.todo{background:#fbeee9; border:1px solid #e3b3a0; color:#a4502f;}
+  html[data-theme="dark"] .tag.todo{background:#3a2a24; border-color:#7a4a38; color:#e3a38c;}
+
+  .progress{
+    position:sticky; top:0; z-index:5;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    padding:10px 20px 12px;
+  }
+  .progress .inner{max-width:720px; margin:0 auto;}
+  .progress .row1{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-size:13px; color:var(--muted);
+  }
+  .progress .row1 b{font-size:15px; color:var(--ink); letter-spacing:1px;}
+  .p-track{height:6px; background:var(--accent-light); border-radius:99px; margin-top:8px; overflow:hidden;}
+  .p-fill{height:100%; width:0%; background:var(--accent); border-radius:99px; transition:width .35s ease;}
+
+  form{max-width:720px; margin:0 auto; padding:26px 18px 80px;}
+  .step{display:none; animation:fadein .3s ease;}
+  .step.on{display:block;}
+  @keyframes fadein{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+
+  section{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:24px 22px;
+    margin-bottom:18px;
+    box-shadow:var(--shadow);
+  }
+  section h2{
+    font-size:18px; letter-spacing:1px;
+    border-left:4px solid var(--accent);
+    padding-left:12px; margin:0 0 20px;
+  }
+  .known-box{
+    background:var(--known); border:1px solid var(--known-b); border-radius:10px;
+    padding:12px 16px; font-size:14px; color:var(--known-t); margin-bottom:20px;
+  }
+  .known-box b{letter-spacing:1px;}
+
+  .field{margin-bottom:20px;}
+  label.title{display:block; font-weight:600; margin-bottom:8px; font-size:14.5px;}
+  .hint{font-size:12px; color:var(--muted); margin-left:6px; font-weight:400;}
+  .req{color:#c0563c; margin-left:2px;}
+  input[type=text], input[type=tel], input[type=email], input[type=date], select, textarea{
+    width:100%;
+    padding:13px 14px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    font-size:16px;
+    background:var(--card);
+    color:var(--ink);
+    font-family:inherit;
+    color-scheme:light;
+  }
+  html[data-theme="dark"] input, html[data-theme="dark"] select, html[data-theme="dark"] textarea{
+    color-scheme:dark;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline:none; border-color:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  textarea{resize:vertical; min-height:76px;}
+  .row{display:flex; gap:12px; flex-wrap:wrap;}
+  .row .field{flex:1; min-width:170px;}
+  .note{font-size:12.5px; color:var(--muted); margin-top:6px;}
+
+  .pills{display:flex; flex-wrap:wrap; gap:9px;}
+  .pill{position:relative; display:inline-flex;}
+  .pill input{position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer;}
+  .pill span{
+    display:inline-flex; align-items:center;
+    padding:10px 18px;
+    border:1.5px solid var(--line);
+    border-radius:99px;
+    font-size:14.5px;
+    background:var(--card);
+    color:var(--ink);
+    cursor:pointer;
+    user-select:none;
+    transition:background .15s, border-color .15s, color .15s;
+  }
+  .pill input:checked + span{
+    background:var(--accent); border-color:var(--accent); color:var(--on-accent);
+    font-weight:600;
+  }
+  .pill input[type=checkbox]:checked + span::before{content:"✓"; margin-right:6px; font-weight:800;}
+  .pill input:focus-visible + span{box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);}
+  @media(hover:hover){
+    .pill input:not(:checked) + span:hover{border-color:var(--accent); color:var(--accent-deep);}
+  }
+
+  .member-row{display:flex; gap:10px; margin-bottom:10px;}
+  .member-row input{flex:1;}
+
+  .wiz-nav{display:flex; gap:12px; margin-top:8px;}
+  .wiz-nav button{
+    flex:1;
+    border:none; cursor:pointer; font-family:inherit;
+    font-size:16px; font-weight:700; letter-spacing:2px;
+    padding:15px 10px; border-radius:12px;
+  }
+  .btn-next, .btn-submit{background:var(--accent); color:var(--on-accent);}
+  .btn-next:active, .btn-submit:active{transform:scale(.98);}
+  .btn-prev{
+    background:transparent; color:var(--muted);
+    border:1.5px solid var(--line); flex:0 0 32%;
+  }
+  .step-hint{text-align:center; font-size:12.5px; color:var(--muted); margin-top:12px;}
+
+  .line-reminder{
+    background:var(--accent-light);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px;
+    font-size:14px;
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .line-reminder img{
+    width:150px; height:150px; margin:12px auto 6px; display:block;
+    border:1px solid var(--line); border-radius:10px; background:#fff;
+  }
+  .line-reminder a{color:var(--accent-deep); font-weight:700;}
+  .line-reminder .small{font-size:12px; color:var(--muted);}
+</style>
+</head>
+<body>
+
+<button class="theme-btn" id="themeBtn" type="button" title="切換深淺色">🌙</button>
+
+<header>
+  <h1>禹合制所 YUHE DESIGN</h1>
+  <p>中和地球村・裝修需求表 CLIENT BRIEF</p>
+</header>
+
+<div class="legend">
+  <span class="tag known">已確認</span>依 LINE 討論已知，無須重填
+  <span class="tag todo">待確認</span>麻煩兩位補充
+</div>
+
+<div class="progress">
+  <div class="inner">
+    <div class="row1">
+      <b id="stepTitle">基本資料</b>
+      <span>第 <span id="stepNow">1</span> / 6 步</span>
+    </div>
+    <div class="p-track"><div class="p-fill" id="pFill"></div></div>
+  </div>
+</div>
+
+<form id="briefForm" action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="access_key" value="d0792706-dda7-4d46-9be3-bef7d4dc6554">
+  <input type="hidden" name="subject" value="禹合制所｜中和地球村 需求表">
+  <input type="hidden" name="from_name" value="禹合制所 網站需求表">
+  <input type="hidden" name="redirect" value="https://amyapple0220-creator.github.io/yuhe-design-forms/thanks.html">
+  <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
+  <input type="hidden" name="案名" value="中和地球村">
+
+  <!-- ═══ 步驟 1：基本資料 ═══ -->
+  <div class="step on" data-title="基本資料">
+    <section>
+      <h2>一、基本資料</h2>
+
+      <div class="known-box">
+        <b>已確認</b>：社區「中和地球村」（南勢角捷運站旁）｜中古屋翻新｜
+        預計 2026 年 8 月中交屋｜預算約 250 萬（不含空調、家具、家電）｜
+        目前尚無圖面，交屋後安排丈量
+      </div>
+
+      <div class="row">
+        <div class="field"><label class="title">男業主 稱呼<span class="req">＊</span></label><input type="text" name="owner1_name" value="AC" required></div>
+        <div class="field"><label class="title">男業主 電話<span class="req">＊</span></label><input type="tel" name="owner1_phone" required></div>
+        <div class="field"><label class="title">男業主 Line ID</label><input type="text" name="owner1_line"></div>
+      </div>
+
+      <div class="row">
+        <div class="field"><label class="title">女業主 稱呼</label><input type="text" name="owner2_name" value="Amber"></div>
+        <div class="field"><label class="title">女業主 電話</label><input type="tel" name="owner2_phone"></div>
+        <div class="field"><label class="title">女業主 Line ID</label><input type="text" name="owner2_line"></div>
+      </div>
+
+      <div class="field"><label class="title">Email</label><input type="email" name="email"></div>
+
+      <div class="field">
+        <label class="title">居住人數</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="household_count" value="1人"><span>1人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="2人"><span>2人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="3人"><span>3人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="4人"><span>4人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="5人"><span>5人</span></label>
+          <label class="pill"><input type="radio" name="household_count" value="6人以上"><span>6人以上</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="title">家庭成員及年齡 <span class="hint">(小孩年齡會影響小孩房規劃，麻煩填寫)</span></label>
+        <div class="member-row"><input type="text" name="member1_role" placeholder="成員稱謂"><input type="text" name="member1_age" placeholder="年齡" inputmode="numeric"></div>
+        <div class="member-row"><input type="text" name="member2_role" placeholder="成員稱謂"><input type="text" name="member2_age" placeholder="年齡" inputmode="numeric"></div>
+        <div class="member-row"><input type="text" name="member3_role" placeholder="成員稱謂"><input type="text" name="member3_age" placeholder="年齡" inputmode="numeric"></div>
+        <div class="member-row"><input type="text" name="member4_role" placeholder="成員稱謂"><input type="text" name="member4_age" placeholder="年齡" inputmode="numeric"></div>
+      </div>
+
+      <div class="field" style="margin-bottom:4px;">
+        <label class="title">兩位的休假型態 <span class="hint">(方便安排丈量與討論時間)</span></label>
+        <div class="pills">
+          <label class="pill"><input type="checkbox" name="off_day[]" value="週休二日"><span>週休二日</span></label>
+          <label class="pill"><input type="checkbox" name="off_day[]" value="輪班"><span>輪班</span></label>
+          <label class="pill"><input type="checkbox" name="off_day[]" value="自由工作者"><span>自由工作者</span></label>
+          <label class="pill"><input type="checkbox" name="off_day[]" value="平日晚上方便"><span>平日晚上方便</span></label>
+          <label class="pill"><input type="checkbox" name="off_day[]" value="其他"><span>其他</span></label>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══ 步驟 2：房屋現況 ═══ -->
+  <div class="step" data-title="房屋現況">
+    <section>
+      <h2>二、房屋現況（中古屋）</h2>
+
+      <div class="known-box">
+        <b>已確認</b>：同社區不同樓層格局可參考｜屋況為一手屋、屋齡較高｜實際格局待丈量確認
+      </div>
+
+      <div class="field"><label class="title">完整地址（含樓層／戶別）<span class="tag todo">待確認</span></label><input type="text" name="address" placeholder="例：新北市中和區○○路○號○樓"></div>
+
+      <div class="row">
+        <div class="field"><label class="title">屋齡<span class="tag todo">待確認</span></label><input type="text" name="house_age" placeholder="例：約30年"></div>
+        <div class="field"><label class="title">權狀坪數</label><input type="text" name="deed_ping" placeholder="坪" inputmode="decimal"></div>
+        <div class="field"><label class="title">室內約</label><input type="text" name="actual_ping" placeholder="坪（未丈量可先估）" inputmode="decimal"></div>
+      </div>
+
+      <div class="field">
+        <label class="title">目前格局</label>
+        <div class="row">
+          <div class="field"><input type="text" name="layout_room" placeholder="幾房，例：3房" inputmode="numeric"></div>
+          <div class="field"><input type="text" name="layout_living" placeholder="幾廳，例：2廳" inputmode="numeric"></div>
+          <div class="field"><input type="text" name="layout_bath" placeholder="幾衛，例：2衛" inputmode="numeric"></div>
+        </div>
+      </div>
+
+      <div class="field"><label class="title">預計交屋日期 <span class="hint">(已知約 8 月中，確定後請填)</span></label><input type="date" name="handover_date"></div>
+
+      <div class="field">
+        <label class="title">已知屋況問題 <span class="hint">(可複選)</span><span class="tag todo">待確認</span></label>
+        <div class="pills">
+          <label class="pill"><input type="checkbox" name="condition[]" value="漏水"><span>漏水</span></label>
+          <label class="pill"><input type="checkbox" name="condition[]" value="壁癌"><span>壁癌</span></label>
+          <label class="pill"><input type="checkbox" name="condition[]" value="管線老舊"><span>管線老舊</span></label>
+          <label class="pill"><input type="checkbox" name="condition[]" value="電量不足/電箱老舊"><span>電量不足/電箱老舊</span></label>
+          <label class="pill"><input type="checkbox" name="condition[]" value="窗戶老舊"><span>窗戶老舊</span></label>
+          <label class="pill"><input type="checkbox" name="condition[]" value="地板不平/隆起"><span>地板不平/隆起</span></label>
+          <label class="pill"><input type="checkbox" name="condition[]" value="尚不清楚"><span>尚不清楚</span></label>
+          <label class="pill"><input type="checkbox" name="condition[]" value="其他"><span>其他</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="title">水電管線是否曾更新</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="pipe_renewed" value="有更新過"><span>有更新過</span></label>
+          <label class="pill"><input type="radio" name="pipe_renewed" value="沒有"><span>沒有</span></label>
+          <label class="pill"><input type="radio" name="pipe_renewed" value="不確定"><span>不確定</span></label>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:4px;">
+        <label class="title">社區施工規定 <span class="hint">(管理室規約、施工時段、電梯保護等，知道多少填多少)</span></label>
+        <textarea name="community_rules" placeholder="例：週一至週五 9:00-17:00 可施工、需繳保證金等"></textarea>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══ 步驟 3：工程範圍 ═══ -->
+  <div class="step" data-title="工程範圍">
+    <section>
+      <h2>三、工程範圍與保留項目</h2>
+
+      <div class="known-box">
+        <b>已確認</b>：基礎工程做到最好為前提｜客廳、廚房、玄關、浴室必做｜
+        小孩房、客房、儲藏室以簡單軟裝為主｜格局有兩處希望微調（依費用評估）｜
+        空調、家具、家電自理（不在 250 萬內）
+      </div>
+
+      <div class="field">
+        <label class="title">想保留不動的項目 <span class="hint">(可複選)</span><span class="tag todo">待確認</span></label>
+        <div class="pills">
+          <label class="pill"><input type="checkbox" name="keep[]" value="鋁窗"><span>鋁窗</span></label>
+          <label class="pill"><input type="checkbox" name="keep[]" value="大門"><span>大門</span></label>
+          <label class="pill"><input type="checkbox" name="keep[]" value="室內門"><span>室內門</span></label>
+          <label class="pill"><input type="checkbox" name="keep[]" value="地板"><span>地板</span></label>
+          <label class="pill"><input type="checkbox" name="keep[]" value="廚具"><span>廚具</span></label>
+          <label class="pill"><input type="checkbox" name="keep[]" value="衛浴設備"><span>衛浴設備</span></label>
+          <label class="pill"><input type="checkbox" name="keep[]" value="全部重做，不保留"><span>全部重做，不保留</span></label>
+          <label class="pill"><input type="checkbox" name="keep[]" value="其他"><span>其他</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="title">格局想微調的兩處，請描述<span class="tag todo">待確認</span></label>
+        <textarea name="layout_change" placeholder="例：想把廚房牆打開做半開放式、主臥想隔出更衣區…（丈量時會一起現場討論）"></textarea>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label class="title">浴室施作範圍</label>
+          <div class="pills">
+            <label class="pill"><input type="radio" name="bath_scope" value="全部重做"><span>全部重做</span></label>
+            <label class="pill"><input type="radio" name="bath_scope" value="部分重做"><span>部分重做</span></label>
+            <label class="pill"><input type="radio" name="bath_scope" value="現場討論"><span>現場討論</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label class="title">廚房施作範圍</label>
+          <div class="pills">
+            <label class="pill"><input type="radio" name="kitchen_scope" value="全部重做"><span>全部重做</span></label>
+            <label class="pill"><input type="radio" name="kitchen_scope" value="保留部分更新"><span>保留部分更新</span></label>
+            <label class="pill"><input type="radio" name="kitchen_scope" value="現場討論"><span>現場討論</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="title">全室水電更新 <span class="hint">(屋齡較高，通常建議全室重拉，實際依現場評估)</span></label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="repipe" value="同意全室更新"><span>同意全室更新</span></label>
+          <label class="pill"><input type="radio" name="repipe" value="視報價決定"><span>視報價決定</span></label>
+          <label class="pill"><input type="radio" name="repipe" value="現場討論"><span>現場討論</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="title">空調雖自購，是否需要我們預留線路／排水／木作包管</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="ac_prep" value="需要"><span>需要</span></label>
+          <label class="pill"><input type="radio" name="ac_prep" value="不需要"><span>不需要</span></label>
+          <label class="pill"><input type="radio" name="ac_prep" value="尚未決定"><span>尚未決定</span></label>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:4px;"><label class="title">工程範圍其他備註</label><textarea name="scope_note"></textarea></div>
+    </section>
+  </div>
+
+  <!-- ═══ 步驟 4：空間配置 ═══ -->
+  <div class="step" data-title="空間配置">
+    <section>
+      <h2>四、空間配置需求</h2>
+
+      <div class="field">
+        <label class="title">需要的空間 <span class="hint">(可複選)</span></label>
+        <div class="pills">
+          <label class="pill"><input type="checkbox" name="spaces[]" value="玄關落塵區"><span>玄關落塵區</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="客廳"><span>客廳</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="餐廳"><span>餐廳</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="廚房"><span>廚房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="主臥房"><span>主臥房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="小孩房"><span>小孩房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="客房"><span>客房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="儲藏室"><span>儲藏室</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="書房/工作區"><span>書房/工作區</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="更衣室"><span>更衣室</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="浴廁"><span>浴廁</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="陽台/工作陽台"><span>陽台/工作陽台</span></label>
+        </div>
+      </div>
+
+      <div class="field"><label class="title">客廳需求 <span class="hint">(必做區)</span></label><textarea name="need_living" placeholder="例：電視牆、收納櫃、沙發配置、影音設備…"></textarea></div>
+      <div class="field"><label class="title">廚房需求 <span class="hint">(必做區)</span></label><textarea name="need_kitchen" placeholder="例：一字型/L型/中島、電器櫃、冰箱尺寸…"></textarea></div>
+      <div class="field"><label class="title">玄關需求 <span class="hint">(必做區)</span></label><textarea name="need_entry" placeholder="例：鞋櫃數量、穿鞋椅、全身鏡…"></textarea></div>
+      <div class="field"><label class="title">浴室需求 <span class="hint">(必做區)</span></label><textarea name="need_bath" placeholder="例：乾濕分離、浴缸、暖風機、免治馬桶…"></textarea></div>
+      <div class="field"><label class="title">主臥需求</label><textarea name="need_master" placeholder="例：床型、衣櫃、化妝桌…"></textarea></div>
+      <div class="field" style="margin-bottom:4px;">
+        <label class="title">小孩房／客房／儲藏室 <span class="hint">(已知以簡單軟裝為主，有特別想法再補充)</span></label>
+        <textarea name="need_soft" placeholder="例：小孩房要書桌和床、客房放雙人床即可…"></textarea>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══ 步驟 5：設計風格 ═══ -->
+  <div class="step" data-title="設計風格">
+    <section>
+      <h2>五、期望設計風格 <span class="hint">(可複選)</span></h2>
+      <div class="pills">
+        <label class="pill"><input type="checkbox" name="styles[]" value="北歐風"><span>北歐風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="無印風"><span>無印風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="侘寂風"><span>侘寂風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="美式簡約"><span>美式簡約</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="美式古典"><span>美式古典</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="工業風"><span>工業風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="飯店風"><span>飯店風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="輕奢風"><span>輕奢風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="日式風"><span>日式風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="現代風"><span>現代風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="混搭風"><span>混搭風</span></label>
+        <label class="pill"><input type="checkbox" name="styles[]" value="其他"><span>其他</span></label>
+      </div>
+      <div class="field" style="margin:18px 0 0;"><label class="title">喜好顏色 / 材質參考</label><textarea name="color_material" placeholder="如喜歡的色系、木紋、石材、金屬色等"></textarea></div>
+      <div class="field" style="margin-bottom:4px;"><label class="title">參考圖片或案例連結 <span class="hint">(Pinterest、IG 或我們官網案例都可以)</span></label><textarea name="ref_links" placeholder="貼上連結或描述"></textarea></div>
+    </section>
+  </div>
+
+  <!-- ═══ 步驟 6：預算與送出 ═══ -->
+  <div class="step" data-title="預算與送出">
+    <section>
+      <h2>六、預算與其他</h2>
+
+      <div class="known-box">
+        <b>已確認</b>：預算約 250 萬（不含空調、家具、家電）｜
+        規劃時會依「一定要做」與「可分階段完成」排出優先順序，把預算花在最有感的地方
+      </div>
+
+      <div class="field">
+        <label class="title">預算彈性</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="budget_flex" value="以250萬為上限"><span>以 250 萬為上限</span></label>
+          <label class="pill"><input type="radio" name="budget_flex" value="可小幅增加(10%內)"><span>可小幅增加（10%內）</span></label>
+          <label class="pill"><input type="radio" name="budget_flex" value="視規劃內容再討論"><span>視規劃內容再討論</span></label>
+        </div>
+      </div>
+
+      <div class="field"><label class="title">期望完工／入住時間</label><input type="text" name="finish_time" placeholder="例：交屋後 4 個月內、2026年底前"></div>
+
+      <div class="field"><label class="title">寵物 / 過敏 / 長輩小孩安全等特殊考量</label><textarea name="special_note"></textarea></div>
+      <div class="field" style="margin-bottom:4px;"><label class="title">其他想補充說明的事項</label><textarea name="other_note"></textarea></div>
+    </section>
+
+    <div class="line-reminder">
+      表單送出後，請在 LINE 群組跟我們說一聲「已填寫完成」，<br>我們會依內容準備丈量與規劃方向。
+      <img src="line-qrcode.png" alt="禹合制所官方LINE QRcode">
+      <span class="small">掃描加入禹合制所官方 LINE</span><br>
+      <a href="https://line.me/R/ti/p/@yuhedesign" target="_blank">LINE ID：@yuhedesign</a>
+    </div>
+  </div>
+
+  <div class="wiz-nav">
+    <button type="button" class="btn-prev" id="btnPrev" style="visibility:hidden;">上一步</button>
+    <button type="button" class="btn-next" id="btnNext">下一步</button>
+    <button type="submit" class="btn-submit" id="btnSubmit" style="display:none;">送出需求表</button>
+  </div>
+  <p class="step-hint" id="stepHint">共 6 個步驟，約需 5–8 分鐘</p>
+  <p style="text-align:center;margin-top:6px;"><button type="button" id="lineFallback" style="background:none;border:none;color:var(--accent-deep);text-decoration:underline;font-size:13px;cursor:pointer;font-family:inherit;display:none;">送出遇到問題？點此複製填寫內容，改用 LINE 傳給我們</button></p>
+
+</form>
+
+<script>
+(function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setTheme(t){
+    document.documentElement.setAttribute('data-theme',t);
+    themeBtn.textContent=t==='dark'?'☀️':'🌙';
+    try{localStorage.setItem('yuhe_form_theme',t);}catch(e){}
+  }
+  var saved=null;
+  try{saved=localStorage.getItem('yuhe_form_theme');}catch(e){}
+  setTheme(saved==='dark'?'dark':'light');
+  themeBtn.addEventListener('click',function(){
+    setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  });
+
+  var steps=Array.prototype.slice.call(document.querySelectorAll('.step'));
+  var cur=0;
+  var btnPrev=document.getElementById('btnPrev'),
+      btnNext=document.getElementById('btnNext'),
+      btnSubmit=document.getElementById('btnSubmit');
+
+  function show(i){
+    cur=i;
+    steps.forEach(function(s,k){s.classList.toggle('on',k===i);});
+    document.getElementById('stepTitle').textContent=steps[i].dataset.title;
+    document.getElementById('stepNow').textContent=i+1;
+    document.getElementById('pFill').style.width=((i+1)/steps.length*100)+'%';
+    btnPrev.style.visibility=i===0?'hidden':'visible';
+    btnNext.style.display=i===steps.length-1?'none':'';
+    btnSubmit.style.display=i===steps.length-1?'':'none';
+    var fb2=document.getElementById('lineFallback');
+    if(fb2)fb2.style.display=i===steps.length-1?'':'none';
+    document.getElementById('stepHint').textContent=
+      i===steps.length-1?'送出後請在 LINE 群組說一聲，我們會盡快與您聯繫':'共 6 個步驟，約需 5–8 分鐘';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function validStep(){
+    var fields=steps[cur].querySelectorAll('input,select,textarea');
+    for(var k=0;k<fields.length;k++){
+      if(!fields[k].checkValidity()){fields[k].reportValidity();return false;}
+    }
+    return true;
+  }
+
+  btnNext.addEventListener('click',function(){
+    if(validStep())show(cur+1);
+  });
+  btnPrev.addEventListener('click',function(){show(cur-1);});
+
+  document.getElementById('briefForm').addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&e.target.tagName!=='TEXTAREA'&&cur<steps.length-1){
+      e.preventDefault();
+      btnNext.click();
+    }
+  });
+
+  /* ── 送出：原生表單送出（已驗證信箱），成功導回感謝頁 ── */
+  function fieldLabel(el){
+    var f=el.closest('.field');
+    while(f){
+      var t=f.querySelector('label.title');
+      if(t)return t.childNodes[0].textContent.trim();
+      f=f.parentElement?f.parentElement.closest('.field'):null;
+    }
+    var sb=el.closest('.space-block');
+    if(sb){var h3=sb.querySelector('h3');if(h3)return h3.textContent.trim();}
+    var sec=el.closest('section');
+    if(sec){var h2=sec.querySelector('h2');
+      if(h2)return h2.childNodes[0].textContent.trim().replace(/^[一二三四五六七八九十]+、/,'');}
+    return el.name;
+  }
+  function toChinese(form){
+    var seen={},list=[];
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.type==='hidden'||el.tagName==='BUTTON')return;
+      if(el.name==='botcheck')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=(el.value||'').trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(seen[label]!==undefined){list[seen[label]].v+='、'+v;}
+      else{seen[label]=list.length;list.push({k:label,v:v});}
+    });
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.tagName==='BUTTON')return;
+      if(['access_key','subject','from_name','redirect','案名','botcheck'].indexOf(el.name)>=0)return;
+      el.disabled=true; el.setAttribute('data-cndis','1');
+    });
+    list.forEach(function(p){
+      var h=document.createElement('input');
+      h.type='hidden'; h.name=p.k; h.value=p.v; h.setAttribute('data-cnadd','1');
+      form.appendChild(h);
+    });
+  }
+  window.addEventListener('pageshow',function(){
+    document.querySelectorAll('[data-cndis]').forEach(function(el){el.disabled=false;el.removeAttribute('data-cndis');});
+    document.querySelectorAll('[data-cnadd]').forEach(function(el){el.remove();});
+  });
+
+  function buildSummary(form){
+    var lines=['【'+document.title.replace(/.*｜/,'')+'】'],seen={};
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.name.charAt(0)==='_'||el.type==='hidden')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=el.value.trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(el.type==='checkbox'&&seen[el.name]){
+        lines[seen[el.name]-1]+='、'+v;
+      }else{
+        lines.push(label+'：'+v);
+        if(el.type==='checkbox')seen[el.name]=lines.length;
+      }
+    });
+    return lines.join('\n');
+  }
+  function copyText(text){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        alert('已複製！請貼到 LINE 傳給我們。');
+      },function(){prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);});
+    }else{prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);}
+  }
+  var fb=document.getElementById('lineFallback');
+  if(fb)fb.onclick=function(){copyText(buildSummary(document.getElementById('briefForm')));};
+  document.getElementById('briefForm').addEventListener('submit',function(e){
+    for(var i=0;i<steps.length;i++){
+      var fields=steps[i].querySelectorAll('input,select,textarea');
+      for(var k=0;k<fields.length;k++){
+        if(!fields[k].checkValidity()){
+          e.preventDefault();
+          show(i);
+          fields[k].reportValidity();
+          return;
+        }
+      }
+    }
+    toChinese(this);
+    var b=document.getElementById('btnSubmit');
+    b.textContent='送出中…';
+  });
+
+  show(0);
+})();
+</script>
+<div style="text-align:center;font-size:10.5px;color:#b5ac9a;padding:0 0 20px;">表單系統版本 v4（中文信件）</div>
+</body>
+</html>

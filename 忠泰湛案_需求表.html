@@ -54,10 +54,12 @@
   <span class="tag todo">待確認</span>需要客戶補充填寫
 </div>
 
-<form action="https://formsubmit.co/yuhe.design0220@gmail.com" method="POST">
-  <input type="hidden" name="_subject" value="禹合制所｜忠泰湛案需求表">
-  <input type="hidden" name="_template" value="table">
-  <input type="hidden" name="_captcha" value="false">
+<form action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="access_key" value="d0792706-dda7-4d46-9be3-bef7d4dc6554">
+  <input type="hidden" name="subject" value="禹合制所｜忠泰湛案需求表">
+  <input type="hidden" name="from_name" value="禹合制所 網站需求表">
+  <input type="hidden" name="redirect" value="https://amyapple0220-creator.github.io/yuhe-design-forms/thanks.html">
+  <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
 
   <!-- 一、基本資料 -->
   <section>
@@ -400,10 +402,100 @@
   </section>
 
   <div class="submit-area">
-    <button type="submit">送出需求表</button>
+    <button type="submit" id="btnSubmit">送出需求表</button>
     <p style="font-size:12px;color:#999;">送出後我們將盡快與您聯繫，並安排現場丈量與初步配置規劃。</p>
+    <p><button type="button" id="lineFallback" style="background:none;border:none;color:#6f563a;text-decoration:underline;font-size:13px;cursor:pointer;font-family:inherit;padding:0;">送出遇到問題？點此複製填寫內容，改用 LINE 傳給我們</button></p>
   </div>
 
 </form>
+
+<script>
+(function(){
+  var form=document.querySelector('form');
+  var btn=document.getElementById('btnSubmit');
+  function fieldLabel(el){
+    var f=el.closest('.field');
+    while(f){
+      var t=f.querySelector('label.title');
+      if(t)return t.childNodes[0].textContent.trim();
+      f=f.parentElement?f.parentElement.closest('.field'):null;
+    }
+    var sb=el.closest('.space-block');
+    if(sb){var h3=sb.querySelector('h3');if(h3)return h3.textContent.trim();}
+    var sec=el.closest('section');
+    if(sec){var h2=sec.querySelector('h2');
+      if(h2)return h2.childNodes[0].textContent.trim().replace(/^[一二三四五六七八九十]+、/,'');}
+    return el.name;
+  }
+  function toChinese(form){
+    var seen={},list=[];
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.type==='hidden'||el.tagName==='BUTTON')return;
+      if(el.name==='botcheck')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=(el.value||'').trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(seen[label]!==undefined){list[seen[label]].v+='、'+v;}
+      else{seen[label]=list.length;list.push({k:label,v:v});}
+    });
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.tagName==='BUTTON')return;
+      if(['access_key','subject','from_name','redirect','案名','botcheck'].indexOf(el.name)>=0)return;
+      el.disabled=true; el.setAttribute('data-cndis','1');
+    });
+    list.forEach(function(p){
+      var h=document.createElement('input');
+      h.type='hidden'; h.name=p.k; h.value=p.v; h.setAttribute('data-cnadd','1');
+      form.appendChild(h);
+    });
+  }
+  window.addEventListener('pageshow',function(){
+    document.querySelectorAll('[data-cndis]').forEach(function(el){el.disabled=false;el.removeAttribute('data-cndis');});
+    document.querySelectorAll('[data-cnadd]').forEach(function(el){el.remove();});
+  });
+
+  function buildSummary(){
+    var lines=['【忠泰湛案 需求表】'],seen={};
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.name.charAt(0)==='_'||el.type==='hidden')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=el.value.trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(el.type==='checkbox'&&seen[el.name]){
+        lines[seen[el.name]-1]+='、'+v;
+      }else{
+        lines.push(label+'：'+v);
+        if(el.type==='checkbox')seen[el.name]=lines.length;
+      }
+    });
+    return lines.join('\n');
+  }
+  function copyText(text){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        alert('已複製！請貼到 LINE 傳給我們。');
+      },function(){prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);});
+    }else{prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);}
+  }
+  function showSuccess(){
+    form.style.display='none';
+    var d=document.createElement('div');
+    d.style.cssText='max-width:760px;margin:40px auto 80px;padding:40px 24px;text-align:center;';
+    d.innerHTML='<div style="font-size:56px;line-height:1;">✅</div>'
+      +'<h2 style="letter-spacing:2px;margin:16px 0 8px;">需求表已送出</h2>'
+      +'<p style="color:#888;font-size:14.5px;">我們已收到您的資料，將盡快與您聯繫安排現場丈量。</p>';
+    form.parentNode.appendChild(d);
+    window.scrollTo(0,0);
+  }
+  var fb=document.getElementById('lineFallback');
+  if(fb)fb.onclick=function(){copyText(buildSummary());};
+  form.addEventListener('submit',function(e){
+    if(!form.checkValidity()){e.preventDefault();form.reportValidity();return;}
+    toChinese(form);
+    btn.textContent='送出中…';
+  });
+})();
+</script>
+<div style="text-align:center;font-size:10.5px;color:#b5ac9a;padding:0 0 20px;">表單系統版本 v4（中文信件）</div>
 </body>
 </html>
