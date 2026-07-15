@@ -241,6 +241,14 @@
   }
   .n-none{font-size:12.5px; color:var(--muted); margin-bottom:6px;}
 
+  /* ── 提示訊息 ── */
+  #toast{
+    display:none; position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+    max-width:88vw; z-index:30; text-align:center;
+    background:var(--yellow); color:#1c1a14; font-weight:700; font-size:14px;
+    padding:11px 20px; border-radius:11px; box-shadow:0 4px 18px rgba(0,0,0,.45);
+  }
+
   .g-bar{
     position:absolute; height:34px; border-radius:9px; z-index:1; cursor:pointer;
     border:1.5px solid var(--yellow-dim); background:#2a2617; overflow:hidden;
@@ -367,9 +375,12 @@
       <button data-v="list">☰ 列表視圖</button>
     </div>
     <button class="btn ghost" id="btnTpl">⬒ 套用範本</button>
+    <button class="btn ghost" id="btnShare">📤 分享</button>
     <div class="spacer"></div>
     <div class="chip-note">點工項可編輯</div>
   </div>
+
+  <div id="toast"></div>
 
   <div class="empty" id="empty">
     <div class="icon">📊</div>
@@ -978,13 +989,80 @@
 
   window.addEventListener('resize',render);
 
-  /* ── Demo 模式（#demo 預覽用，不寫入儲存）── */
+  /* ── 分享（資料壓縮進連結，貼到 LINE 群組即可）── */
+  var toastTimer;
+  function toast(msg){
+    var t=$('toast');
+    t.textContent=msg; t.style.display='block';
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){t.style.display='none';},4000);
+  }
+  function b64uEnc(bytes){
+    var bin='';
+    for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+  function b64uDec(s){
+    s=s.replace(/-/g,'+').replace(/_/g,'/');
+    while(s.length%4)s+='=';
+    var bin=atob(s),u=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+    return u;
+  }
+  function buildShareURL(){
+    var json=JSON.stringify(state);
+    var plain=Promise.resolve('j:'+b64uEnc(new TextEncoder().encode(json)));
+    if(!window.CompressionStream)return plain;
+    return new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('deflate-raw')))
+      .arrayBuffer()
+      .then(function(buf){return 'z:'+b64uEnc(new Uint8Array(buf));})
+      .catch(function(){return plain;})
+      .then(function(p){return location.origin+location.pathname+'#d='+p;});
+  }
+  $('btnShare').onclick=function(){
+    buildShareURL().then(function(url){
+      function done(){toast('連結已複製！貼到 LINE 群組，大家點開就會看到目前的資料 ✓');}
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(done,function(){prompt('請手動複製此連結：',url);});
+      }else{
+        prompt('請手動複製此連結：',url);
+      }
+    });
+  };
+  function tryImport(){
+    var m=location.hash.match(/^#d=(z:|j:)(.+)$/);
+    if(!m)return Promise.resolve(false);
+    var bytes;
+    try{bytes=b64uDec(m[2]);}catch(e){return Promise.resolve(false);}
+    var jsonP;
+    if(m[1]==='z:'){
+      if(!window.DecompressionStream)return Promise.resolve(false);
+      jsonP=new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+    }else{
+      jsonP=Promise.resolve(new TextDecoder().decode(bytes));
+    }
+    return jsonP.then(function(json){
+      var d=JSON.parse(json);
+      if(!(d&&d.projects&&d.projects.length))return false;
+      var has=false;
+      try{has=!!localStorage.getItem(KEY);}catch(e){}
+      if(has&&!confirm('收到分享的專案資料，要用它更新這台裝置上的資料嗎？'))return false;
+      state=d; save();
+      history.replaceState(null,'',location.pathname+location.search);
+      setTimeout(function(){toast('已載入分享的最新專案資料 ✓');},300);
+      return true;
+    }).catch(function(){return false;});
+  }
+
+  /* ── 啟動：demo / 分享連結匯入 / 一般載入 ── */
   if(location.hash==='#demo'){
     save=function(){};
     seedRealProjects();
     render();
   }else{
-    load(); render();
+    tryImport().then(function(){
+      load(); render();
+    });
   }
 })();
 </script>
