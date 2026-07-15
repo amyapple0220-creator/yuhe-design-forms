@@ -42,6 +42,11 @@
   }
   .head h1:focus{background:var(--card2);}
   .head .sub{font-size:13px; color:var(--muted); margin:2px 0 0 4px;}
+  .proj-line{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  #projSel{
+    background:var(--card); color:var(--yellow); border:1px solid var(--line);
+    border-radius:9px; padding:7px 10px; font-family:inherit; font-size:13.5px; font-weight:600;
+  }
   .btn{
     border:none; cursor:pointer; font-family:inherit;
     display:inline-flex; align-items:center; gap:6px;
@@ -245,7 +250,10 @@
   <div class="crumb">工程進度總覽</div>
   <div class="head">
     <div>
-      <h1 id="projName" contenteditable="true" spellcheck="false">未命名專案</h1>
+      <div class="proj-line">
+        <h1 id="projName" contenteditable="true" spellcheck="false">未命名專案</h1>
+        <select id="projSel" title="切換專案"></select>
+      </div>
       <div class="sub" id="updatedAt"></div>
     </div>
     <button class="btn" id="btnAdd">＋ 新增工項</button>
@@ -357,34 +365,93 @@
   function dayDiff(a,b){return Math.round((b-a)/864e5);}
   var today=new Date(); today=new Date(today.getFullYear(),today.getMonth(),today.getDate());
 
-  /* ── 資料 ── */
-  var state={projectName:'未命名專案',tasks:[]};
+  /* ── 資料（多專案）── */
+  var state={cur:0,projects:[]};
+  function P(){return state.projects[state.cur];}
   function load(){
     try{
       var raw=localStorage.getItem(KEY);
-      if(raw){var d=JSON.parse(raw); if(d&&d.tasks) state=d;}
+      if(raw){
+        var d=JSON.parse(raw);
+        if(d&&d.projects&&d.projects.length){state=d;}
+        else if(d&&d.tasks){ /* 舊版單專案格式升級 */
+          state={cur:0,projects:[{name:d.projectName||'未命名專案',tasks:d.tasks}],_seq:d._seq};
+        }
+      }
     }catch(e){}
+    if(!state.projects.length) seedRealProjects();
+    if(state.cur>=state.projects.length)state.cur=0;
   }
   function save(){
     try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
   }
   function uid(){return 't'+(++state._seq||(state._seq=1));}
 
+  /* ── 工作天工具（扣週六日）── */
+  function isWorkday(d){return d.getDay()!==0&&d.getDay()!==6;}
+  function nextWorkday(d){var x=new Date(d);while(!isWorkday(x))x=addDays(x,1);return x;}
+  function addWorkdays(d,n){ /* 含起日共 n 個工作天，回傳最後一天 */
+    var x=nextWorkday(d),left=n-1;
+    while(left>0){x=addDays(x,1);if(isWorkday(x))left--;}
+    return x;
+  }
+
+  /* 禹合制所實際工序範本（工作天數，自動跳過週六日） */
   var TEMPLATE=[
-    ['保護工程',2,'全室'],['拆除工程',5,'全室'],['水電配管',10,'全室'],
-    ['泥作工程',12,'全室'],['浴室防水',3,'衛浴'],['鋁窗工程',3,'全室'],
-    ['木作工程',15,'全室'],['油漆工程',10,'全室'],['系統櫃安裝',5,'各房'],
-    ['廚具衛浴安裝',4,'廚房/衛浴'],['燈具五金安裝',3,'全室'],
-    ['細部清潔',2,'全室'],['完工驗收',1,'全室']
+    ['保護工程',1,'全室'],['拆除＋清運',3,'全室'],['空調配管',3,'全室'],
+    ['水電配管',5,'全室'],['木作工程',20,'全室'],['油漆工程',20,'全室'],
+    ['玻璃＋壁紙施工',2,'全室'],['系統櫃進料＋安裝',7,'各房'],
+    ['燈具/開關/衛浴五金',3,'全室'],['空調收尾',2,'全室'],['水電收尾',3,'全室'],
+    ['地板施工',2,'玄關/各房'],['IKEA 安裝',1,'各房'],['粗清＋細清',2,'全室'],
+    ['矽利康工程',1,'全室'],['窗簾＋家具進場',2,'全室'],['Deco 拍攝',1,'全室'],
+    ['交屋前點檢/缺失改善',3,'全室'],['正式交屋',1,'全室']
   ];
   function applyTemplate(startStr){
-    var cur=parse(startStr);
+    var cur=nextWorkday(parse(startStr));
     TEMPLATE.forEach(function(t){
-      var end=addDays(cur,t[1]-1);
-      state.tasks.push({id:uid(),name:t[0],vendor:'',area:t[2],start:fmt(cur),end:fmt(end),progress:0});
-      cur=addDays(end,1);
+      var end=addWorkdays(cur,t[1]);
+      P().tasks.push({id:uid(),name:t[0],vendor:'',area:t[2],start:fmt(cur),end:fmt(end),progress:0});
+      cur=nextWorkday(addDays(end,1));
     });
     save(); render();
+  }
+
+  /* ── 內建目前兩個實際工地 ── */
+  function seedProgress(t){
+    var s=parse(t.start),e=parse(t.end);
+    t.progress=e<today?100:(s<=today?50:0);
+    return t;
+  }
+  function mkTasks(rows){
+    return rows.map(function(r){
+      return seedProgress({id:uid(),name:r[0],start:'2026-'+r[1],end:'2026-'+(r[2]||r[1]),progress:0,vendor:'',area:r[3]||''});
+    });
+  }
+  function seedRealProjects(){
+    state.projects=[
+      {name:'鉅力高宇',tasks:mkTasks([
+        ['保護工程','06-12'],['空調工程','06-17','06-18'],['水電工程前置','06-22','06-26'],
+        ['木作工程','06-29','07-17'],['油漆工程','07-20','08-14'],
+        ['系統櫃討論/丈量/下單','07-20','07-29'],['系統櫃進料','08-17'],
+        ['系統櫃安裝','08-18','08-26'],['玻璃＋鋁框門安裝','08-27','08-28'],
+        ['壁紙施工','08-31','09-02'],['空調收尾','09-03','09-04'],
+        ['水電收尾','09-07','09-11'],['玄關地板施工','09-14'],['IKEA 安裝','09-15'],
+        ['粗清＋細清','09-16','09-17'],['矽利康工程','09-18'],
+        ['窗簾/現成家具安裝','09-19'],['Deco+ 拍攝','09-20'],
+        ['交屋前點檢/缺失改善','09-21','09-23'],['正式交屋','09-24']
+      ])},
+      {name:'合新合心',tasks:mkTasks([
+        ['保護工程','06-15'],['拆除＋清運','06-16','06-18'],['空調配管','06-22','06-24'],
+        ['水電配管','06-25','07-01'],['木作工程(含鋁框軌道)','07-02','08-05'],
+        ['油漆工程','08-06','09-01'],['玻璃＋壁紙施工','09-02'],
+        ['燈具/開關/衛浴五金安裝','09-03','09-09'],['空調收尾','09-10','09-11'],
+        ['地板施工(木地板&玄關)','09-11','09-15'],['IKEA 安裝','09-16'],
+        ['粗清＋細清','09-17','09-18'],['矽利康工程','09-19'],['窗簾安裝','09-21'],
+        ['家具家電進場','09-22','09-23'],['DECO＆完工拍攝','09-29'],
+        ['收尾點檢','09-30'],['正式交屋','10-01']
+      ])}
+    ];
+    state.cur=0;
   }
 
   /* ── 狀態判斷 ── */
@@ -402,12 +469,22 @@
 
   function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
+  function renderProjSel(){
+    var sel=$('projSel'),h='';
+    state.projects.forEach(function(p,i){
+      h+='<option value="'+i+'"'+(i===state.cur?' selected':'')+'>'+esc(p.name)+'</option>';
+    });
+    h+='<option value="__new">＋ 新增專案…</option>';
+    sel.innerHTML=h;
+  }
+
   function render(){
     readCssVars();
-    var tasks=state.tasks.slice().sort(function(a,b){
+    renderProjSel();
+    var tasks=P().tasks.slice().sort(function(a,b){
       return a.start<b.start?-1:a.start>b.start?1:0;
     });
-    $('projName').textContent=state.projectName;
+    $('projName').textContent=P().name;
     var wk=['日','一','二','三','四','五','六'];
     $('updatedAt').textContent='更新於 '+String(today.getMonth()+1).padStart(2,'0')+'/'+String(today.getDate()).padStart(2,'0')+' ・ 星期'+wk[today.getDay()];
 
@@ -565,18 +642,34 @@
     var data={name:name,vendor:$('eVendor').value.trim(),area:$('eArea').value.trim(),
               start:s,end:e,progress:+$('eProg').value};
     if(editing){Object.assign(editing,data);}
-    else{data.id=uid();state.tasks.push(data);}
+    else{data.id=uid();P().tasks.push(data);}
     save();$('editOverlay').classList.remove('show');render();
   };
   $('eDelete').onclick=function(){
     if(editing&&confirm('確定刪除「'+editing.name+'」？')){
-      state.tasks=state.tasks.filter(function(t){return t!==editing;});
+      P().tasks=P().tasks.filter(function(t){return t!==editing;});
       save();$('editOverlay').classList.remove('show');render();
     }
   };
   $('btnAdd').onclick=$('btnAdd2').onclick=function(){openEdit(null);};
 
-  function findTask(id){return state.tasks.find(function(t){return t.id===id;});}
+  function findTask(id){return P().tasks.find(function(t){return t.id===id;});}
+
+  /* ── 專案切換 / 新增 ── */
+  $('projSel').addEventListener('change',function(){
+    if(this.value==='__new'){
+      var nm=prompt('新專案名稱：','');
+      if(nm&&nm.trim()){
+        state.projects.push({name:nm.trim(),tasks:[]});
+        state.cur=state.projects.length-1;
+        save();
+      }
+    }else{
+      state.cur=+this.value;
+      save();
+    }
+    render();
+  });
   document.addEventListener('click',function(e){
     var el=e.target.closest('.g-row,.g-bar,.l-card');
     if(el&&el.dataset.id){openEdit(findTask(el.dataset.id));}
@@ -599,9 +692,9 @@
 
   /* ── 專案名稱 ── */
   $('projName').addEventListener('blur',function(){
-    state.projectName=this.textContent.trim()||'未命名專案';
-    this.textContent=state.projectName;
-    save();
+    P().name=this.textContent.trim()||'未命名專案';
+    this.textContent=P().name;
+    save(); renderProjSel();
   });
   $('projName').addEventListener('keydown',function(e){
     if(e.key==='Enter'){e.preventDefault();this.blur();}
@@ -612,13 +705,7 @@
   /* ── Demo 模式（#demo 預覽用，不寫入儲存）── */
   if(location.hash==='#demo'){
     save=function(){};
-    state.projectName='青田家';
-    var demoStart=addDays(today,-18);
-    applyTemplate(fmt(demoStart));
-    var progs=[100,100,80,45,0,0,0,0,0,0,0,0,0];
-    state.tasks.forEach(function(t,i){t.progress=progs[i]||0;});
-    state.tasks[0].vendor='禹合工務'; state.tasks[1].vendor='昌益拆除';
-    state.tasks[2].vendor='穩達水電'; state.tasks[3].vendor='邵睿泥作';
+    seedRealProjects();
     render();
   }else{
     load(); render();
