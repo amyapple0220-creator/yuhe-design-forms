@@ -108,7 +108,7 @@
   .g-right{flex:1; min-width:0; overflow-x:auto; overscroll-behavior-x:contain;}
   .g-canvas{position:relative;}
 
-  .g-head{height:58px; border-bottom:1px solid var(--line);}
+  .g-head{height:88px; border-bottom:1px solid var(--line);}
   .g-left .g-head{
     display:flex; align-items:flex-end; padding:0 12px 8px;
     font-size:12px; color:var(--muted); letter-spacing:1px;
@@ -156,10 +156,90 @@
 
   .grid-row{height:var(--row-h); border-bottom:1px solid var(--line);}
   .v-grid{position:absolute; top:0; bottom:0; width:1px; background:var(--line); opacity:.45;}
-  .weekend-band{position:absolute; top:58px; bottom:0; background:rgba(255,255,255,.025);}
+  .weekend-band{position:absolute; top:88px; bottom:0; background:rgba(255,255,255,.025);}
   .today-line{
-    position:absolute; top:58px; bottom:0; width:2px; background:var(--yellow); opacity:.85; z-index:1;
+    position:absolute; top:88px; bottom:0; width:2px; background:var(--yellow); opacity:.85; z-index:1;
   }
+
+  /* ── 會勘節點 ── */
+  .insp-chip{
+    position:absolute; top:61px; z-index:2; white-space:nowrap;
+    font-size:10.5px; font-weight:700; color:var(--yellow);
+    background:#2a2617; border:1px solid var(--yellow-dim);
+    border-radius:6px; padding:1px 7px; line-height:1.7;
+  }
+  .insp-line{
+    position:absolute; top:88px; bottom:0; width:0;
+    border-left:1.5px dashed var(--yellow-dim); opacity:.55;
+  }
+
+  /* ── 連假不施工 ── */
+  .holiday-band{
+    position:absolute; top:88px; bottom:0;
+    background:rgba(255,107,107,.09);
+  }
+  .holiday-chip{
+    position:absolute; top:61px; z-index:2; white-space:nowrap;
+    font-size:10.5px; font-weight:700; color:var(--red);
+    background:var(--red-bg); border:1px solid #6b3a3a;
+    border-radius:6px; padding:1px 7px; line-height:1.7;
+  }
+
+  /* ── 請款節點 ── */
+  .pay-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px 12px; margin:0 0 14px;
+  }
+  .pay-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  .pay-head .t{font-size:13px; color:var(--muted); letter-spacing:1px;}
+  .pay-set{
+    background:transparent; border:1px solid var(--line); color:var(--yellow);
+    border-radius:8px; padding:5px 12px; font-family:inherit; font-size:12.5px; cursor:pointer;
+  }
+  .pay-chips{display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;}
+  .pay-chip{
+    flex:none; min-width:128px; cursor:pointer;
+    background:var(--card2); border:1.5px solid var(--line); border-radius:10px;
+    padding:9px 12px;
+  }
+  .pay-chip .pay-name{font-size:12px; color:var(--muted);}
+  .pay-chip .amt{font-size:15.5px; font-weight:800; margin:1px 0;}
+  .pay-chip .pay-date{font-size:11.5px; color:var(--muted);}
+  .pay-badge{
+    display:inline-block; font-size:10.5px; font-weight:700; border-radius:5px;
+    padding:0 6px; margin-left:4px;
+    background:#3a331d; color:var(--yellow);
+  }
+  .pay-chip.paid{border-color:#3a5c46;}
+  .pay-chip.paid .pay-badge{background:var(--green-bg); color:var(--green);}
+  .pay-empty{font-size:13px; color:var(--muted); padding:4px 0;}
+
+  /* ── 節點設定 modal ── */
+  .n-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:14px; font-weight:700; color:var(--yellow); margin:16px 0 8px; letter-spacing:1px;
+  }
+  .n-add{
+    background:transparent; border:1px solid var(--yellow-dim); color:var(--yellow);
+    border-radius:7px; padding:3px 12px; font-family:inherit; font-size:13px; cursor:pointer;
+  }
+  .n-row{display:flex; gap:6px; margin-bottom:8px; align-items:center;}
+  .n-row input[type=text]{flex:1.3; min-width:0;}
+  .n-row input[type=date]{flex:1; min-width:0;}
+  .n-row input[type=number]{width:92px; flex:none;}
+  .n-row input{
+    padding:9px 10px; font-size:13.5px; font-family:inherit;
+    background:var(--card2); border:1px solid var(--line); border-radius:8px; color:var(--text);
+    color-scheme:dark;
+  }
+  .n-row input:focus{outline:none; border-color:var(--yellow);}
+  .n-paid{display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--muted); flex:none;}
+  .n-paid input{accent-color:var(--yellow); width:16px; height:16px;}
+  .n-del{
+    flex:none; width:30px; height:32px; cursor:pointer;
+    background:transparent; border:1px solid var(--line); color:var(--red); border-radius:7px;
+  }
+  .n-none{font-size:12.5px; color:var(--muted); margin-bottom:6px;}
 
   .g-bar{
     position:absolute; height:34px; border-radius:9px; z-index:1; cursor:pointer;
@@ -273,6 +353,14 @@
     <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
   </div>
 
+  <div class="pay-card" id="payCard">
+    <div class="pay-head">
+      <span class="t">請款節點（點卡片可切換已收/未收）</span>
+      <button class="pay-set" id="btnNodes">⚙ 設定節點/連假</button>
+    </div>
+    <div class="pay-chips" id="payChips"></div>
+  </div>
+
   <div class="toolbar">
     <div class="seg" id="viewSeg">
       <button class="on" data-v="gantt">📊 甘特圖</button>
@@ -331,6 +419,27 @@
   </div>
 </div>
 
+<!-- 節點與連假設定 -->
+<div class="overlay" id="nodeOverlay">
+  <div class="modal">
+    <h3>節點與連假設定</h3>
+
+    <div class="n-head">★ 會勘節點 <button class="n-add" id="addInsp">＋ 新增</button></div>
+    <div id="inspRows"></div>
+
+    <div class="n-head">💰 請款節點 <button class="n-add" id="addPay">＋ 新增</button></div>
+    <div id="payRows"></div>
+
+    <div class="n-head">▨ 連假不施工 <button class="n-add" id="addHol">＋ 新增</button></div>
+    <div id="holRows"></div>
+
+    <div class="m-btns">
+      <button class="btn ghost" id="nCancel">取消</button>
+      <button class="btn" id="nSave">儲存</button>
+    </div>
+  </div>
+</div>
+
 <!-- 套用範本 -->
 <div class="overlay" id="tplOverlay">
   <div class="modal">
@@ -349,7 +458,7 @@
 <script>
 (function(){
   var KEY='yuhe_gantt_v1';
-  var COL=38, ROW=64, HEAD=58;
+  var COL=38, ROW=64, HEAD=88;
   function readCssVars(){
     var cs=getComputedStyle(document.documentElement);
     COL=parseInt(cs.getPropertyValue('--col-w'))||38;
@@ -381,14 +490,27 @@
     }catch(e){}
     if(!state.projects.length) seedRealProjects();
     if(state.cur>=state.projects.length)state.cur=0;
+    /* 舊資料補上節點欄位（依專案名稱回填內建節點） */
+    state.projects.forEach(function(p){
+      var seed=SEED_NODES[p.name]||{};
+      if(!p.inspections)p.inspections=seed.inspections||[];
+      if(!p.payments)p.payments=seed.payments||[];
+      if(!p.holidays)p.holidays=seed.holidays||[];
+    });
   }
   function save(){
     try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
   }
   function uid(){return 't'+(++state._seq||(state._seq=1));}
 
-  /* ── 工作天工具（扣週六日）── */
-  function isWorkday(d){return d.getDay()!==0&&d.getDay()!==6;}
+  /* ── 工作天工具（扣週六日與連假）── */
+  function inHoliday(d){
+    return (P()&&P().holidays||[]).some(function(hd){
+      var s=parse(hd.s),e=parse(hd.e||hd.s);
+      return d>=s&&d<=e;
+    });
+  }
+  function isWorkday(d){return d.getDay()!==0&&d.getDay()!==6&&!inHoliday(d);}
   function nextWorkday(d){var x=new Date(d);while(!isWorkday(x))x=addDays(x,1);return x;}
   function addWorkdays(d,n){ /* 含起日共 n 個工作天，回傳最後一天 */
     var x=nextWorkday(d),left=n-1;
@@ -427,6 +549,47 @@
       return seedProgress({id:uid(),name:r[0],start:'2026-'+r[1],end:'2026-'+(r[2]||r[1]),progress:0,vendor:'',area:r[3]||''});
     });
   }
+  var SEED_NODES={
+    '鉅力高宇':{
+      inspections:[
+        {d:'2026-07-17',label:'木工退場會勘'},
+        {d:'2026-08-14',label:'油漆退場會勘'},
+        {d:'2026-08-26',label:'系統櫃安裝完成'},
+        {d:'2026-09-24',label:'正式交屋'}
+      ],
+      payments:[
+        {label:'訂金 30%',amount:345000,d:'2026-06-01',paid:true},
+        {label:'木作進場 30%',amount:345000,d:'2026-06-22',paid:false},
+        {label:'油漆進場 30%',amount:345000,d:'2026-07-20',paid:false},
+        {label:'尾款 10%',amount:115000,d:'2026-09-22',paid:false}
+      ],
+      holidays:[
+        {s:'2026-06-19',e:'2026-06-21',label:'端午連假'},
+        {s:'2026-09-25',e:'2026-09-25',label:'中秋節'}
+      ]
+    },
+    '合新合心':{
+      inspections:[
+        {d:'2026-06-24',label:'空調配管完成會勘'},
+        {d:'2026-07-01',label:'水電配管完成會勘'},
+        {d:'2026-08-05',label:'木作工程完成會勘'},
+        {d:'2026-09-01',label:'油漆工程完成會勘'},
+        {d:'2026-09-09',label:'水電收尾驗收'},
+        {d:'2026-09-23',label:'家具家電定位確認'}
+      ],
+      payments:[
+        {label:'訂金 30%',amount:366000,d:'2026-06-15',paid:true},
+        {label:'木作進場 30%',amount:366000,d:'2026-07-02',paid:false},
+        {label:'油漆進場 30%',amount:366000,d:'2026-08-06',paid:false},
+        {label:'尾款 10%',amount:122000,d:'2026-10-01',paid:false}
+      ],
+      holidays:[
+        {s:'2026-06-19',e:'2026-06-21',label:'端午連假'},
+        {s:'2026-09-25',e:'2026-09-28',label:'中秋連假'}
+      ]
+    }
+  };
+
   function seedRealProjects(){
     state.projects=[
       {name:'鉅力高宇',tasks:mkTasks([
@@ -451,6 +614,10 @@
         ['收尾點檢','09-30'],['正式交屋','10-01']
       ])}
     ];
+    state.projects.forEach(function(p){
+      var s=JSON.parse(JSON.stringify(SEED_NODES[p.name]||{}));
+      p.inspections=s.inspections||[]; p.payments=s.payments||[]; p.holidays=s.holidays||[];
+    });
     state.cur=0;
   }
 
@@ -478,9 +645,27 @@
     sel.innerHTML=h;
   }
 
+  function renderPayments(){
+    var ps=P().payments||[],h='';
+    if(!ps.length){
+      h='<div class="pay-empty">尚未設定請款節點，點右上「⚙ 設定」新增</div>';
+    }else{
+      ps.forEach(function(p,i){
+        h+='<div class="pay-chip'+(p.paid?' paid':'')+'" data-i="'+i+'">'
+          +'<div class="pay-name">'+esc(p.label||'請款')+'</div>'
+          +'<div class="amt">NT$ '+(+p.amount||0).toLocaleString()+'</div>'
+          +'<div class="pay-date">'+(p.d?p.d.slice(5).replace('-','/'):'—')
+          +'<span class="pay-badge">'+(p.paid?'已收':'未收')+'</span></div>'
+          +'</div>';
+      });
+    }
+    $('payChips').innerHTML=h;
+  }
+
   function render(){
     readCssVars();
     renderProjSel();
+    renderPayments();
     var tasks=P().tasks.slice().sort(function(a,b){
       return a.start<b.start?-1:a.start>b.start?1:0;
     });
@@ -559,6 +744,23 @@
         h+='<div class="weekend-band" style="left:'+i*COL+'px;width:'+COL+'px"></div>';
       h+='<div class="v-grid" style="left:'+i*COL+'px;top:'+HEAD+'px;bottom:0"></div>';
     }
+    /* 連假不施工 */
+    (P().holidays||[]).forEach(function(hd){
+      var s=parse(hd.s),e=parse(hd.e||hd.s);
+      if(e<t0||s>t1)return;
+      if(s<t0)s=t0; if(e>t1)e=t1;
+      var x=dayDiff(t0,s)*COL, w=(dayDiff(s,e)+1)*COL;
+      h+='<div class="holiday-band" style="left:'+x+'px;width:'+w+'px"></div>'
+        +'<div class="holiday-chip" style="left:'+x+'px">▨ '+esc(hd.label||'連假')+'</div>';
+    });
+    /* 會勘節點 */
+    (P().inspections||[]).forEach(function(ins){
+      if(!ins.d)return;
+      var d=parse(ins.d); if(d<t0||d>t1)return;
+      var x=dayDiff(t0,d)*COL+COL/2;
+      h+='<div class="insp-line" style="left:'+x+'px"></div>'
+        +'<div class="insp-chip" style="left:'+(x-8)+'px">★ '+esc(ins.label||'會勘')+'</div>';
+    });
     /* 今日線 */
     var tx=dayDiff(t0,today)*COL+COL/2;
     h+='<div class="today-line" style="left:'+tx+'px"></div>';
@@ -677,6 +879,80 @@
   document.querySelectorAll('.overlay').forEach(function(o){
     o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('show');});
   });
+
+  /* ── 請款卡片：點擊切換已收/未收 ── */
+  $('payChips').addEventListener('click',function(e){
+    var chip=e.target.closest('.pay-chip'); if(!chip)return;
+    var p=(P().payments||[])[+chip.dataset.i]; if(!p)return;
+    if(confirm('「'+p.label+'」標記為'+(p.paid?'未收':'已收')+'？')){
+      p.paid=!p.paid; save(); render();
+    }
+  });
+
+  /* ── 節點與連假設定 ── */
+  function nRow(inner){
+    var div=document.createElement('div');
+    div.className='n-row';
+    div.innerHTML=inner+'<button type="button" class="n-del">✕</button>';
+    div.querySelector('.n-del').onclick=function(){div.remove();};
+    return div;
+  }
+  function attrEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+  function addInspRow(v){
+    $('inspRows').appendChild(nRow(
+      '<input type="text" class="f-label" placeholder="會勘名稱" value="'+attrEsc(v&&v.label)+'">'
+      +'<input type="date" class="f-d" value="'+attrEsc(v&&v.d)+'">'
+    ));
+  }
+  function addPayRow(v){
+    $('payRows').appendChild(nRow(
+      '<input type="text" class="f-label" placeholder="名稱（例：訂金 30%）" value="'+attrEsc(v&&v.label)+'">'
+      +'<input type="number" class="f-amt" placeholder="金額" value="'+attrEsc(v&&v.amount)+'">'
+      +'<input type="date" class="f-d" value="'+attrEsc(v&&v.d)+'">'
+      +'<label class="n-paid"><input type="checkbox" class="f-paid"'+(v&&v.paid?' checked':'')+'>已收</label>'
+    ));
+  }
+  function addHolRow(v){
+    $('holRows').appendChild(nRow(
+      '<input type="text" class="f-label" placeholder="連假名稱" value="'+attrEsc(v&&v.label)+'">'
+      +'<input type="date" class="f-s" value="'+attrEsc(v&&v.s)+'">'
+      +'<input type="date" class="f-e" value="'+attrEsc(v&&v.e)+'">'
+    ));
+  }
+  $('addInsp').onclick=function(){addInspRow();};
+  $('addPay').onclick=function(){addPayRow();};
+  $('addHol').onclick=function(){addHolRow();};
+
+  $('btnNodes').onclick=function(){
+    $('inspRows').innerHTML=''; $('payRows').innerHTML=''; $('holRows').innerHTML='';
+    (P().inspections||[]).forEach(addInspRow);
+    (P().payments||[]).forEach(addPayRow);
+    (P().holidays||[]).forEach(addHolRow);
+    $('nodeOverlay').classList.add('show');
+  };
+  $('nCancel').onclick=function(){$('nodeOverlay').classList.remove('show');};
+  $('nSave').onclick=function(){
+    var insp=[],pays=[],hols=[];
+    $('inspRows').querySelectorAll('.n-row').forEach(function(r){
+      var l=r.querySelector('.f-label').value.trim(), d=r.querySelector('.f-d').value;
+      if(l&&d)insp.push({label:l,d:d});
+    });
+    $('payRows').querySelectorAll('.n-row').forEach(function(r){
+      var l=r.querySelector('.f-label').value.trim();
+      if(l)pays.push({label:l,amount:+r.querySelector('.f-amt').value||0,
+                      d:r.querySelector('.f-d').value,paid:r.querySelector('.f-paid').checked});
+    });
+    $('holRows').querySelectorAll('.n-row').forEach(function(r){
+      var l=r.querySelector('.f-label').value.trim(), s=r.querySelector('.f-s').value;
+      var e=r.querySelector('.f-e').value||s;
+      if(l&&s)hols.push({label:l,s:s,e:e});
+    });
+    insp.sort(function(a,b){return a.d<b.d?-1:1;});
+    pays.sort(function(a,b){return (a.d||'')<(b.d||'')?-1:1;});
+    hols.sort(function(a,b){return a.s<b.s?-1:1;});
+    P().inspections=insp; P().payments=pays; P().holidays=hols;
+    save(); $('nodeOverlay').classList.remove('show'); render();
+  };
 
   /* ── 範本 ── */
   $('btnTpl').onclick=$('btnTpl2').onclick=function(){
