@@ -602,7 +602,8 @@
   function doSubmit(form){
     btnSubmit.disabled=true; btnSubmit.textContent='送出中…';
     var fd=new FormData(form);
-    fd.delete('_next');
+    var body=new URLSearchParams();
+    fd.forEach(function(v,k){if(k!=='_next')body.append(k,v);});
     var ctrl=('AbortController' in window)?new AbortController():null;
     var timer=ctrl?setTimeout(function(){ctrl.abort();},20000):null;
     function fail(msg){
@@ -614,7 +615,7 @@
       }
     }
     fetch('https://formsubmit.co/ajax/yuhe.design0220@gmail.com',{
-      method:'POST', body:fd,
+      method:'POST', body:body,
       headers:{'Accept':'application/json'},
       signal:ctrl?ctrl.signal:undefined
     }).then(function(r){
