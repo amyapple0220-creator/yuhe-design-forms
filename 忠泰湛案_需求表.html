@@ -400,10 +400,81 @@
   </section>
 
   <div class="submit-area">
-    <button type="submit">送出需求表</button>
+    <button type="submit" id="btnSubmit">送出需求表</button>
     <p style="font-size:12px;color:#999;">送出後我們將盡快與您聯繫，並安排現場丈量與初步配置規劃。</p>
   </div>
 
 </form>
+
+<script>
+(function(){
+  var form=document.querySelector('form');
+  var btn=document.getElementById('btnSubmit');
+  function fieldLabel(el){
+    var f=el.closest('.field');
+    if(f){var t=f.querySelector('label.title');if(t)return t.childNodes[0].textContent.trim();}
+    return el.name;
+  }
+  function buildSummary(){
+    var lines=['【忠泰湛案 需求表】'],seen={};
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.name.charAt(0)==='_'||el.type==='hidden')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=el.value.trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(el.type==='checkbox'&&seen[el.name]){
+        lines[seen[el.name]-1]+='、'+v;
+      }else{
+        lines.push(label+'：'+v);
+        if(el.type==='checkbox')seen[el.name]=lines.length;
+      }
+    });
+    return lines.join('\n');
+  }
+  function copyText(text){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        alert('已複製！請貼到 LINE 傳給我們。');
+      },function(){prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);});
+    }else{prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);}
+  }
+  function showSuccess(){
+    form.style.display='none';
+    var d=document.createElement('div');
+    d.style.cssText='max-width:760px;margin:40px auto 80px;padding:40px 24px;text-align:center;';
+    d.innerHTML='<div style="font-size:56px;line-height:1;">✅</div>'
+      +'<h2 style="letter-spacing:2px;margin:16px 0 8px;">需求表已送出</h2>'
+      +'<p style="color:#888;font-size:14.5px;">我們已收到您的資料，將盡快與您聯繫安排現場丈量。</p>';
+    form.parentNode.appendChild(d);
+    window.scrollTo(0,0);
+  }
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){form.reportValidity();return;}
+    btn.disabled=true; btn.textContent='送出中…';
+    var fd=new FormData(form);
+    fd.delete('_next');
+    var ctrl=('AbortController' in window)?new AbortController():null;
+    var timer=ctrl?setTimeout(function(){ctrl.abort();},20000):null;
+    function fail(msg){
+      if(timer)clearTimeout(timer);
+      btn.disabled=false; btn.textContent='送出需求表';
+      var text=buildSummary();
+      if(confirm('線上送出失敗'+(msg?'（'+msg+'）':'')+'。\n\n按「確定」複製您填寫的內容，直接貼到 LINE 給我們即可，資料不會白填！')){
+        copyText(text);
+      }
+    }
+    fetch('https://formsubmit.co/ajax/yuhe.design0220@gmail.com',{
+      method:'POST', body:fd,
+      headers:{'Accept':'application/json'},
+      signal:ctrl?ctrl.signal:undefined
+    }).then(function(r){return r.json();}).then(function(res){
+      if(timer)clearTimeout(timer);
+      if(res&&(res.success===true||res.success==='true')){showSuccess();}
+      else{fail(res&&res.message);}
+    }).catch(function(){fail();});
+  });
+})();
+</script>
 </body>
 </html>

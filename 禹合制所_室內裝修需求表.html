@@ -641,19 +641,84 @@
     }
   });
 
-  /* 送出前確認所有步驟的必填欄位（有缺就跳回該步驟提示） */
+  /* ── 背景送出（不跳頁，避免卡住）── */
+  function fieldLabel(el){
+    var f=el.closest('.field');
+    if(f){var t=f.querySelector('label.title');if(t)return t.childNodes[0].textContent.trim();}
+    return el.name;
+  }
+  function buildSummary(form){
+    var lines=['【'+document.title.replace(/.*｜/,'')+'】'],seen={};
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.name.charAt(0)==='_'||el.type==='hidden')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=el.value.trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(el.type==='checkbox'&&seen[el.name]){
+        lines[seen[el.name]-1]+='、'+v;
+      }else{
+        lines.push(label+'：'+v);
+        if(el.type==='checkbox')seen[el.name]=lines.length;
+      }
+    });
+    return lines.join('\n');
+  }
+  function copyText(text){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        alert('已複製！請貼到 LINE 傳給我們。');
+      },function(){prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);});
+    }else{prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);}
+  }
+  function showSuccess(){
+    document.querySelector('.progress').style.display='none';
+    document.getElementById('briefForm').style.display='none';
+    var d=document.createElement('div');
+    d.style.cssText='max-width:720px;margin:30px auto 80px;padding:40px 24px;text-align:center;';
+    d.innerHTML='<div style="font-size:56px;line-height:1;">✅</div>'
+      +'<h2 style="letter-spacing:2px;margin:16px 0 8px;">需求表已送出</h2>'
+      +'<p style="color:var(--muted);font-size:14.5px;">我們已收到您的資料，<br>請加入官方 LINE 並通知客服「已填寫表單」，我們會盡快與您聯繫安排丈量。</p>';
+    document.getElementById('briefForm').parentNode.appendChild(d);
+    window.scrollTo(0,0);
+  }
+  function doSubmit(form){
+    var btnSubmit=document.getElementById('btnSubmit');
+    btnSubmit.disabled=true; btnSubmit.textContent='送出中…';
+    var fd=new FormData(form);
+    fd.delete('_next');
+    var ctrl=('AbortController' in window)?new AbortController():null;
+    var timer=ctrl?setTimeout(function(){ctrl.abort();},20000):null;
+    function fail(msg){
+      if(timer)clearTimeout(timer);
+      btnSubmit.disabled=false; btnSubmit.textContent='送出需求表';
+      var text=buildSummary(form);
+      if(confirm('線上送出失敗'+(msg?'（'+msg+'）':'')+'。\n\n按「確定」複製您填寫的內容，直接貼到 LINE 給我們即可，資料不會白填！')){
+        copyText(text);
+      }
+    }
+    fetch('https://formsubmit.co/ajax/yuhe.design0220@gmail.com',{
+      method:'POST', body:fd,
+      headers:{'Accept':'application/json'},
+      signal:ctrl?ctrl.signal:undefined
+    }).then(function(r){return r.json();}).then(function(res){
+      if(timer)clearTimeout(timer);
+      if(res&&(res.success===true||res.success==='true')){showSuccess();}
+      else{fail(res&&res.message);}
+    }).catch(function(){fail();});
+  }
   document.getElementById('briefForm').addEventListener('submit',function(e){
+    e.preventDefault();
     for(var i=0;i<steps.length;i++){
       var fields=steps[i].querySelectorAll('input,select,textarea');
       for(var k=0;k<fields.length;k++){
         if(!fields[k].checkValidity()){
-          e.preventDefault();
           show(i);
           fields[k].reportValidity();
           return;
         }
       }
     }
+    doSubmit(this);
   });
 
   /* 伴侶欄位連動 */
