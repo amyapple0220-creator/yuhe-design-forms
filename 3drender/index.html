@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜3D渲染比對 3D RENDER</title>
+<style>
+  :root{
+    --ink:#2b2b28;
+    --paper:#faf8f4;
+    --line:#d9d3c7;
+    --accent:#8a6d4b;
+    --accent-light:#f1ebe0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.7;
+  }
+  header{
+    text-align:center;
+    padding:56px 20px 32px;
+    border-bottom:1px solid var(--line);
+  }
+  header .en{
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:34px;
+    letter-spacing:6px;
+    margin:0 0 8px;
+  }
+  header h1{
+    font-size:20px;
+    font-weight:500;
+    letter-spacing:6px;
+    margin:0 0 14px;
+  }
+  header p{
+    margin:0 auto;
+    max-width:560px;
+    color:#7a7468;
+    font-size:14px;
+    letter-spacing:1px;
+  }
+  main{
+    max-width:960px;
+    margin:0 auto;
+    padding:40px 20px 90px;
+  }
+  .project-title{
+    text-align:center;
+    margin:10px 0 34px;
+  }
+  .project-title h2{
+    font-size:22px;
+    font-weight:600;
+    letter-spacing:2px;
+    margin:0 0 6px;
+  }
+  .project-title .sub{
+    font-family:Georgia,serif;
+    color:#7a7468;
+    font-size:15px;
+    letter-spacing:1px;
+  }
+  .project-title .sub::before,
+  .project-title .sub::after{
+    content:"—";
+    color:var(--line);
+    margin:0 10px;
+  }
+  .project-title.next{
+    margin-top:70px;
+    padding-top:56px;
+    border-top:1px solid var(--line);
+  }
+  .vr-link{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:14px;
+    padding:10px 26px;
+    border:1px solid var(--accent);
+    border-radius:999px;
+    color:var(--accent);
+    font-size:14px;
+    letter-spacing:2px;
+    text-decoration:none;
+    transition:background .2s, color .2s;
+  }
+  .vr-link:hover{
+    background:var(--accent);
+    color:#fff;
+  }
+  .vr-link svg{width:18px; height:18px;}
+
+  html{scroll-behavior:smooth;}
+  .case-nav{
+    display:flex;
+    gap:16px;
+    overflow-x:auto;
+    padding:6px 2px 18px;
+    margin-bottom:26px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .case-card{
+    flex:0 0 auto;
+    width:190px;
+    text-decoration:none;
+    color:var(--ink);
+  }
+  .case-card img{
+    display:block;
+    width:100%;
+    aspect-ratio:4/3;
+    object-fit:cover;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .case-card span{
+    display:block;
+    margin-top:8px;
+    font-size:13px;
+    letter-spacing:1px;
+    text-align:center;
+  }
+  .case-card:hover img{
+    box-shadow:0 3px 12px rgba(0,0,0,.15);
+  }
+
+  /* ===== 比對滑桿元件 ===== */
+  figure.compare-block{
+    margin:0 0 56px;
+  }
+  .compare{
+    position:relative;
+    width:100%;
+    overflow:hidden;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:#e8e4dc;
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action:pan-y;          /* 保留頁面直向捲動，水平拖曳給滑桿 */
+    cursor:ew-resize;
+  }
+  .compare img{
+    display:block;
+    width:100%;
+    height:auto;
+    pointer-events:none;
+  }
+  .compare .before-wrap{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    width:var(--pos,50%);
+  }
+  .compare .before-wrap img{
+    position:absolute;
+    inset:0;
+    width:auto;
+    height:100%;
+    max-width:none;
+  }
+  .compare .divider{
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:var(--pos,50%);
+    width:2px;
+    background:#fff;
+    box-shadow:0 0 6px rgba(0,0,0,.35);
+    transform:translateX(-1px);
+  }
+  .compare .handle{
+    position:absolute;
+    top:50%;
+    left:var(--pos,50%);
+    transform:translate(-50%,-50%);
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 2px 10px rgba(0,0,0,.28);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    color:var(--ink);
+    font-size:15px;
+    border:none;
+    cursor:ew-resize;
+    padding:0;
+  }
+  .compare .handle:focus-visible{
+    outline:3px solid var(--accent);
+    outline-offset:2px;
+  }
+  .compare .tag{
+    position:absolute;
+    bottom:14px;
+    background:rgba(255,255,255,.92);
+    color:var(--ink);
+    font-size:12px;
+    letter-spacing:1px;
+    padding:4px 12px;
+    border-radius:3px;
+    opacity:0;
+    transition:opacity .25s;
+    pointer-events:none;
+  }
+  .compare .tag.before{left:14px;}
+  .compare .tag.after{right:14px;}
+  .compare.show-before .tag.before,
+  .compare.show-after .tag.after{opacity:1;}
+
+  figcaption{
+    text-align:center;
+    margin-top:16px;
+    font-size:17px;
+    letter-spacing:3px;
+  }
+  figcaption .en{
+    display:block;
+    font-family:Georgia,serif;
+    font-size:12px;
+    letter-spacing:2px;
+    color:#9a917f;
+    margin-top:2px;
+  }
+
+  footer{
+    border-top:1px solid var(--line);
+    text-align:center;
+    padding:30px 20px 44px;
+    font-size:13px;
+    color:#7a7468;
+    letter-spacing:1px;
+  }
+  footer .brand{
+    font-size:15px;
+    color:var(--ink);
+    letter-spacing:3px;
+    margin-bottom:4px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="en">3D RENDER</p>
+  <h1>3D渲染比對</h1>
+  <p>渲染圖，是我們與業主一同構築藍圖的起點。<br>
+     從模擬到落成，拖曳滑桿，看見設計如何被如實兌現。</p>
+</header>
+
+<main>
+
+  <!-- ===== 案件快速導覽（新增案件時複製一張卡，href 對應案件區塊的 id） ===== -->
+  <nav class="case-nav" aria-label="案件導覽">
+    <a class="case-card" href="#case-zhongtai">
+      <img src="images/zhongtai-living-photo.jpg" alt="忠泰湛-綠境">
+      <span>忠泰湛-綠境</span>
+    </a>
+    <a class="case-card" href="#case-maohai">
+      <img src="images/maohai-living-photo.jpg" alt="豐邑-童趣 × 色彩 × 毛孩">
+      <span>豐邑-童趣 × 色彩 × 毛孩</span>
+    </a>
+    <a class="case-card" href="#case-yujian">
+      <img src="images/yujian-living-photo.jpg" alt="遇見-現代輕法式">
+      <span>遇見-現代輕法式</span>
+    </a>
+  </nav>
+  <!--
+    ★ 換圖方式 ★
+    每個 figure.compare-block 是一組比對。
+    第 1 張 img（before-wrap 內）= 3D 渲染圖
+    第 2 張 img = 完工實景照
+    兩張圖請裁成「相同尺寸、相同視角」效果最好，建議寬 1600px、JPG 80% 品質。
+    把 src 換成你的圖片網址或相對路徑即可，其他都不用改。
+  -->
+  <!-- ===== 忠泰湛-綠境 ===== -->
+  <div class="project-title" id="case-zhongtai">
+    <h2>渲染圖對比｜忠泰湛-綠境</h2>
+    <span class="sub">3D Render vs. Reality</span>
+    <div>
+      <a class="vr-link" href="https://vr.om.cn/view/804977" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="9" ry="3.8"/><path d="M12 3v18"/></svg>
+        720° VR 實境導覽
+      </a>
+    </div>
+  </div>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/zhongtai-living-photo.jpg" alt="客廳 完工實景">
+      <div class="before-wrap">
+        <img src="images/zhongtai-living-render.jpg" alt="客廳 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>客廳<span class="en">LIVING ROOM</span></figcaption>
+  </figure>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/zhongtai-bath-photo.jpg" alt="主浴 完工實景">
+      <div class="before-wrap">
+        <img src="images/zhongtai-bath-render.jpg" alt="主浴 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>主浴<span class="en">MASTER BATHROOM</span></figcaption>
+  </figure>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/zhongtai-guest-photo.jpg" alt="客房 完工實景">
+      <div class="before-wrap">
+        <img src="images/zhongtai-guest-render.jpg" alt="客房 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>客房<span class="en">GUEST ROOM</span></figcaption>
+  </figure>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/zhongtai-master-photo.jpg" alt="主臥 完工實景">
+      <div class="before-wrap">
+        <img src="images/zhongtai-master-render.jpg" alt="主臥 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>主臥<span class="en">MASTER BEDROOM</span></figcaption>
+  </figure>
+
+  <div class="project-title next" id="case-maohai">
+    <h2>渲染圖對比｜豐邑-童趣 × 色彩 × 毛孩</h2>
+    <span class="sub">3D Render vs. Reality</span>
+  </div>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/maohai-living-photo.jpg" alt="客廳 完工實景">
+      <div class="before-wrap">
+        <img src="images/maohai-living-render.jpg" alt="客廳 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>客廳<span class="en">LIVING ROOM</span></figcaption>
+  </figure>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/master-bedroom-photo.jpg" alt="主臥室 完工實景">
+      <div class="before-wrap">
+        <img src="images/master-bedroom-render.jpg" alt="主臥室 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>主臥室<span class="en">MASTER BEDROOM</span></figcaption>
+  </figure>
+
+  <!-- ===== 遇見-現代輕法式 ===== -->
+  <div class="project-title next" id="case-yujian">
+    <h2>渲染圖對比｜遇見-現代輕法式</h2>
+    <span class="sub">3D Render vs. Reality</span>
+    <div>
+      <a class="vr-link" href="https://vr.om.cn/view/881915" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="9" ry="3.8"/><path d="M12 3v18"/></svg>
+        720° VR 實境導覽
+      </a>
+    </div>
+  </div>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/yujian-living-photo.jpg" alt="客廳 完工實景">
+      <div class="before-wrap">
+        <img src="images/yujian-living-render.jpg" alt="客廳 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>客廳<span class="en">LIVING ROOM</span></figcaption>
+  </figure>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/yujian-living2-photo.jpg" alt="客廳電視牆 完工實景">
+      <div class="before-wrap">
+        <img src="images/yujian-living2-render.jpg" alt="客廳電視牆 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>客廳・電視牆<span class="en">LIVING ROOM · TV WALL</span></figcaption>
+  </figure>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/yujian-master-photo.jpg" alt="主臥 完工實景">
+      <div class="before-wrap">
+        <img src="images/yujian-master-render.jpg" alt="主臥 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>主臥<span class="en">MASTER BEDROOM</span></figcaption>
+  </figure>
+
+</main>
+
+<footer>
+  <div class="brand">禹合制所 YUHE DESIGN</div>
+  桃園市桃園區藝文一街86之2號4樓
+</footer>
+
+<script>
+(function(){
+  document.querySelectorAll('.compare').forEach(function(box){
+    var handle = box.querySelector('.handle');
+    var beforeImg = box.querySelector('.before-wrap img');
+    var pos = 50;
+    var dragging = false;
+
+    // before 圖的寬度要跟容器一致，才不會隨裁切變形
+    function syncWidth(){
+      beforeImg.style.width = box.clientWidth + 'px';
+      beforeImg.style.height = 'auto';
+    }
+    window.addEventListener('resize', syncWidth);
+    if (beforeImg.complete) syncWidth(); else beforeImg.addEventListener('load', syncWidth);
+
+    function setPos(p){
+      pos = Math.min(96, Math.max(4, p));
+      box.style.setProperty('--pos', pos + '%');
+      box.classList.toggle('show-before', pos > 60);
+      box.classList.toggle('show-after', pos < 40);
+    }
+
+    function posFromEvent(e){
+      var rect = box.getBoundingClientRect();
+      var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      setPos(x / rect.width * 100);
+    }
+
+    box.addEventListener('pointerdown', function(e){
+      dragging = true;
+      box.setPointerCapture(e.pointerId);
+      posFromEvent(e);
+    });
+    box.addEventListener('pointermove', function(e){
+      if (dragging) posFromEvent(e);
+    });
+    box.addEventListener('pointerup', function(){ dragging = false; });
+    box.addEventListener('pointercancel', function(){ dragging = false; });
+
+    handle.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowLeft'){ setPos(pos - 3); e.preventDefault(); }
+      if (e.key === 'ArrowRight'){ setPos(pos + 3); e.preventDefault(); }
+    });
+
+    setPos(50);
+    syncWidth();
+  });
+})();
+</script>
+
+</body>
+</html>
