@@ -216,7 +216,7 @@
   <input type="hidden" name="from_name" value="禹合制所 網站需求表">
   <input type="hidden" name="redirect" value="https://amyapple0220-creator.github.io/yuhe-design-forms/thanks.html">
   <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
-  <input type="hidden" name="case" value="中和地球村">
+  <input type="hidden" name="案名" value="中和地球村">
 
   <!-- ═══ 步驟 1：基本資料 ═══ -->
   <div class="step on" data-title="基本資料">
@@ -231,14 +231,14 @@
 
       <div class="row">
         <div class="field"><label class="title">男業主 稱呼<span class="req">＊</span></label><input type="text" name="owner1_name" value="AC" required></div>
-        <div class="field"><label class="title">電話<span class="req">＊</span></label><input type="tel" name="owner1_phone" required></div>
-        <div class="field"><label class="title">Line ID</label><input type="text" name="owner1_line"></div>
+        <div class="field"><label class="title">男業主 電話<span class="req">＊</span></label><input type="tel" name="owner1_phone" required></div>
+        <div class="field"><label class="title">男業主 Line ID</label><input type="text" name="owner1_line"></div>
       </div>
 
       <div class="row">
         <div class="field"><label class="title">女業主 稱呼</label><input type="text" name="owner2_name" value="Amber"></div>
-        <div class="field"><label class="title">電話</label><input type="tel" name="owner2_phone"></div>
-        <div class="field"><label class="title">Line ID</label><input type="text" name="owner2_line"></div>
+        <div class="field"><label class="title">女業主 電話</label><input type="tel" name="owner2_phone"></div>
+        <div class="field"><label class="title">女業主 Line ID</label><input type="text" name="owner2_line"></div>
       </div>
 
       <div class="field"><label class="title">Email</label><input type="email" name="email"></div>
@@ -566,9 +566,45 @@
   /* ── 送出：原生表單送出（已驗證信箱），成功導回感謝頁 ── */
   function fieldLabel(el){
     var f=el.closest('.field');
-    if(f){var t=f.querySelector('label.title');if(t)return t.childNodes[0].textContent.trim();}
+    while(f){
+      var t=f.querySelector('label.title');
+      if(t)return t.childNodes[0].textContent.trim();
+      f=f.parentElement?f.parentElement.closest('.field'):null;
+    }
+    var sb=el.closest('.space-block');
+    if(sb){var h3=sb.querySelector('h3');if(h3)return h3.textContent.trim();}
+    var sec=el.closest('section');
+    if(sec){var h2=sec.querySelector('h2');
+      if(h2)return h2.childNodes[0].textContent.trim().replace(/^[一二三四五六七八九十]+、/,'');}
     return el.name;
   }
+  function toChinese(form){
+    var seen={},list=[];
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.type==='hidden'||el.tagName==='BUTTON')return;
+      if(el.name==='botcheck')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=(el.value||'').trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(seen[label]!==undefined){list[seen[label]].v+='、'+v;}
+      else{seen[label]=list.length;list.push({k:label,v:v});}
+    });
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.tagName==='BUTTON')return;
+      if(['access_key','subject','from_name','redirect','案名','botcheck'].indexOf(el.name)>=0)return;
+      el.disabled=true; el.setAttribute('data-cndis','1');
+    });
+    list.forEach(function(p){
+      var h=document.createElement('input');
+      h.type='hidden'; h.name=p.k; h.value=p.v; h.setAttribute('data-cnadd','1');
+      form.appendChild(h);
+    });
+  }
+  window.addEventListener('pageshow',function(){
+    document.querySelectorAll('[data-cndis]').forEach(function(el){el.disabled=false;el.removeAttribute('data-cndis');});
+    document.querySelectorAll('[data-cnadd]').forEach(function(el){el.remove();});
+  });
+
   function buildSummary(form){
     var lines=['【'+document.title.replace(/.*｜/,'')+'】'],seen={};
     Array.prototype.forEach.call(form.elements,function(el){
@@ -606,6 +642,7 @@
         }
       }
     }
+    toChinese(this);
     var b=document.getElementById('btnSubmit');
     b.textContent='送出中…';
   });
@@ -613,6 +650,6 @@
   show(0);
 })();
 </script>
-<div style="text-align:center;font-size:10.5px;color:#b5ac9a;padding:0 0 20px;">表單系統版本 v3（Web3Forms）</div>
+<div style="text-align:center;font-size:10.5px;color:#b5ac9a;padding:0 0 20px;">表單系統版本 v4（中文信件）</div>
 </body>
 </html>
