@@ -96,6 +96,40 @@
   }
   .vr-link svg{width:18px; height:18px;}
 
+  html{scroll-behavior:smooth;}
+  .case-nav{
+    display:flex;
+    gap:16px;
+    overflow-x:auto;
+    padding:6px 2px 18px;
+    margin-bottom:26px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .case-card{
+    flex:0 0 auto;
+    width:190px;
+    text-decoration:none;
+    color:var(--ink);
+  }
+  .case-card img{
+    display:block;
+    width:100%;
+    aspect-ratio:4/3;
+    object-fit:cover;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .case-card span{
+    display:block;
+    margin-top:8px;
+    font-size:13px;
+    letter-spacing:1px;
+    text-align:center;
+  }
+  .case-card:hover img{
+    box-shadow:0 3px 12px rgba(0,0,0,.15);
+  }
+
   /* ===== 比對滑桿元件 ===== */
   figure.compare-block{
     margin:0 0 56px;
@@ -225,11 +259,17 @@
 
 <main>
 
-  <div class="project-title">
-    <h2>渲染圖對比｜童趣 × 色彩 × 毛孩</h2>
-    <span class="sub">3D Render vs. Reality</span>
-  </div>
-
+  <!-- ===== 案件快速導覽（新增案件時複製一張卡，href 對應案件區塊的 id） ===== -->
+  <nav class="case-nav" aria-label="案件導覽">
+    <a class="case-card" href="#case-zhongtai">
+      <img src="images/zhongtai-living-photo.jpg" alt="忠泰湛-綠境">
+      <span>忠泰湛-綠境</span>
+    </a>
+    <a class="case-card" href="#case-maohai">
+      <img src="images/maohai-living-photo.jpg" alt="童趣 × 色彩 × 毛孩">
+      <span>童趣 × 色彩 × 毛孩</span>
+    </a>
+  </nav>
   <!--
     ★ 換圖方式 ★
     每個 figure.compare-block 是一組比對。
@@ -238,37 +278,8 @@
     兩張圖請裁成「相同尺寸、相同視角」效果最好，建議寬 1600px、JPG 80% 品質。
     把 src 換成你的圖片網址或相對路徑即可，其他都不用改。
   -->
-
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/maohai-living-photo.jpg" alt="客廳 完工實景">
-      <div class="before-wrap">
-        <img src="images/maohai-living-render.jpg" alt="客廳 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
-    </div>
-    <figcaption>客廳<span class="en">LIVING ROOM</span></figcaption>
-  </figure>
-
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/master-bedroom-photo.jpg" alt="主臥室 完工實景">
-      <div class="before-wrap">
-        <img src="images/master-bedroom-render.jpg" alt="主臥室 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
-    </div>
-    <figcaption>主臥室<span class="en">MASTER BEDROOM</span></figcaption>
-  </figure>
-
-  <!-- ===== 案件二：忠泰湛-綠境 ===== -->
-  <div class="project-title next">
+  <!-- ===== 忠泰湛-綠境 ===== -->
+  <div class="project-title" id="case-zhongtai">
     <h2>渲染圖對比｜忠泰湛-綠境</h2>
     <span class="sub">3D Render vs. Reality</span>
     <div>
@@ -335,6 +346,38 @@
     <figcaption>主臥<span class="en">MASTER BEDROOM</span></figcaption>
   </figure>
 
+  <div class="project-title next" id="case-maohai">
+    <h2>渲染圖對比｜童趣 × 色彩 × 毛孩</h2>
+    <span class="sub">3D Render vs. Reality</span>
+  </div>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/maohai-living-photo.jpg" alt="客廳 完工實景">
+      <div class="before-wrap">
+        <img src="images/maohai-living-render.jpg" alt="客廳 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>客廳<span class="en">LIVING ROOM</span></figcaption>
+  </figure>
+
+  <figure class="compare-block">
+    <div class="compare" style="--pos:50%">
+      <img src="images/master-bedroom-photo.jpg" alt="主臥室 完工實景">
+      <div class="before-wrap">
+        <img src="images/master-bedroom-render.jpg" alt="主臥室 3D渲染圖" aria-hidden="true">
+      </div>
+      <div class="divider" aria-hidden="true"></div>
+      <span class="tag before">3D渲染 Before</span>
+      <span class="tag after">實景 After</span>
+      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+    </div>
+    <figcaption>主臥室<span class="en">MASTER BEDROOM</span></figcaption>
+  </figure>
 
 </main>
 
