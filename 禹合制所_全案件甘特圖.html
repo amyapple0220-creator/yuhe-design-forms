@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜全案件甘特圖</title>
+<style>
+  :root{
+    --bg:#efe9dc;
+    --card:#fdfbf6;
+    --card2:#f2ecdf;
+    --line:#e2dac8;
+    --gold:#b3873e;
+    --gold-dim:#caa96a;
+    --gold-bg:#f5ecd9;
+    --gold-ink:#8a6a24;
+    --text:#3d382e;
+    --muted:#8f8776;
+    --red:#b85c48;
+    --red-bg:#f7e5e0;
+    --green:#588157;
+    --green-bg:#e7efe4;
+    --green-ink:#4a7048;
+    --blue:#4a7db8;
+    --blue-bg:#e3ecf6;
+    --blue-ink:#3f6ba3;
+    --shadow:0 1px 5px rgba(90,80,60,.09);
+    --row-h:64px;
+    --col-w:38px;
+    --left-w:190px;
+    --radius:12px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:20px 14px 90px;}
+
+  .crumb{font-size:12px; color:var(--muted); letter-spacing:2px; margin-bottom:2px;}
+  .head h1{
+    font-size:26px; margin:0; letter-spacing:2px;
+    font-family:"Noto Serif TC","Songti TC",serif; font-weight:700;
+  }
+  .head .sub{font-size:13px; color:var(--muted); margin:2px 0 0 2px;}
+
+  /* ── 案件切換 chips ── */
+  .chips{display:flex; gap:8px; overflow-x:auto; padding:14px 0 4px; -webkit-overflow-scrolling:touch;}
+  .chip{
+    flex:none; cursor:pointer; white-space:nowrap;
+    font-size:13.5px; font-weight:600; letter-spacing:1px;
+    padding:8px 16px; border-radius:99px;
+    background:var(--card); color:var(--muted); border:1px solid var(--line);
+    box-shadow:var(--shadow);
+  }
+  .chip.on{background:var(--text); color:#f5efe2; border-color:var(--text);}
+  .chip .n{font-weight:400; opacity:.75; margin-left:4px; font-size:12px;}
+
+  /* ── 摘要卡 ── */
+  .summary{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px 18px; margin:12px 0 14px; box-shadow:var(--shadow);
+    display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .summary .t{font-size:13px; color:var(--muted); letter-spacing:1px;}
+  .summary .v{font-size:22px; font-weight:800;}
+  .summary .v small{font-size:13px; font-weight:500; color:var(--muted);}
+  .tag{
+    font-size:11px; padding:1px 8px; border-radius:6px; white-space:nowrap;
+    background:var(--card2); color:var(--muted); border:1px solid var(--line);
+  }
+  .tag.build{background:var(--gold-bg); color:var(--gold-ink); border-color:var(--gold-dim);}
+  .tag.design{background:var(--blue-bg); color:var(--blue-ink); border-color:#a9c2de;}
+  .tag.finish{background:var(--green-bg); color:var(--green-ink); border-color:#b2c9ae;}
+
+  /* ── 甘特圖 ── */
+  .gantt-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    overflow:hidden; box-shadow:var(--shadow);
+  }
+  .gantt{display:flex; align-items:stretch;}
+  .g-left{flex:none; width:var(--left-w); border-right:1px solid var(--line); background:var(--card); z-index:2;}
+  .g-right{flex:1; min-width:0; overflow-x:auto; overscroll-behavior-x:contain;}
+  .g-canvas{position:relative;}
+
+  .g-head{height:92px; border-bottom:1px solid var(--line);}
+  .g-left .g-head{
+    display:flex; align-items:flex-end; padding:0 12px 8px;
+    font-size:12px; color:var(--muted); letter-spacing:1px;
+  }
+  .month-row{position:absolute; top:0; left:0; height:26px;}
+  .month-cell{
+    position:absolute; top:4px; font-size:12px; font-weight:700; color:var(--text);
+    border-left:1px solid var(--line); height:20px; white-space:nowrap;
+    display:flex; overflow:hidden;
+  }
+  .month-cell span{position:sticky; left:8px; padding-left:8px;}
+  .day-row{position:absolute; top:26px; left:0; height:28px;}
+  .day-cell{
+    position:absolute; width:var(--col-w); text-align:center;
+    font-size:11px; color:var(--muted); line-height:26px;
+  }
+  .day-cell.weekend{color:var(--red);}
+  .day-cell.today{color:#f5efe2; font-weight:800; z-index:1;}
+  .day-cell.today::before{
+    content:""; position:absolute; left:50%; top:2px; transform:translateX(-50%);
+    width:24px; height:22px; background:var(--text); border-radius:7px; z-index:-1;
+  }
+
+  .g-row{
+    height:var(--row-h); border-bottom:1px solid var(--line);
+    display:flex; flex-direction:column; justify-content:center;
+    padding:0 12px; cursor:pointer;
+  }
+  .g-row:hover{background:var(--card2);}
+  .g-row .name{
+    font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    display:flex; align-items:center; gap:6px;
+  }
+  .dot{width:7px; height:7px; border-radius:50%; background:var(--gold); flex:none;}
+  .g-row .meta{display:flex; gap:5px; margin-top:3px; flex-wrap:nowrap; overflow:hidden; align-items:center;}
+  .g-row .meta .dates{font-size:11px; color:var(--muted); white-space:nowrap;}
+
+  .grid-row{height:var(--row-h); border-bottom:1px solid var(--line);}
+  .v-grid{position:absolute; top:0; bottom:0; width:1px; background:var(--line); opacity:.55;}
+  .weekend-band{position:absolute; top:92px; bottom:0; background:rgba(61,56,46,.04);}
+  .today-line{
+    position:absolute; top:92px; bottom:0; width:2px; background:var(--gold); opacity:.9; z-index:1;
+  }
+
+  /* ── 里程碑節點 ── */
+  .ms-chip{
+    position:absolute; z-index:2; white-space:nowrap;
+    font-size:10.5px; font-weight:700; color:var(--gold-ink);
+    background:var(--gold-bg); border:1px solid var(--gold-dim);
+    border-radius:6px; padding:0 7px; line-height:1.8;
+  }
+  .ms-chip.done{color:var(--green-ink); background:var(--green-bg); border-color:#b2c9ae;}
+  .ms-line{
+    position:absolute; top:92px; bottom:0; width:0;
+    border-left:1.5px dashed var(--gold-dim); opacity:.7;
+  }
+  .ms-mark{
+    position:absolute; z-index:2; width:10px; height:10px;
+    background:var(--gold); transform:rotate(45deg);
+    border-radius:2px; cursor:default;
+  }
+  .ms-mark.done{background:var(--green);}
+
+  .g-bar{
+    position:absolute; height:34px; border-radius:9px; z-index:1;
+    border:1.5px solid var(--gold-dim); background:var(--gold-bg); overflow:hidden;
+    display:flex; align-items:center;
+  }
+  .g-bar .fill{position:absolute; left:0; top:0; bottom:0; background:var(--gold); opacity:.92;}
+  .g-bar .txt{
+    position:relative; z-index:1; font-size:11.5px; font-weight:700; color:#fff;
+    padding:0 8px; white-space:nowrap; text-shadow:0 1px 1px rgba(60,45,10,.25);
+  }
+  .g-bar .txt.on-dark{color:var(--text); text-shadow:none;}
+  .g-bar.done{border-color:#b2c9ae; background:var(--green-bg);}
+  .g-bar.done .fill{background:var(--green); opacity:.88;}
+  .g-bar.plan{border-style:dashed; opacity:.85;}
+  .g-bar.design-bar{border-color:#a9c2de; background:var(--blue-bg);}
+  .g-bar.design-bar .fill{background:var(--blue);}
+
+  .note{
+    font-size:12.5px; color:var(--muted); margin:12px 2px 0; line-height:1.7;
+  }
+  .note b{color:var(--gold-ink); font-weight:700;}
+
+  @media(max-width:520px){
+    :root{--left-w:142px; --col-w:34px; --row-h:60px;}
+    .head h1{font-size:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crumb">全案件時間表</div>
+  <div class="head">
+    <h1>禹合制所｜全案件甘特圖</h1>
+    <div class="sub" id="updatedAt"></div>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="gantt-card">
+    <div class="gantt">
+      <div class="g-left" id="gLeft"></div>
+      <div class="g-right" id="gRight"><div class="g-canvas" id="gCanvas"></div></div>
+    </div>
+  </div>
+
+  <div class="note" id="note"></div>
+
+</div>
+
+<script>
+(function(){
+  /* ═══════════════════════════════════════════════════════════
+     資料快照（2026/07/17 依「禹合真正營運版_V5_3_MASTER」整理）
+     ── 更新方式 ──
+     A. 直接編輯下方 DATA（工項 t:[名稱, 開始, 結束]，日期 MM-DD；
+        里程碑 m:[日期, 標籤]）
+     B. 進階：把總表「工程進度表」分頁發布為 CSV（檔案→共用→發布到網路，
+        欄位需為 案件,工項,開始日,結束日,備註），把網址填入下方
+        SHEET_CSV_URL，頁面會自動抓最新工項覆蓋同名案件的快照。
+     ═══════════════════════════════════════════════════════════ */
+  var SHEET_CSV_URL='';
+
+  var Y='2026-';
+  var DATA=[
+    {name:'豐邑氧森A1', type:'finish', typeTxt:'收尾期',
+     t:[
+       ['缺失修繕期','07-13','07-17'],
+       ['正式交屋','07-18']
+     ],
+     m:[['07-18','正式交屋']]},
+
+    {name:'鉅力高宇', type:'build', typeTxt:'施工中',
+     t:[
+       ['保護工程','06-12'],
+       ['空調工程','06-17','06-18'],
+       ['水電工程前置','06-22','06-26'],
+       ['木作工程','06-29','07-17'],
+       ['油漆工程','07-20','08-14'],
+       ['系統櫃討論/丈量/下單','07-20','07-29'],
+       ['系統櫃工廠製作','07-30','08-16'],
+       ['系統櫃進料','08-17'],
+       ['系統櫃安裝','08-18','08-26'],
+       ['玻璃＋鋁框門安裝','08-27','08-28'],
+       ['壁紙施工','08-31','09-02'],
+       ['空調收尾','09-03','09-04'],
+       ['水電收尾','09-07','09-11'],
+       ['玄關地板施工','09-14'],
+       ['IKEA 安裝','09-15'],
+       ['粗清＋細清','09-16','09-17'],
+       ['矽利康工程','09-18'],
+       ['窗簾/現成家具安裝','09-19'],
+       ['Deco＋拍攝','09-20'],
+       ['交屋前點檢/缺失改善','09-21','09-23'],
+       ['正式交屋','09-24']
+     ],
+     m:[
+       ['07-17','木工退場會勘'],
+       ['07-20','收油漆款 34.5萬'],
+       ['07-29','系統櫃下單截止'],
+       ['08-14','油漆退場會勘'],
+       ['09-22','收尾款 11.5萬'],
+       ['09-24','正式交屋']
+     ]},
+
+    {name:'合新合心', type:'build', typeTxt:'施工中',
+     t:[
+       ['保護工程','06-15'],
+       ['拆除＋清運','06-16','06-18'],
+       ['空調配管','06-22','06-24'],
+       ['水電配管','06-25','07-01'],
+       ['木作工程(含鋁框軌道)','07-02','08-05'],
+       ['油漆工程','08-06','09-01'],
+       ['玻璃＋壁紙施工','09-02'],
+       ['燈具/開關/衛浴五金','09-03','09-09'],
+       ['空調收尾','09-10','09-11'],
+       ['地板施工(木地板&玄關)','09-11','09-15'],
+       ['IKEA 安裝','09-16'],
+       ['粗清＋細清','09-17','09-18'],
+       ['矽利康工程','09-19'],
+       ['窗簾安裝','09-21'],
+       ['家具家電進場','09-22','09-23'],
+       ['DECO＆完工拍攝','09-29'],
+       ['收尾點檢','09-30'],
+       ['正式交屋','10-01']
+     ],
+     m:[
+       ['08-06','出油漆請款單 36.6萬'],
+       ['09-30','完工目標'],
+       ['10-01','正式交屋']
+     ]},
+
+    {name:'台北華府', type:'build', typeTxt:'泥作中',
+     t:[
+       ['抹牆面粗底','07-14','07-16'],
+       ['牆面防水＋地板基礎防水','07-17'],
+       ['抹地板粗底','07-20','07-21'],
+       ['地板塗抹防水','07-22'],
+       ['防水養護','07-23','07-27'],
+       ['試水','07-28'],
+       ['貼磁磚','07-29','08-04'],
+       ['木工進場','08-03']
+     ],
+     m:[
+       ['07-20','出調整版後3D圖'],
+       ['07-20','現場覆量地磚'],
+       ['07-27','立面圖交付期限'],
+       ['08-03','木工進場']
+     ]},
+
+    {name:'鉅力高宇C-2F', type:'design', typeTxt:'設計中',
+     t:[
+       ['簽設計約＆請一期款','07-17'],
+       ['3D發想・設計規劃(內部)','07-24'],
+       ['內部圖面與報價準備','08-21'],
+       ['預計工程期間(暫)','09-15','12-15']
+     ],
+     m:[
+       ['07-17','簽約＆一期款'],
+       ['07-31','第一次3D提案'],
+       ['08-14','二次3D修改＋材質挑選'],
+       ['08-31','工程報價＋簽約'],
+       ['09-07','社區開工申請'],
+       ['09-15','吉日開工']
+     ]},
+
+    {name:'遠雄仰森', type:'design', typeTxt:'設計中',
+     t:[
+       ['驗屋＋現場丈量','07-20']
+     ],
+     m:[
+       ['07-20','13:45 驗屋＋丈量'],
+       ['09-01','預計9月進場(暫)']
+     ]},
+
+    {name:'忠泰湛B2-22F', type:'design', typeTxt:'設計中',
+     t:[
+       ['平配＋簡報內部作業','07-13','07-25']
+     ],
+     m:[
+       ['07-26','14:00 平配＋簡報提案'],
+       ['09-21','預計進場(暫)']
+     ]}
+  ];
+
+  /* ── 日期工具 ── */
+  var COL=38, ROW=64, HEAD=92;
+  function readCssVars(){
+    var cs=getComputedStyle(document.documentElement);
+    COL=parseInt(cs.getPropertyValue('--col-w'))||38;
+    ROW=parseInt(cs.getPropertyValue('--row-h'))||64;
+  }
+  function parse(s){
+    var p=s.replace(/\//g,'-').split('-');
+    if(p.length===2)p.unshift('2026');
+    return new Date(+p[0],+p[1]-1,+p[2]);
+  }
+  function addDays(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x;}
+  function dayDiff(a,b){return Math.round((b-a)/864e5);}
+  var today=new Date(); today=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+
+  /* 內部正規化：tasks→{name,s,e}、ms→{d,label} */
+  DATA.forEach(function(c){
+    c.tasks=(c.t||[]).map(function(r){
+      return {name:r[0], s:parse(Y+r[1]), e:parse(Y+(r[2]||r[1]))};
+    });
+    c.ms=(c.m||[]).map(function(r){return {d:parse(Y+r[0]), label:r[1]};});
+    delete c.t; delete c.m;
+  });
+
+  /* ── 可選：從發布的 CSV 覆蓋工項 ── */
+  function fetchCsv(){
+    if(!SHEET_CSV_URL)return Promise.resolve();
+    return fetch(SHEET_CSV_URL).then(function(r){return r.text();}).then(function(txt){
+      var byCase={};
+      txt.split(/\r?\n/).slice(1).forEach(function(line){
+        if(!line.trim())return;
+        var cols=line.split(',');
+        if(cols.length<4)return;
+        var cs=cols[0].trim(), nm=cols[1].trim(), s=cols[2].trim(), e=(cols[3]||'').trim();
+        if(!cs||!nm||!s)return;
+        (byCase[cs]=byCase[cs]||[]).push({name:nm, s:parse(s), e:parse(e||s)});
+      });
+      Object.keys(byCase).forEach(function(cs){
+        var c=DATA.find(function(x){return x.name===cs;});
+        if(c)c.tasks=byCase[cs];
+        else DATA.push({name:cs,type:'build',typeTxt:'施工中',tasks:byCase[cs],ms:[]});
+      });
+    }).catch(function(){/* 抓不到就用內建快照 */});
+  }
+
+  /* ── 進度（依日期自動推算）── */
+  function progOf(s,e){
+    if(e<today)return 100;
+    if(s>today)return 0;
+    var total=dayDiff(s,e)+1, done=dayDiff(s,today)+0.5;
+    return Math.min(99,Math.max(5,Math.round(done/total*100)));
+  }
+
+  function $(id){return document.getElementById(id);}
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+  var cur=-1; /* -1 = 全部案件總覽 */
+
+  function renderChips(){
+    var h='<div class="chip'+(cur===-1?' on':'')+'" data-i="-1">全部案件<span class="n">'+DATA.length+'</span></div>';
+    DATA.forEach(function(c,i){
+      h+='<div class="chip'+(cur===i?' on':'')+'" data-i="'+i+'">'+esc(c.name)+'</div>';
+    });
+    $('chips').innerHTML=h;
+  }
+  $('chips').addEventListener('click',function(e){
+    var el=e.target.closest('.chip'); if(!el)return;
+    cur=+el.dataset.i; render();
+  });
+
+  function caseRange(c){
+    var min=null,max=null;
+    c.tasks.forEach(function(t){
+      if(!min||t.s<min)min=t.s;
+      if(!max||t.e>max)max=t.e;
+    });
+    c.ms.forEach(function(m){
+      if(!min||m.d<min)min=m.d;
+      if(!max||m.d>max)max=m.d;
+    });
+    return {min:min||today, max:max||today};
+  }
+  function fmtMD(d){return (d.getMonth()+1)+'/'+d.getDate();}
+
+  function header(t0,days){
+    var h='<div class="month-row">';
+    var d=new Date(t0), t1=addDays(t0,days-1);
+    while(d<=t1){
+      var mEnd=new Date(d.getFullYear(),d.getMonth()+1,0);
+      if(mEnd>t1)mEnd=t1;
+      var x=dayDiff(t0,d)*COL, mw=(dayDiff(d,mEnd)+1)*COL;
+      h+='<div class="month-cell" style="left:'+x+'px;width:'+mw+'px"><span>'+d.getFullYear()+'年'+(d.getMonth()+1)+'月</span></div>';
+      d=new Date(d.getFullYear(),d.getMonth()+1,1);
+    }
+    h+='</div><div class="day-row">';
+    for(var i=0;i<days;i++){
+      var dd=addDays(t0,i), cls='day-cell';
+      if(dd.getDay()===0||dd.getDay()===6)cls+=' weekend';
+      if(dd.getTime()===today.getTime())cls+=' today';
+      h+='<div class="'+cls+'" style="left:'+i*COL+'px">'+dd.getDate()+'</div>';
+    }
+    h+='</div>';
+    for(var i=0;i<days;i++){
+      var dd=addDays(t0,i);
+      if(dd.getDay()===0||dd.getDay()===6)
+        h+='<div class="weekend-band" style="left:'+i*COL+'px;width:'+COL+'px"></div>';
+      h+='<div class="v-grid" style="left:'+i*COL+'px;top:'+HEAD+'px;bottom:0"></div>';
+    }
+    return h;
+  }
+  function todayLine(t0){
+    var tx=dayDiff(t0,today)*COL+COL/2;
+    return {x:tx, html:'<div class="today-line" style="left:'+tx+'px"></div>'};
+  }
+  function scrollToToday(tx){
+    var gRight=$('gRight');
+    var target=tx-gRight.clientWidth*0.3;
+    if(target>0)gRight.scrollLeft=target;
+  }
+
+  /* ── 總覽（每案一列）── */
+  function renderOverview(){
+    var min=null,max=null;
+    DATA.forEach(function(c){
+      var r=caseRange(c);
+      if(!min||r.min<min)min=r.min;
+      if(!max||r.max>max)max=r.max;
+    });
+    if(today<min)min=today; if(today>max)max=today;
+    var t0=addDays(min,-2), t1=addDays(max,4);
+    var days=dayDiff(t0,t1)+1, W=days*COL;
+
+    var lh='<div class="g-head">案件</div>';
+    DATA.forEach(function(c,i){
+      var r=caseRange(c);
+      lh+='<div class="g-row" data-i="'+i+'">'
+        +'<div class="name"><span class="dot"></span>'+esc(c.name)+'</div>'
+        +'<div class="meta"><span class="tag '+c.type+'">'+esc(c.typeTxt)+'</span>'
+        +'<span class="dates">'+fmtMD(r.min)+' – '+fmtMD(r.max)+'</span></div>'
+        +'</div>';
+    });
+    $('gLeft').innerHTML=lh;
+
+    var h=header(t0,days);
+    var tl=todayLine(t0); h+=tl.html;
+    DATA.forEach(function(c,i){
+      var top=HEAD+i*ROW;
+      h+='<div class="grid-row" style="position:absolute;left:0;width:'+W+'px;top:'+top+'px"></div>';
+      var r=caseRange(c);
+      var x=dayDiff(t0,r.min)*COL+2, w=(dayDiff(r.min,r.max)+1)*COL-4;
+      var p=progOf(r.min,r.max);
+      var cls='g-bar'+(p>=100?' done':'')+(c.type==='design'?' design-bar':'');
+      h+='<div class="'+cls+'" data-i="'+i+'" style="left:'+x+'px;width:'+w+'px;top:'+(top+(ROW-34)/2)+'px;cursor:pointer">'
+        +'<div class="fill" style="width:'+p+'%"></div>'
+        +'<span class="txt'+(p<40?' on-dark':'')+'">'+esc(c.name)+' '+p+'%</span>'
+        +'</div>';
+      c.ms.forEach(function(m){
+        var mx=dayDiff(t0,m.d)*COL+COL/2-5;
+        var done=m.d<today;
+        h+='<div class="ms-mark'+(done?' done':'')+'" style="left:'+mx+'px;top:'+(top+ROW-14)+'px" title="'+esc(fmtMD(m.d)+' '+m.label)+'"></div>';
+      });
+    });
+    var canvas=$('gCanvas');
+    canvas.style.width=W+'px';
+    canvas.style.height=(HEAD+DATA.length*ROW)+'px';
+    canvas.innerHTML=h;
+    scrollToToday(tl.x);
+
+    $('summary').innerHTML=
+      '<div><div class="t">進行中案件</div><div class="v">'+DATA.length+' <small>案</small></div></div>'
+      +'<div><div class="t">今日</div><div class="v">'+fmtMD(today)+' <small>星期'+'日一二三四五六'[today.getDay()]+'</small></div></div>'
+      +'<div><div class="t">說明</div><div class="v" style="font-size:13px;font-weight:500;color:var(--muted)">點案件列或長條可看單案細項<br>◆ 里程碑（滑過可看說明）</div></div>';
+    $('note').innerHTML='<b>金色長條</b>＝工程案　<b>藍色長條</b>＝設計案　◆＝里程碑（會勘/請款/交付/交屋）　進度％依日期自動推算。';
+  }
+
+  /* ── 單案細項 ── */
+  function renderCase(c){
+    var tasks=c.tasks.slice().sort(function(a,b){return a.s-b.s;});
+    var r=caseRange(c);
+    var min=r.min, max=r.max;
+    if(today<min)min=today; if(today>max)max=today;
+    var t0=addDays(min,-3), t1=addDays(max,7);
+    var days=dayDiff(t0,t1)+1, W=days*COL;
+
+    var lh='<div class="g-head">工項 / 節點</div>';
+    tasks.forEach(function(t){
+      var p=progOf(t.s,t.e);
+      var st=p>=100?'完成':(p>0?'進行中':'未開始');
+      lh+='<div class="g-row">'
+        +'<div class="name"><span class="dot"></span>'+esc(t.name)+'</div>'
+        +'<div class="meta"><span class="tag'+(p>=100?' finish':(p>0?' build':''))+'">'+st+'</span>'
+        +'<span class="dates">'+fmtMD(t.s)+' – '+fmtMD(t.e)+'</span></div>'
+        +'</div>';
+    });
+    $('gLeft').innerHTML=lh;
+
+    var h=header(t0,days);
+    /* 里程碑虛線與標籤（同日重疊時自動錯開兩層） */
+    var lastX=-999, lane=0;
+    c.ms.slice().sort(function(a,b){return a.d-b.d;}).forEach(function(m){
+      var x=dayDiff(t0,m.d)*COL+COL/2;
+      lane=(x-lastX<90)?(lane+1)%2:0;
+      lastX=x;
+      var done=m.d<today;
+      h+='<div class="ms-line" style="left:'+x+'px"></div>'
+        +'<div class="ms-chip'+(done?' done':'')+'" style="left:'+(x-8)+'px;top:'+(44+lane*22)+'px">'
+        +(done?'✓ ':'★ ')+esc(m.label)+'</div>';
+    });
+    var tl=todayLine(t0); h+=tl.html;
+    tasks.forEach(function(t,idx){
+      var top=HEAD+idx*ROW;
+      h+='<div class="grid-row" style="position:absolute;left:0;width:'+W+'px;top:'+top+'px"></div>';
+      var x=dayDiff(t0,t.s)*COL+2, w=(dayDiff(t.s,t.e)+1)*COL-4;
+      var p=progOf(t.s,t.e);
+      var cls='g-bar'+(p>=100?' done':'')+(/預計|暫/.test(t.name)?' plan':'');
+      h+='<div class="'+cls+'" style="left:'+x+'px;width:'+w+'px;top:'+(top+(ROW-34)/2)+'px">'
+        +'<div class="fill" style="width:'+p+'%"></div>'
+        +'<span class="txt'+(p<40?' on-dark':'')+'">'+esc(t.name)+(p>0&&p<100?' '+p+'%':'')+'</span>'
+        +'</div>';
+    });
+    var canvas=$('gCanvas');
+    canvas.style.width=W+'px';
+    canvas.style.height=(HEAD+tasks.length*ROW)+'px';
+    canvas.innerHTML=h;
+    scrollToToday(tl.x);
+
+    var p=progOf(r.min,r.max);
+    $('summary').innerHTML=
+      '<div><div class="t">'+esc(c.name)+'</div><div class="v"><span class="tag '+c.type+'" style="font-size:13px;vertical-align:middle">'+esc(c.typeTxt)+'</span></div></div>'
+      +'<div><div class="t">期間</div><div class="v" style="font-size:16px">'+fmtMD(r.min)+' – '+fmtMD(r.max)+'</div></div>'
+      +'<div><div class="t">時程進度（依日期）</div><div class="v">'+p+' <small>%</small></div></div>'
+      +'<div><div class="t">工項</div><div class="v">'+tasks.length+' <small>項</small></div></div>';
+    $('note').innerHTML='★＝未到的里程碑　✓＝已過的里程碑　虛線框長條＝暫定/預計時程　進度％依日期自動推算，實際以現場為準。';
+  }
+
+  function render(){
+    readCssVars();
+    renderChips();
+    if(cur===-1)renderOverview(); else renderCase(DATA[cur]);
+  }
+
+  $('gLeft').addEventListener('click',function(e){
+    var el=e.target.closest('.g-row');
+    if(el&&el.dataset.i!==undefined&&cur===-1){cur=+el.dataset.i; render();}
+  });
+  $('gCanvas').addEventListener('click',function(e){
+    var el=e.target.closest('.g-bar');
+    if(el&&el.dataset.i!==undefined&&cur===-1){cur=+el.dataset.i; render();}
+  });
+
+  var wk=['日','一','二','三','四','五','六'];
+  $('updatedAt').textContent='今日 '+String(today.getMonth()+1).padStart(2,'0')+'/'+String(today.getDate()).padStart(2,'0')+' ・ 星期'+wk[today.getDay()]+'　（資料快照 2026/07/17）';
+
+  window.addEventListener('resize',render);
+
+  fetchCsv().then(render);
+})();
+</script>
+</body>
+</html>
