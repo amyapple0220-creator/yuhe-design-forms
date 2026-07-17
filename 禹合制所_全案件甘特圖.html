@@ -6,19 +6,25 @@
 <title>禹合制所 YUHE DESIGN｜全案件甘特圖</title>
 <style>
   :root{
-    --bg:#161512;
-    --card:#201e19;
-    --card2:#282520;
-    --line:#3a362d;
-    --yellow:#f2c230;
-    --yellow-dim:#8a7530;
-    --text:#f0ede6;
-    --muted:#9a958a;
-    --red:#ff6b6b;
-    --red-bg:#3a2222;
-    --green:#67c587;
-    --green-bg:#22352a;
-    --blue:#7aa8e8;
+    --bg:#efe9dc;
+    --card:#fdfbf6;
+    --card2:#f2ecdf;
+    --line:#e2dac8;
+    --gold:#b3873e;
+    --gold-dim:#caa96a;
+    --gold-bg:#f5ecd9;
+    --gold-ink:#8a6a24;
+    --text:#3d382e;
+    --muted:#8f8776;
+    --red:#b85c48;
+    --red-bg:#f7e5e0;
+    --green:#588157;
+    --green-bg:#e7efe4;
+    --green-ink:#4a7048;
+    --blue:#4a7db8;
+    --blue-bg:#e3ecf6;
+    --blue-ink:#3f6ba3;
+    --shadow:0 1px 5px rgba(90,80,60,.09);
     --row-h:64px;
     --col-w:38px;
     --left-w:190px;
@@ -35,7 +41,10 @@
   .wrap{max-width:1080px; margin:0 auto; padding:20px 14px 90px;}
 
   .crumb{font-size:12px; color:var(--muted); letter-spacing:2px; margin-bottom:2px;}
-  .head h1{font-size:26px; margin:0; letter-spacing:1px;}
+  .head h1{
+    font-size:26px; margin:0; letter-spacing:2px;
+    font-family:"Noto Serif TC","Songti TC",serif; font-weight:700;
+  }
   .head .sub{font-size:13px; color:var(--muted); margin:2px 0 0 2px;}
 
   /* ── 案件切換 chips ── */
@@ -45,14 +54,15 @@
     font-size:13.5px; font-weight:600; letter-spacing:1px;
     padding:8px 16px; border-radius:99px;
     background:var(--card); color:var(--muted); border:1px solid var(--line);
+    box-shadow:var(--shadow);
   }
-  .chip.on{background:var(--yellow); color:#1c1a14; border-color:var(--yellow);}
+  .chip.on{background:var(--text); color:#f5efe2; border-color:var(--text);}
   .chip .n{font-weight:400; opacity:.75; margin-left:4px; font-size:12px;}
 
   /* ── 摘要卡 ── */
   .summary{
     background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-    padding:16px 18px; margin:12px 0 14px;
+    padding:16px 18px; margin:12px 0 14px; box-shadow:var(--shadow);
     display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
   }
   .summary .t{font-size:13px; color:var(--muted); letter-spacing:1px;}
@@ -62,14 +72,14 @@
     font-size:11px; padding:1px 8px; border-radius:6px; white-space:nowrap;
     background:var(--card2); color:var(--muted); border:1px solid var(--line);
   }
-  .tag.build{background:#3a331d; color:var(--yellow); border-color:var(--yellow-dim);}
-  .tag.design{background:#20304a; color:var(--blue); border-color:#3a5580;}
-  .tag.finish{background:var(--green-bg); color:var(--green); border-color:#3a5c46;}
+  .tag.build{background:var(--gold-bg); color:var(--gold-ink); border-color:var(--gold-dim);}
+  .tag.design{background:var(--blue-bg); color:var(--blue-ink); border-color:#a9c2de;}
+  .tag.finish{background:var(--green-bg); color:var(--green-ink); border-color:#b2c9ae;}
 
   /* ── 甘特圖 ── */
   .gantt-card{
     background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-    overflow:hidden;
+    overflow:hidden; box-shadow:var(--shadow);
   }
   .gantt{display:flex; align-items:stretch;}
   .g-left{flex:none; width:var(--left-w); border-right:1px solid var(--line); background:var(--card); z-index:2;}
@@ -93,11 +103,11 @@
     position:absolute; width:var(--col-w); text-align:center;
     font-size:11px; color:var(--muted); line-height:26px;
   }
-  .day-cell.weekend{color:#c96a5a;}
-  .day-cell.today{color:#1c1a14; font-weight:800; z-index:1;}
+  .day-cell.weekend{color:var(--red);}
+  .day-cell.today{color:#f5efe2; font-weight:800; z-index:1;}
   .day-cell.today::before{
     content:""; position:absolute; left:50%; top:2px; transform:translateX(-50%);
-    width:24px; height:22px; background:var(--yellow); border-radius:7px; z-index:-1;
+    width:24px; height:22px; background:var(--text); border-radius:7px; z-index:-1;
   }
 
   .g-row{
@@ -110,57 +120,57 @@
     font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     display:flex; align-items:center; gap:6px;
   }
-  .dot{width:7px; height:7px; border-radius:50%; background:var(--yellow); flex:none;}
+  .dot{width:7px; height:7px; border-radius:50%; background:var(--gold); flex:none;}
   .g-row .meta{display:flex; gap:5px; margin-top:3px; flex-wrap:nowrap; overflow:hidden; align-items:center;}
   .g-row .meta .dates{font-size:11px; color:var(--muted); white-space:nowrap;}
 
   .grid-row{height:var(--row-h); border-bottom:1px solid var(--line);}
-  .v-grid{position:absolute; top:0; bottom:0; width:1px; background:var(--line); opacity:.45;}
-  .weekend-band{position:absolute; top:92px; bottom:0; background:rgba(255,255,255,.025);}
+  .v-grid{position:absolute; top:0; bottom:0; width:1px; background:var(--line); opacity:.55;}
+  .weekend-band{position:absolute; top:92px; bottom:0; background:rgba(61,56,46,.04);}
   .today-line{
-    position:absolute; top:92px; bottom:0; width:2px; background:var(--yellow); opacity:.85; z-index:1;
+    position:absolute; top:92px; bottom:0; width:2px; background:var(--gold); opacity:.9; z-index:1;
   }
 
   /* ── 里程碑節點 ── */
   .ms-chip{
     position:absolute; z-index:2; white-space:nowrap;
-    font-size:10.5px; font-weight:700; color:var(--yellow);
-    background:#2a2617; border:1px solid var(--yellow-dim);
+    font-size:10.5px; font-weight:700; color:var(--gold-ink);
+    background:var(--gold-bg); border:1px solid var(--gold-dim);
     border-radius:6px; padding:0 7px; line-height:1.8;
   }
-  .ms-chip.done{color:var(--green); background:var(--green-bg); border-color:#3a5c46;}
+  .ms-chip.done{color:var(--green-ink); background:var(--green-bg); border-color:#b2c9ae;}
   .ms-line{
     position:absolute; top:92px; bottom:0; width:0;
-    border-left:1.5px dashed var(--yellow-dim); opacity:.55;
+    border-left:1.5px dashed var(--gold-dim); opacity:.7;
   }
   .ms-mark{
     position:absolute; z-index:2; width:10px; height:10px;
-    background:var(--yellow); transform:rotate(45deg);
+    background:var(--gold); transform:rotate(45deg);
     border-radius:2px; cursor:default;
   }
   .ms-mark.done{background:var(--green);}
 
   .g-bar{
     position:absolute; height:34px; border-radius:9px; z-index:1;
-    border:1.5px solid var(--yellow-dim); background:#2a2617; overflow:hidden;
+    border:1.5px solid var(--gold-dim); background:var(--gold-bg); overflow:hidden;
     display:flex; align-items:center;
   }
-  .g-bar .fill{position:absolute; left:0; top:0; bottom:0; background:var(--yellow); opacity:.9;}
+  .g-bar .fill{position:absolute; left:0; top:0; bottom:0; background:var(--gold); opacity:.92;}
   .g-bar .txt{
-    position:relative; z-index:1; font-size:11.5px; font-weight:700; color:#1c1a14;
-    padding:0 8px; white-space:nowrap;
+    position:relative; z-index:1; font-size:11.5px; font-weight:700; color:#fff;
+    padding:0 8px; white-space:nowrap; text-shadow:0 1px 1px rgba(60,45,10,.25);
   }
-  .g-bar .txt.on-dark{color:var(--text);}
-  .g-bar.done{border-color:#3a5c46; background:var(--green-bg);}
-  .g-bar.done .fill{background:var(--green); opacity:.85;}
-  .g-bar.plan{border-style:dashed; opacity:.8;}
-  .g-bar.design-bar{border-color:#3a5580; background:#1d2635;}
+  .g-bar .txt.on-dark{color:var(--text); text-shadow:none;}
+  .g-bar.done{border-color:#b2c9ae; background:var(--green-bg);}
+  .g-bar.done .fill{background:var(--green); opacity:.88;}
+  .g-bar.plan{border-style:dashed; opacity:.85;}
+  .g-bar.design-bar{border-color:#a9c2de; background:var(--blue-bg);}
   .g-bar.design-bar .fill{background:var(--blue);}
 
   .note{
     font-size:12.5px; color:var(--muted); margin:12px 2px 0; line-height:1.7;
   }
-  .note b{color:var(--yellow); font-weight:700;}
+  .note b{color:var(--gold-ink); font-weight:700;}
 
   @media(max-width:520px){
     :root{--left-w:142px; --col-w:34px; --row-h:60px;}
@@ -500,7 +510,7 @@
       '<div><div class="t">進行中案件</div><div class="v">'+DATA.length+' <small>案</small></div></div>'
       +'<div><div class="t">今日</div><div class="v">'+fmtMD(today)+' <small>星期'+'日一二三四五六'[today.getDay()]+'</small></div></div>'
       +'<div><div class="t">說明</div><div class="v" style="font-size:13px;font-weight:500;color:var(--muted)">點案件列或長條可看單案細項<br>◆ 里程碑（滑過可看說明）</div></div>';
-    $('note').innerHTML='<b>黃色長條</b>＝工程案　<b>藍色長條</b>＝設計案　◆＝里程碑（會勘/請款/交付/交屋）　進度％依日期自動推算。';
+    $('note').innerHTML='<b>金色長條</b>＝工程案　<b>藍色長條</b>＝設計案　◆＝里程碑（會勘/請款/交付/交屋）　進度％依日期自動推算。';
   }
 
   /* ── 單案細項 ── */
