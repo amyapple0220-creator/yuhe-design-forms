@@ -12,11 +12,13 @@
 <meta property="og:url" content="https://amyapple0220-creator.github.io/yuhe-design-forms/3drender/">
 <style>
   :root{
-    --ink:#2b2b28;
-    --paper:#faf8f4;
-    --line:#d9d3c7;
-    --accent:#8a6d4b;
-    --accent-light:#f1ebe0;
+    --ink:#45413a;
+    --paper:#faf9f6;
+    --line:#ddd8cf;
+    --accent:#8f7550;
+    --accent-light:#f1ede5;
+    --greige:#ece8e0;
+    --muted:#8a857c;
   }
   *{box-sizing:border-box;}
   body{
@@ -35,25 +37,28 @@
     justify-content:space-between;
     gap:12px;
     padding:12px 20px;
-    background:rgba(250,248,244,.92);
+    background:rgba(250,249,246,.93);
     backdrop-filter:blur(8px);
     -webkit-backdrop-filter:blur(8px);
     border-bottom:1px solid var(--line);
   }
   .site-bar .brand{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
     text-decoration:none;
     color:var(--ink);
-    font-size:16px;
-    font-weight:600;
+    font-size:15px;
+    font-weight:500;
     letter-spacing:3px;
   }
+  .site-bar .brand img{height:26px; width:auto; display:block;}
   .site-bar .brand span{
-    font-family:Georgia,serif;
-    font-weight:400;
-    font-size:12px;
+    font-weight:300;
+    font-size:11px;
     letter-spacing:2px;
-    color:#9a917f;
-    margin-left:8px;
+    color:var(--muted);
+    margin-left:2px;
   }
   .site-bar .back-home{
     text-decoration:none;
@@ -72,11 +77,28 @@
     padding:56px 20px 32px;
     border-bottom:1px solid var(--line);
   }
+  header .logo{
+    width:200px;
+    max-width:60%;
+    height:auto;
+    margin:0 auto 10px;
+    display:block;
+  }
+  header .slogan{
+    font-size:13px;
+    font-weight:300;
+    letter-spacing:3px;
+    color:var(--muted);
+    margin:0 0 30px;
+  }
   header .en{
-    font-family:Georgia,"Times New Roman",serif;
-    font-size:34px;
-    letter-spacing:6px;
-    margin:0 0 8px;
+    font-size:15px;
+    font-weight:300;
+    letter-spacing:4px;
+    color:var(--muted);
+    margin:0 0 6px;
+    text-transform:uppercase;
+    white-space:nowrap;
   }
   header h1{
     font-size:20px;
@@ -87,7 +109,7 @@
   header p{
     margin:0 auto;
     max-width:560px;
-    color:#7a7468;
+    color:var(--muted);
     font-size:14px;
     letter-spacing:1px;
   }
@@ -107,8 +129,8 @@
     margin:0 0 6px;
   }
   .project-title .sub{
-    font-family:Georgia,serif;
-    color:#7a7468;
+    font-weight:300;
+    color:var(--muted);
     font-size:15px;
     letter-spacing:1px;
   }
@@ -326,19 +348,21 @@
   }
   figcaption .en{
     display:block;
-    font-family:Georgia,serif;
+    font-weight:300;
+    text-transform:uppercase;
     font-size:12px;
     letter-spacing:2px;
-    color:#9a917f;
+    color:#a39d92;
     margin-top:2px;
   }
 
   footer{
+    background:var(--greige);
     border-top:1px solid var(--line);
     text-align:center;
-    padding:30px 20px 44px;
+    padding:36px 20px 46px;
     font-size:13px;
-    color:#7a7468;
+    color:var(--muted);
     letter-spacing:1px;
   }
   footer .brand{
@@ -352,12 +376,14 @@
 <body>
 
 <nav class="site-bar">
-  <a class="brand" href="https://www.yu-he-design.com">禹合制所<span>YUHE DESIGN</span></a>
+  <a class="brand" href="https://www.yu-he-design.com"><img src="images/logo-mark.png" alt="禹合制所 logo">禹合制所<span>YUHE DESIGN</span></a>
   <a class="back-home" href="https://www.yu-he-design.com">回官網首頁</a>
 </nav>
 
 <header>
-  <p class="en">3D RENDER</p>
+  <img class="logo" src="images/logo.png" alt="禹合制所室內裝修有限公司 YUHE DESIGN CO., LTD." width="479" height="352">
+  <p class="slogan">以「禹合」為名，「制所」於心。</p>
+  <p class="en">Portfolio ─ 3D Render</p>
   <h1>3D渲染比對</h1>
   <p>渲染圖，是我們與業主一同構築藍圖的起點。<br>
      從模擬到落成，拖曳滑桿，看見設計如何被如實兌現。</p>
@@ -548,7 +574,8 @@
 <button class="to-top" type="button" aria-label="回到頁面頂端">↑</button>
 
 <footer>
-  <div class="brand">禹合制所 YUHE DESIGN</div>
+  <div style="font-size:13px; letter-spacing:2px; color:var(--muted); margin-bottom:10px;">以「禹合」為名，「制所」於心。</div>
+  <div class="brand">禹合制所室內裝修有限公司</div>
   桃園市桃園區藝文一街86之2號4樓<br>
   <a href="https://www.yu-he-design.com" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none; letter-spacing:1px;">官方網站 www.yu-he-design.com</a>
 </footer>
