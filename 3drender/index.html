@@ -356,6 +356,90 @@
     .to-top{right:26px;}
   }
 
+
+  /* ===== 得獎資訊 ===== */
+  .award-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:12px;
+    padding:7px 18px;
+    border:1px solid #b8963f;
+    border-radius:999px;
+    color:#a07f2f;
+    font-size:12.5px;
+    letter-spacing:1.5px;
+    text-decoration:none;
+    background:linear-gradient(180deg, #fffdf6, #faf3df);
+    transition:box-shadow .2s;
+  }
+  .award-badge:hover{box-shadow:0 2px 10px rgba(160,127,47,.25);}
+  .award-card{
+    display:flex;
+    align-items:center;
+    gap:22px;
+    max-width:640px;
+    margin:0 auto;
+    padding:26px 28px;
+    background:#fff;
+    border:1px solid var(--line);
+    text-decoration:none;
+    color:var(--ink);
+    transition:box-shadow .25s;
+  }
+  .award-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.10);}
+  .award-medal{
+    flex:0 0 auto;
+    width:86px;
+    height:86px;
+    border-radius:50%;
+    border:2px solid #b8963f;
+    background:radial-gradient(circle at 35% 30%, #f4e3ae, #d9b45e);
+    color:#5c4508;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-align:center;
+    line-height:1.35;
+  }
+  .award-medal b{font-size:15px; letter-spacing:2px;}
+  .award-info h3{
+    margin:0 0 2px;
+    font-family:var(--serif);
+    font-size:17px;
+    font-weight:400;
+    letter-spacing:1.5px;
+  }
+  .award-info .a-proj{
+    margin:0 0 4px;
+    font-size:14.5px;
+    font-weight:600;
+    letter-spacing:1px;
+  }
+  .award-info .a-meta{
+    margin:0;
+    font-size:12.5px;
+    color:var(--muted);
+    letter-spacing:1px;
+  }
+  .award-info .a-desc{
+    margin:8px 0 0;
+    font-size:13px;
+    color:#6d6960;
+    line-height:1.8;
+  }
+  .award-info .a-link{
+    display:inline-block;
+    margin-top:8px;
+    font-size:12.5px;
+    color:var(--accent);
+    letter-spacing:1px;
+  }
+
   /* ===== 比對滑桿元件 ===== */
   figure.compare-block{
     margin:0 0 72px;
@@ -482,6 +566,7 @@
   <nav>
     <a class="mi" href="https://www.yu-he-design.com">HOME<span>官網首頁</span></a>
     <a class="mi active" href="#top">3D RENDER<span>渲染比對</span></a>
+    <a class="mi" href="#awards">AWARDS<span>得獎資訊</span></a>
     <details class="mi-group">
       <summary>WORKFLOW<span>委託流程</span></summary>
       <a class="sub" href="https://www.yu-he-design.com" target="_blank" rel="noopener">SERVICES｜服務內容</a>
@@ -536,6 +621,9 @@
   <div class="project-title" id="case-zhongtai">
     <h2>渲染圖對比｜忠泰湛-綠境</h2>
     <span class="sub">3D Render vs. Reality</span>
+    <div>
+      <a class="award-badge" href="https://thelondondesignawards.com/winner-info.php?id=9167" target="_blank" rel="noopener">🏆 London Design Awards 2026・Gold Winner</a>
+    </div>
     <div>
       <a class="vr-link" href="https://vr.om.cn/view/804977" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="9" ry="3.8"/><path d="M12 3v18"/></svg>
@@ -686,6 +774,23 @@
     </div>
     <figcaption>主臥<span class="en">MASTER BEDROOM</span></figcaption>
   </figure>
+
+  <!-- ===== 得獎資訊 ===== -->
+  <div class="project-title next" id="awards">
+    <h2>得獎資訊</h2>
+    <span class="sub">Awards</span>
+  </div>
+
+  <a class="award-card" href="https://thelondondesignawards.com/winner-info.php?id=9167" target="_blank" rel="noopener">
+    <div class="award-medal">2026<b>GOLD</b>WINNER</div>
+    <div class="award-info">
+      <h3>London Design Awards 2026</h3>
+      <p class="a-proj">The Poise of Green｜忠泰湛-綠境</p>
+      <p class="a-meta">Gold Winner・Interior Design – Residential・Taiwan</p>
+      <p class="a-desc">45 坪台北住宅，以「綠」為生長與延續的隱喻——不張揚的奢華，讓材質、光線與空間的連續性，靜靜構築恆久的居住體驗。</p>
+      <span class="a-link">查看官方得獎頁 →</span>
+    </div>
+  </a>
 
 </main>
 
