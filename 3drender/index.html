@@ -12,13 +12,14 @@
 <meta property="og:url" content="https://amyapple0220-creator.github.io/yuhe-design-forms/3drender/">
 <style>
   :root{
-    --ink:#45413a;
-    --paper:#faf9f6;
-    --line:#ddd8cf;
+    --ink:#2f2e2b;
+    --paper:#f5f4f1;
+    --line:#e3e0da;
     --accent:#8f7550;
     --accent-light:#f1ede5;
-    --greige:#ece8e0;
-    --muted:#8a857c;
+    --greige:#ebe8e2;
+    --muted:#8f8b83;
+    --serif:Georgia,"Times New Roman",serif;
   }
   *{box-sizing:border-box;}
   body{
@@ -78,33 +79,34 @@
     border-bottom:1px solid var(--line);
   }
   header .logo{
-    width:200px;
+    width:150px;
     max-width:60%;
     height:auto;
     margin:0 auto 10px;
     display:block;
   }
   header .slogan{
-    font-size:13px;
+    font-size:12px;
     font-weight:300;
     letter-spacing:3px;
     color:var(--muted);
-    margin:0 0 30px;
+    margin:0;
   }
   header .en{
-    font-size:15px;
-    font-weight:300;
-    letter-spacing:4px;
-    color:var(--muted);
-    margin:0 0 6px;
-    text-transform:uppercase;
+    font-family:var(--serif);
+    font-size:34px;
+    font-weight:400;
+    letter-spacing:10px;
+    color:var(--ink);
+    margin:26px 0 4px;
     white-space:nowrap;
   }
   header h1{
-    font-size:20px;
-    font-weight:500;
-    letter-spacing:6px;
-    margin:0 0 14px;
+    font-size:15px;
+    font-weight:400;
+    letter-spacing:8px;
+    color:var(--muted);
+    margin:0 0 18px;
   }
   header p{
     margin:0 auto;
@@ -123,16 +125,16 @@
     margin:10px 0 34px;
   }
   .project-title h2{
-    font-size:22px;
-    font-weight:600;
-    letter-spacing:2px;
-    margin:0 0 6px;
+    font-size:21px;
+    font-weight:500;
+    letter-spacing:3px;
+    margin:0 0 8px;
   }
   .project-title .sub{
-    font-weight:300;
+    font-family:var(--serif);
     color:var(--muted);
-    font-size:15px;
-    letter-spacing:1px;
+    font-size:14px;
+    letter-spacing:2px;
   }
   .project-title .sub::before,
   .project-title .sub::after{
@@ -253,17 +255,116 @@
     .compare .handle::before{animation:none;}
   }
 
+
+  /* ===== 側欄選單（優德式） ===== */
+  .side-menu{
+    position:fixed;
+    top:0;
+    left:0;
+    bottom:0;
+    width:250px;
+    background:#fbfaf8;
+    border-right:1px solid var(--line);
+    padding:34px 30px 26px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    z-index:80;
+    overflow-y:auto;
+    transform:translateX(-100%);
+    transition:transform .3s ease;
+  }
+  .side-menu.open{transform:none; box-shadow:0 0 40px rgba(0,0,0,.18);}
+  .side-menu .menu-logo{display:block; margin-bottom:26px;}
+  .side-menu .menu-logo img{width:120px; height:auto; display:block;}
+  .side-menu nav{display:flex; flex-direction:column;}
+  .side-menu .mi,
+  .side-menu summary{
+    display:block;
+    padding:10px 0;
+    font-size:13px;
+    letter-spacing:3px;
+    color:#6d6960;
+    text-decoration:none;
+    cursor:pointer;
+    transition:color .2s;
+  }
+  .side-menu .mi span,
+  .side-menu summary span{
+    margin-left:8px;
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--muted);
+  }
+  .side-menu .mi:hover, .side-menu summary:hover{color:var(--ink);}
+  .side-menu .mi.active{color:var(--ink); font-weight:600;}
+  .side-menu details{border:0;}
+  .side-menu summary{list-style:none; position:relative;}
+  .side-menu summary::-webkit-details-marker{display:none;}
+  .side-menu summary::after{
+    content:"▾";
+    position:absolute;
+    right:2px;
+    color:var(--muted);
+    transition:transform .2s;
+  }
+  .side-menu details[open] summary::after{transform:rotate(180deg);}
+  .side-menu .sub{
+    display:block;
+    padding:7px 0 7px 18px;
+    font-size:12px;
+    letter-spacing:2px;
+    color:var(--muted);
+    text-decoration:none;
+  }
+  .side-menu .sub:hover{color:var(--ink);}
+  .side-menu .menu-foot{
+    margin-top:auto;
+    padding-top:20px;
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--muted);
+  }
+  .menu-mask{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.35);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s;
+    z-index:70;
+  }
+  .menu-mask.show{opacity:1; pointer-events:auto;}
+  .menu-btn{
+    background:none;
+    border:none;
+    padding:6px;
+    cursor:pointer;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .menu-btn i{display:block; width:22px; height:1.5px; background:var(--ink);}
+  @media (min-width:1020px){
+    .site-bar{display:none;}
+    header .logo, header .slogan{display:none;}
+    header{padding-top:64px;}
+    .menu-mask{display:none;}
+    .side-menu{transform:none; box-shadow:none;}
+    header, main, footer{margin-left:250px;}
+    .to-top{right:26px;}
+  }
+
   /* ===== 比對滑桿元件 ===== */
   figure.compare-block{
-    margin:0 0 56px;
+    margin:0 0 72px;
   }
   .compare{
     position:relative;
     width:100%;
     overflow:hidden;
-    border-radius:6px;
-    border:1px solid var(--line);
-    background:#e8e4dc;
+    background:#e9e6e0;
     user-select:none;
     -webkit-user-select:none;
     touch-action:pan-y;          /* 保留頁面直向捲動，水平拖曳給滑桿 */
@@ -348,8 +449,7 @@
   }
   figcaption .en{
     display:block;
-    font-weight:300;
-    text-transform:uppercase;
+    font-family:var(--serif);
     font-size:12px;
     letter-spacing:2px;
     color:#a39d92;
@@ -375,15 +475,33 @@
 </head>
 <body>
 
+<aside class="side-menu" id="sideMenu" aria-label="網站選單">
+  <a class="menu-logo" href="https://www.yu-he-design.com">
+    <img src="images/logo.png" alt="禹合制所 YUHE DESIGN" width="479" height="352">
+  </a>
+  <nav>
+    <a class="mi" href="https://www.yu-he-design.com">HOME<span>官網首頁</span></a>
+    <a class="mi active" href="#top">3D RENDER<span>渲染比對</span></a>
+    <details class="mi-group">
+      <summary>WORKFLOW<span>委託流程</span></summary>
+      <a class="sub" href="https://www.yu-he-design.com" target="_blank" rel="noopener">SERVICES｜服務內容</a>
+      <a class="sub" href="https://www.yu-he-design.com" target="_blank" rel="noopener">FEE｜收費方式</a>
+    </details>
+    <a class="mi" href="https://www.yu-he-design.com" target="_blank" rel="noopener">CONTACT<span>聯絡我們</span></a>
+  </nav>
+  <div class="menu-foot">以「禹合」為名，「制所」於心。</div>
+</aside>
+<div class="menu-mask" id="menuMask"></div>
+
 <nav class="site-bar">
   <a class="brand" href="https://www.yu-he-design.com"><img src="images/logo-mark.png" alt="禹合制所 logo">禹合制所<span>YUHE DESIGN</span></a>
-  <a class="back-home" href="https://www.yu-he-design.com">回官網首頁</a>
+  <button class="menu-btn" id="menuBtn" aria-label="開啟選單" aria-expanded="false"><i></i><i></i><i></i></button>
 </nav>
 
 <header>
   <img class="logo" src="images/logo.png" alt="禹合制所室內裝修有限公司 YUHE DESIGN CO., LTD." width="479" height="352">
   <p class="slogan">以「禹合」為名，「制所」於心。</p>
-  <p class="en">Portfolio ─ 3D Render</p>
+  <p class="en">3D RENDER</p>
   <h1>3D渲染比對</h1>
   <p>渲染圖，是我們與業主一同構築藍圖的起點。<br>
      從模擬到落成，拖曳滑桿，看見設計如何被如實兌現。</p>
@@ -701,6 +819,21 @@
     top.classList.toggle('show', window.scrollY > 900);
   }, {passive:true});
   top.addEventListener('click', function(){ window.scrollTo({top:0, behavior: reduced ? 'auto' : 'smooth'}); });
+})();
+</script>
+<script>
+(function(){
+  var menu = document.getElementById('sideMenu');
+  var mask = document.getElementById('menuMask');
+  var btn = document.getElementById('menuBtn');
+  function close(){ menu.classList.remove('open'); mask.classList.remove('show'); btn.setAttribute('aria-expanded','false'); }
+  btn.addEventListener('click', function(){
+    var open = menu.classList.toggle('open');
+    mask.classList.toggle('show', open);
+    btn.setAttribute('aria-expanded', open);
+  });
+  mask.addEventListener('click', close);
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', close); });
 })();
 </script>
 
