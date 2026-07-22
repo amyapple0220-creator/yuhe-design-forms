@@ -451,6 +451,14 @@
     background:radial-gradient(circle at 35% 30%, #f2f3f5, #b9bec6);
     color:#4a4e55;
   }
+  .short-block{margin:0;}
+  .short-name{
+    text-align:center;
+    margin-top:10px;
+    font-size:13px;
+    letter-spacing:1.5px;
+    color:#6d6960;
+  }
   .shorts-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
@@ -668,15 +676,24 @@
   </div>
 
   <div class="shorts-grid">
-    <div class="short-frame">
-      <iframe src="https://www.youtube.com/embed/vBSjz5FdYHE" title="禹合制所 短影音 1" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    </div>
-    <div class="short-frame">
-      <iframe src="https://www.youtube.com/embed/e5aJVyi7KdA" title="禹合制所 短影音 2" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    </div>
-    <div class="short-frame">
-      <iframe src="https://www.youtube.com/embed/txK4YWE8qis" title="禹合制所 短影音 3" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    </div>
+    <figure class="short-block">
+      <div class="short-frame">
+        <iframe src="https://www.youtube.com/embed/vBSjz5FdYHE" title="豐邑-童趣 × 色彩 × 毛孩 短影音" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <figcaption class="short-name">豐邑-童趣 × 色彩 × 毛孩</figcaption>
+    </figure>
+    <figure class="short-block">
+      <div class="short-frame">
+        <iframe src="https://www.youtube.com/embed/e5aJVyi7KdA" title="遇見-現代輕法式 短影音" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <figcaption class="short-name">遇見-現代輕法式</figcaption>
+    </figure>
+    <figure class="short-block">
+      <div class="short-frame">
+        <iframe src="https://www.youtube.com/embed/txK4YWE8qis" title="世界花園 短影音" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <figcaption class="short-name">世界花園</figcaption>
+    </figure>
   </div>
 
 </main>
