@@ -451,6 +451,25 @@
     background:radial-gradient(circle at 35% 30%, #f2f3f5, #b9bec6);
     color:#4a4e55;
   }
+  .shorts-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:18px;
+    margin-bottom:64px;
+  }
+  .short-frame{
+    position:relative;
+    aspect-ratio:9/16;
+    background:#111;
+    overflow:hidden;
+  }
+  .short-frame iframe{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+  }
   .video-block{margin:0 0 64px;}
   .video-frame{
     position:relative;
@@ -642,6 +661,23 @@
     </div>
     <figcaption>現代奢華宅 PART Ⅱ<span class="en">MODERN LUXURY RESIDENCE Ⅱ</span></figcaption>
   </figure>
+
+  <div class="project-title next">
+    <h2>短影音</h2>
+    <span class="sub">Shorts</span>
+  </div>
+
+  <div class="shorts-grid">
+    <div class="short-frame">
+      <iframe src="https://www.youtube.com/embed/vBSjz5FdYHE" title="禹合制所 短影音 1" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="short-frame">
+      <iframe src="https://www.youtube.com/embed/e5aJVyi7KdA" title="禹合制所 短影音 2" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="short-frame">
+      <iframe src="https://www.youtube.com/embed/txK4YWE8qis" title="禹合制所 短影音 3" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+  </div>
 
 </main>
 
