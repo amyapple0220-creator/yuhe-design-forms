@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>禹合制所 YUHE DESIGN｜3D渲染比對 3D RENDER</title>
-<meta name="description" content="拖曳滑桿，比對 3D 渲染圖與完工實景——看見禹合制所如何把設計如實兌現。">
+<title>禹合制所 YUHE DESIGN｜影像作品 VIDEO</title>
+<meta name="description" content="禹合制所的空間影像作品——走進完工後的家，感受光線與材質的流動。">
 <meta property="og:type" content="website">
-<meta property="og:title" content="禹合制所 YUHE DESIGN｜3D渲染比對">
-<meta property="og:description" content="拖曳滑桿，比對 3D 渲染圖與完工實景。">
+<meta property="og:title" content="禹合制所 YUHE DESIGN｜影像作品">
+<meta property="og:description" content="走進完工後的家，感受光線與材質的流動。">
 <meta property="og:image" content="https://amyapple0220-creator.github.io/yuhe-design-forms/3drender/images/zhongtai-living-photo.jpg">
-<meta property="og:url" content="https://amyapple0220-creator.github.io/yuhe-design-forms/3drender/">
+<meta property="og:url" content="https://amyapple0220-creator.github.io/yuhe-design-forms/video/">
 <style>
   :root{
     --ink:#2f2e2b;
@@ -440,6 +440,21 @@
     letter-spacing:1px;
   }
 
+  .video-block{margin:0 0 64px;}
+  .video-frame{
+    position:relative;
+    aspect-ratio:16/9;
+    background:#111;
+    overflow:hidden;
+  }
+  .video-frame iframe{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+  }
+
   /* ===== 比對滑桿元件 ===== */
   figure.compare-block{
     margin:0 0 72px;
@@ -561,13 +576,12 @@
 
 <aside class="side-menu" id="sideMenu" aria-label="網站選單">
   <a class="menu-logo" href="https://www.yu-he-design.com">
-    <img src="images/logo.png" alt="禹合制所 YUHE DESIGN" width="479" height="352">
+    <img src="https://amyapple0220-creator.github.io/yuhe-design-forms/3drender/images/logo.png" alt="禹合制所 YUHE DESIGN" width="479" height="352">
   </a>
   <nav>
     <a class="mi" href="https://www.yu-he-design.com">HOME<span>官網首頁</span></a>
-    <a class="mi active" href="#top">3D RENDER<span>渲染比對</span></a>
-    <a class="mi" href="https://amyapple0220-creator.github.io/yuhe-design-forms/video/">VIDEO<span>影像作品</span></a>
-    <a class="mi" href="#awards">AWARDS<span>得獎資訊</span></a>
+    <a class="mi" href="https://amyapple0220-creator.github.io/yuhe-design-forms/3drender/">3D RENDER<span>渲染比對</span></a>
+    <a class="mi" href="https://amyapple0220-creator.github.io/yuhe-design-forms/3drender/#awards">AWARDS<span>得獎資訊</span></a>
     <details class="mi-group">
       <summary>WORKFLOW<span>委託流程</span></summary>
       <a class="sub" href="https://www.yu-he-design.com" target="_blank" rel="noopener">SERVICES｜服務內容</a>
@@ -580,218 +594,42 @@
 <div class="menu-mask" id="menuMask"></div>
 
 <nav class="site-bar">
-  <a class="brand" href="https://www.yu-he-design.com"><img src="images/logo-mark.png" alt="禹合制所 logo">禹合制所<span>YUHE DESIGN</span></a>
+  <a class="brand" href="https://www.yu-he-design.com"><img src="https://amyapple0220-creator.github.io/yuhe-design-forms/3drender/images/logo-mark.png" alt="禹合制所 logo">禹合制所<span>YUHE DESIGN</span></a>
   <button class="menu-btn" id="menuBtn" aria-label="開啟選單" aria-expanded="false"><i></i><i></i><i></i></button>
 </nav>
 
 <header>
-  <img class="logo" src="images/logo.png" alt="禹合制所室內裝修有限公司 YUHE DESIGN CO., LTD." width="479" height="352">
+  <img class="logo" src="https://amyapple0220-creator.github.io/yuhe-design-forms/3drender/images/logo.png" alt="禹合制所室內裝修有限公司 YUHE DESIGN CO., LTD." width="479" height="352">
   <p class="slogan">以「禹合」為名，「制所」於心。</p>
-  <p class="en">3D RENDER</p>
-  <h1>3D渲染比對</h1>
-  <p>渲染圖，是我們與業主一同構築藍圖的起點。<br>
-     從模擬到落成，拖曳滑桿，看見設計如何被如實兌現。</p>
+  <p class="en">VIDEO</p>
+  <h1>影像作品</h1>
+  <p>照片留下空間的樣子，影像留下生活的溫度。<br>
+     走進完工後的家，感受光線與材質的流動。</p>
 </header>
 
 <main>
 
-  <!-- ===== 案件快速導覽（新增案件時複製一張卡，href 對應案件區塊的 id） ===== -->
-  <nav class="case-nav" aria-label="案件導覽">
-    <a class="case-card" href="#case-zhongtai">
-      <img src="images/zhongtai-living-photo.jpg" width="1600" height="900" alt="忠泰湛-綠境">
-      <span>忠泰湛-綠境</span>
-    </a>
-    <a class="case-card" href="#case-maohai">
-      <img src="images/maohai-living-photo.jpg" width="1600" height="900" alt="豐邑-童趣 × 色彩 × 毛孩">
-      <span>豐邑-童趣 × 色彩 × 毛孩</span>
-    </a>
-    <a class="case-card" href="#case-yujian">
-      <img src="images/yujian-living-photo.jpg" width="1600" height="900" alt="遇見-現代輕法式">
-      <span>遇見-現代輕法式</span>
-    </a>
-  </nav>
-  <!--
-    ★ 換圖方式 ★
-    每個 figure.compare-block 是一組比對。
-    第 1 張 img（before-wrap 內）= 3D 渲染圖
-    第 2 張 img = 完工實景照
-    兩張圖請裁成「相同尺寸、相同視角」效果最好，建議寬 1600px、JPG 80% 品質。
-    把 src 換成你的圖片網址或相對路徑即可，其他都不用改。
-  -->
-  <!-- ===== 忠泰湛-綠境 ===== -->
-  <div class="project-title" id="case-zhongtai">
-    <h2>渲染圖對比｜忠泰湛-綠境</h2>
-    <span class="sub">3D Render vs. Reality</span>
+  <div class="project-title">
+    <h2>忠泰湛-綠境</h2>
+    <span class="sub">The Poise of Green</span>
     <div>
       <a class="award-badge" href="https://thelondondesignawards.com/winner-info.php?id=9167" target="_blank" rel="noopener">🏆 London Design Awards 2026・Gold Winner</a>
     </div>
-    <div>
-      <a class="vr-link" href="https://vr.om.cn/view/804977" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="9" ry="3.8"/><path d="M12 3v18"/></svg>
-        720° VR 實境導覽
-      </a>
-    </div>
   </div>
 
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/zhongtai-living-photo.jpg" width="1600" height="900" alt="客廳 完工實景" loading="lazy" decoding="async">
-      <div class="before-wrap">
-        <img src="images/zhongtai-living-render.jpg" width="1600" height="900" alt="客廳 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+  <figure class="video-block">
+    <div class="video-frame">
+      <iframe src="https://www.youtube.com/embed/-5Rg5053OGw" title="忠泰湛-綠境 空間影像 I" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
-    <figcaption>客廳<span class="en">LIVING ROOM</span></figcaption>
+    <figcaption>空間影像 Ⅰ<span class="en">FILM Ⅰ</span></figcaption>
   </figure>
 
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/zhongtai-bath-photo.jpg" width="1280" height="1600" alt="主浴 完工實景" loading="lazy" decoding="async">
-      <div class="before-wrap">
-        <img src="images/zhongtai-bath-render.jpg" width="1280" height="1600" alt="主浴 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
+  <figure class="video-block">
+    <div class="video-frame">
+      <iframe src="https://www.youtube.com/embed/AabEfOiOsHA" title="忠泰湛-綠境 空間影像 II" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
-    <figcaption>主浴<span class="en">MASTER BATHROOM</span></figcaption>
+    <figcaption>空間影像 Ⅱ<span class="en">FILM Ⅱ</span></figcaption>
   </figure>
-
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/zhongtai-guest-photo.jpg" width="1600" height="900" alt="客房 完工實景" loading="lazy" decoding="async">
-      <div class="before-wrap">
-        <img src="images/zhongtai-guest-render.jpg" width="1600" height="900" alt="客房 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
-    </div>
-    <figcaption>客房<span class="en">GUEST ROOM</span></figcaption>
-  </figure>
-
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/zhongtai-master-photo.jpg" width="1600" height="1067" alt="主臥 完工實景" loading="lazy" decoding="async">
-      <div class="before-wrap">
-        <img src="images/zhongtai-master-render.jpg" width="1600" height="1067" alt="主臥 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
-    </div>
-    <figcaption>主臥<span class="en">MASTER BEDROOM</span></figcaption>
-  </figure>
-
-  <div class="project-title next" id="case-maohai">
-    <h2>渲染圖對比｜豐邑-童趣 × 色彩 × 毛孩</h2>
-    <span class="sub">3D Render vs. Reality</span>
-  </div>
-
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/maohai-living-photo.jpg" width="1600" height="900" alt="客廳 完工實景" loading="lazy" decoding="async">
-      <div class="before-wrap">
-        <img src="images/maohai-living-render.jpg" width="1600" height="900" alt="客廳 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
-    </div>
-    <figcaption>客廳<span class="en">LIVING ROOM</span></figcaption>
-  </figure>
-
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/master-bedroom-photo.jpg" width="1600" height="1067" alt="主臥室 完工實景" loading="lazy" decoding="async">
-      <div class="before-wrap">
-        <img src="images/master-bedroom-render.jpg" width="1600" height="1067" alt="主臥室 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
-    </div>
-    <figcaption>主臥室<span class="en">MASTER BEDROOM</span></figcaption>
-  </figure>
-
-  <!-- ===== 遇見-現代輕法式 ===== -->
-  <div class="project-title next" id="case-yujian">
-    <h2>渲染圖對比｜遇見-現代輕法式</h2>
-    <span class="sub">3D Render vs. Reality</span>
-    <div>
-      <a class="vr-link" href="https://vr.om.cn/view/881915" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="9" ry="3.8"/><path d="M12 3v18"/></svg>
-        720° VR 實境導覽
-      </a>
-    </div>
-  </div>
-
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/yujian-living-photo.jpg" width="1600" height="900" alt="客廳 完工實景" loading="lazy" decoding="async">
-      <div class="before-wrap">
-        <img src="images/yujian-living-render.jpg" width="1600" height="900" alt="客廳 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
-    </div>
-    <figcaption>客廳<span class="en">LIVING ROOM</span></figcaption>
-  </figure>
-
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/yujian-living2-photo.jpg" width="1600" height="900" alt="客廳電視牆 完工實景" loading="lazy" decoding="async">
-      <div class="before-wrap">
-        <img src="images/yujian-living2-render.jpg" width="1600" height="900" alt="客廳電視牆 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
-    </div>
-    <figcaption>客廳・電視牆<span class="en">LIVING ROOM · TV WALL</span></figcaption>
-  </figure>
-
-  <figure class="compare-block">
-    <div class="compare" style="--pos:50%">
-      <img src="images/yujian-master-photo.jpg" width="1600" height="1067" alt="主臥 完工實景" loading="lazy" decoding="async">
-      <div class="before-wrap">
-        <img src="images/yujian-master-render.jpg" width="1600" height="1067" alt="主臥 3D渲染圖" aria-hidden="true">
-      </div>
-      <div class="divider" aria-hidden="true"></div>
-      <span class="tag before">3D渲染 Before</span>
-      <span class="tag after">實景 After</span>
-      <button class="handle" type="button" aria-label="拖曳比對 3D渲染圖與完工實景（可用左右方向鍵）">‹&nbsp;›</button>
-    </div>
-    <figcaption>主臥<span class="en">MASTER BEDROOM</span></figcaption>
-  </figure>
-
-  <!-- ===== 得獎資訊 ===== -->
-  <div class="project-title next" id="awards">
-    <h2>得獎資訊</h2>
-    <span class="sub">Awards</span>
-  </div>
-
-  <a class="award-card" href="https://thelondondesignawards.com/winner-info.php?id=9167" target="_blank" rel="noopener">
-    <div class="award-medal">2026<b>GOLD</b>WINNER</div>
-    <div class="award-info">
-      <h3>London Design Awards 2026</h3>
-      <p class="a-proj">The Poise of Green｜忠泰湛-綠境</p>
-      <p class="a-meta">Gold Winner・Interior Design – Residential・Taiwan</p>
-      <p class="a-desc">45 坪台北住宅，以「綠」為生長與延續的隱喻——不張揚的奢華，讓材質、光線與空間的連續性，靜靜構築恆久的居住體驗。</p>
-      <span class="a-link">查看官方得獎頁 →</span>
-    </div>
-  </a>
 
 </main>
 
