@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>禹合制所 YUHE DESIGN｜案場照片紀錄</title>
+<meta name="description" content="依案場與工種整理施工照片，全部存在你的裝置端，可一鍵匯出完工相簿。">
+<style>
+  :root{
+    --ink:#2f2e2b;
+    --paper:#f5f4f1;
+    --card:#fdfcfa;
+    --line:#e3e0da;
+    --accent:#8f7550;
+    --accent-light:#f1ede5;
+    --greige:#ebe8e2;
+    --muted:#8f8b83;
+    --danger:#a4553f;
+    --serif:Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.7;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .site-bar{
+    position:sticky;
+    top:0;
+    z-index:60;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 20px;
+    background:rgba(250,249,246,.93);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .site-bar .brand{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+    color:var(--ink);
+    font-size:15px;
+    font-weight:500;
+    letter-spacing:3px;
+    white-space:nowrap;
+  }
+  .site-bar .brand img{height:26px; width:auto; display:block;}
+  .site-bar .brand span{
+    font-weight:300;
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--muted);
+    margin-left:2px;
+  }
+  .site-bar .back-home{
+    text-decoration:none;
+    color:var(--accent);
+    font-size:13px;
+    letter-spacing:1px;
+    border:1px solid var(--accent);
+    border-radius:999px;
+    padding:6px 16px;
+    white-space:nowrap;
+    background:none;
+    cursor:pointer;
+    transition:background .2s, color .2s;
+  }
+  .site-bar .back-home:hover{background:var(--accent); color:#fff;}
+
+  header.page-head{
+    text-align:center;
+    padding:40px 20px 26px;
+    border-bottom:1px solid var(--line);
+  }
+  header.page-head .en{
+    font-family:var(--serif);
+    font-size:28px;
+    font-weight:400;
+    letter-spacing:8px;
+    margin:0 0 4px;
+  }
+  header.page-head h1{
+    font-size:15px;
+    font-weight:400;
+    letter-spacing:8px;
+    color:var(--muted);
+    margin:0 0 14px;
+  }
+  header.page-head p{
+    margin:0 auto;
+    max-width:520px;
+    color:var(--muted);
+    font-size:13px;
+    letter-spacing:1px;
+  }
+  main{
+    max-width:960px;
+    margin:0 auto;
+    padding:26px 16px 110px;
+  }
+
+  /* ── 案場列表 ── */
+  .sites-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:16px;
+  }
+  .site-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:box-shadow .2s, transform .2s;
+  }
+  .site-card:hover{box-shadow:0 6px 22px rgba(47,46,43,.08); transform:translateY(-2px);}
+  .site-card .cover{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:2px;
+    aspect-ratio:3/1.6;
+    background:var(--greige);
+  }
+  .site-card .cover img{width:100%; height:100%; object-fit:cover; display:block;}
+  .site-card .cover .empty-cover{
+    grid-column:1/-1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:2px;
+  }
+  .site-card .info{padding:12px 14px 14px;}
+  .site-card .info h3{margin:0; font-size:16px; font-weight:500; letter-spacing:2px;}
+  .site-card .info .meta{font-size:12px; color:var(--muted); letter-spacing:1px; margin-top:2px;}
+  .add-site-card{
+    border:1px dashed var(--accent);
+    border-radius:12px;
+    min-height:150px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    color:var(--accent);
+    font-size:14px;
+    letter-spacing:2px;
+    cursor:pointer;
+    background:transparent;
+    transition:background .2s;
+  }
+  .add-site-card:hover{background:var(--accent-light);}
+  .add-site-card .plus{font-size:26px; line-height:1; font-weight:300;}
+
+  /* ── 章節標題 ── */
+  .section-title{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+    margin:6px 2px 16px;
+  }
+  .section-title h2{font-size:17px; font-weight:500; letter-spacing:3px; margin:0;}
+  .section-title .sub{font-family:var(--serif); font-size:12px; color:var(--muted); letter-spacing:2px;}
+
+  /* ── 相簿檢視 ── */
+  .album-head{margin-bottom:14px;}
+  .album-head h2{font-size:20px; font-weight:500; letter-spacing:3px; margin:0 0 2px;}
+  .album-head .meta{font-size:12.5px; color:var(--muted); letter-spacing:1px;}
+  .album-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:14px 0 18px;
+  }
+  .btn{
+    appearance:none;
+    border:1px solid var(--accent);
+    background:var(--accent);
+    color:#fff;
+    font-family:inherit;
+    font-size:14px;
+    letter-spacing:2px;
+    border-radius:999px;
+    padding:9px 22px;
+    cursor:pointer;
+    transition:opacity .2s, background .2s, color .2s;
+  }
+  .btn:hover{opacity:.88;}
+  .btn.ghost{background:transparent; color:var(--accent);}
+  .btn.ghost:hover{background:var(--accent); color:#fff; opacity:1;}
+  .btn.danger{border-color:var(--danger); background:transparent; color:var(--danger);}
+  .btn.danger:hover{background:var(--danger); color:#fff;}
+  .btn.small{font-size:12.5px; padding:6px 14px; letter-spacing:1px;}
+  .btn[disabled]{opacity:.4; cursor:default;}
+
+  .filter-row{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:2px 2px 12px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .chip{
+    flex:0 0 auto;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    font-family:inherit;
+    font-size:13px;
+    letter-spacing:1px;
+    border-radius:999px;
+    padding:6px 15px;
+    cursor:pointer;
+    transition:background .2s, border-color .2s, color .2s;
+  }
+  .chip.active{background:var(--ink); border-color:var(--ink); color:#f5efe2;}
+  .search-box{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    font-family:inherit;
+    font-size:14px;
+    padding:10px 14px;
+    margin-bottom:16px;
+    color:var(--ink);
+  }
+  .search-box:focus{outline:none; border-color:var(--accent);}
+
+  .date-group{margin-bottom:26px;}
+  .date-group h4{
+    font-size:13px;
+    font-weight:500;
+    letter-spacing:2px;
+    color:var(--muted);
+    margin:0 0 10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .date-group h4::after{content:""; flex:1; height:1px; background:var(--line);}
+  .photo-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(105px,1fr));
+    gap:8px;
+  }
+  .photo-cell{
+    position:relative;
+    aspect-ratio:1/1;
+    border-radius:8px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    cursor:pointer;
+    background:var(--greige);
+  }
+  .photo-cell img{width:100%; height:100%; object-fit:cover; display:block;}
+  .photo-cell .tag{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    font-size:10.5px;
+    letter-spacing:1px;
+    color:#fff;
+    background:linear-gradient(transparent,rgba(30,28,25,.72));
+    padding:14px 7px 5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .photo-cell .note-dot{
+    position:absolute;
+    top:6px; right:6px;
+    width:8px; height:8px;
+    border-radius:50%;
+    background:#e9b04c;
+    box-shadow:0 0 0 2px rgba(255,255,255,.75);
+  }
+
+  .empty-state{
+    text-align:center;
+    color:var(--muted);
+    padding:60px 20px;
+    font-size:14px;
+    letter-spacing:1px;
+  }
+  .empty-state .btn{margin-top:18px;}
+
+  /* ── 浮動新增按鈕 ── */
+  .fab{
+    position:fixed;
+    right:20px;
+    bottom:calc(24px + env(safe-area-inset-bottom));
+    z-index:55;
+    width:58px; height:58px;
+    border-radius:50%;
+    border:none;
+    background:var(--accent);
+    color:#fff;
+    font-size:30px;
+    font-weight:300;
+    line-height:1;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(47,46,43,.28);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    transition:transform .15s;
+  }
+  .fab:active{transform:scale(.94);}
+
+  /* ── 底部彈窗（sheet） ── */
+  .overlay{
+    position:fixed;
+    inset:0;
+    z-index:80;
+    background:rgba(30,28,25,.45);
+    display:none;
+  }
+  .overlay.open{display:block;}
+  .sheet{
+    position:fixed;
+    left:0; right:0; bottom:0;
+    z-index:90;
+    background:var(--paper);
+    border-radius:18px 18px 0 0;
+    padding:20px 20px calc(24px + env(safe-area-inset-bottom));
+    max-height:88vh;
+    overflow-y:auto;
+    transform:translateY(105%);
+    transition:transform .28s ease;
+    max-width:640px;
+    margin:0 auto;
+    box-shadow:0 -10px 40px rgba(30,28,25,.2);
+  }
+  .sheet.open{transform:translateY(0);}
+  .sheet h3{margin:0 0 16px; font-size:16px; font-weight:500; letter-spacing:3px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:12.5px; letter-spacing:2px; color:var(--muted); margin-bottom:7px;}
+  .field input[type=text], .field input[type=date], .field textarea, .field select{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    font-family:inherit;
+    font-size:15px;
+    padding:10px 13px;
+    color:var(--ink);
+  }
+  .field textarea{resize:vertical; min-height:64px;}
+  .field input:focus, .field textarea:focus, .field select:focus{outline:none; border-color:var(--accent);}
+  .trade-select{display:flex; flex-wrap:wrap; gap:8px;}
+  .trade-select .chip.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .file-drop{
+    border:1px dashed var(--accent);
+    border-radius:12px;
+    background:var(--accent-light);
+    color:var(--accent);
+    text-align:center;
+    padding:22px 14px;
+    font-size:14px;
+    letter-spacing:1px;
+    cursor:pointer;
+  }
+  .file-drop strong{display:block; font-size:15px; letter-spacing:2px; font-weight:500;}
+  .file-drop .hint{font-size:12px; color:var(--muted); margin-top:4px;}
+  .preview-strip{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;}
+  .preview-strip img{width:64px; height:64px; object-fit:cover; border-radius:8px; border:1px solid var(--line);}
+  .sheet-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:20px;}
+
+  /* ── 燈箱（照片詳情） ── */
+  .lightbox{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:rgba(24,22,20,.94);
+    display:none;
+    flex-direction:column;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox .lb-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 18px;
+    color:#e8e5df;
+  }
+  .lightbox .lb-top .lb-title{font-size:13px; letter-spacing:2px;}
+  .lightbox .lb-close{
+    background:none; border:none; color:#e8e5df;
+    font-size:26px; line-height:1; cursor:pointer; padding:4px 8px;
+  }
+  .lightbox .lb-img{
+    flex:1;
+    min-height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0 12px;
+  }
+  .lightbox .lb-img img{max-width:100%; max-height:100%; object-fit:contain; border-radius:4px;}
+  .lightbox .lb-panel{
+    background:var(--paper);
+    border-radius:16px 16px 0 0;
+    padding:16px 18px calc(20px + env(safe-area-inset-bottom));
+    max-width:640px;
+    margin:0 auto;
+    width:100%;
+  }
+  .lb-row{display:flex; gap:10px; margin-bottom:10px;}
+  .lb-row select, .lb-row input[type=date]{
+    flex:1;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    font-family:inherit;
+    font-size:14px;
+    padding:8px 11px;
+    color:var(--ink);
+  }
+  .lb-panel textarea{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--card);
+    font-family:inherit;
+    font-size:14px;
+    padding:9px 12px;
+    color:var(--ink);
+    resize:vertical;
+    min-height:52px;
+  }
+  .lb-actions{display:flex; gap:10px; justify-content:space-between; margin-top:12px;}
+
+  .privacy-note{
+    max-width:960px;
+    margin:0 auto;
+    padding:0 20px 40px;
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:1px;
+  }
+  .privacy-note svg{vertical-align:-2px; margin-right:4px;}
+
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:calc(96px + env(safe-area-inset-bottom));
+    transform:translateX(-50%) translateY(10px);
+    z-index:120;
+    background:var(--ink);
+    color:#f5efe2;
+    font-size:13px;
+    letter-spacing:1px;
+    padding:9px 20px;
+    border-radius:999px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s, transform .25s;
+    white-space:nowrap;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* ── 匯出報告（列印） ── */
+  #report{display:none;}
+  @media print{
+    body > *:not(#report){display:none !important;}
+    body{background:#fff;}
+    #report{display:block; padding:0 8px;}
+    #report .rp-head{text-align:center; border-bottom:1px solid #ccc; padding-bottom:14px; margin-bottom:18px;}
+    #report .rp-head .en{font-family:var(--serif); font-size:22px; letter-spacing:6px; margin:0;}
+    #report .rp-head .zh{font-size:12px; letter-spacing:5px; color:#777; margin:2px 0 8px;}
+    #report .rp-head h2{font-size:18px; letter-spacing:3px; margin:8px 0 2px;}
+    #report .rp-head .meta{font-size:11px; color:#777; letter-spacing:1px;}
+    #report h3.rp-trade{
+      font-size:14px; letter-spacing:3px; margin:20px 0 10px;
+      border-left:3px solid var(--accent); padding-left:10px;
+      break-after:avoid;
+    }
+    #report .rp-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+    #report figure{margin:0; break-inside:avoid;}
+    #report figure img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:4px;}
+    #report figcaption{font-size:9.5px; color:#555; line-height:1.45; margin-top:3px;}
+  }
+
+  @media (max-width:520px){
+    header.page-head .en{font-size:22px; letter-spacing:5px;}
+    .sites-grid{grid-template-columns:1fr 1fr;}
+    .photo-grid{grid-template-columns:repeat(3,1fr);}
+    #report .rp-grid{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<div class="site-bar">
+  <a class="brand" href="https://www.yu-he-design.com"><img src="images/logo-mark.png" alt="禹合制所 logo">禹合制所<span>YUHE DESIGN</span></a>
+  <button class="back-home" id="navBack" style="display:none">← 回案場列表</button>
+</div>
+
+<header class="page-head" id="pageHead">
+  <p class="en">SITE PHOTO LOG</p>
+  <h1>案場照片紀錄</h1>
+  <p>拍照、歸檔、備註，依案場與工種整理施工紀錄；完工後一鍵匯出相簿交付業主。</p>
+</header>
+
+<main>
+  <!-- 案場列表 -->
+  <section id="viewSites">
+    <div class="section-title">
+      <h2>進行中案場</h2>
+      <span class="sub" id="siteCount"></span>
+    </div>
+    <div class="sites-grid" id="sitesGrid"></div>
+    <div class="empty-state" id="sitesEmpty" style="display:none">
+      目前還沒有案場。<br>建立第一個案場，或先載入示範資料看看效果。<br>
+      <button class="btn ghost" id="btnDemo">載入示範資料</button>
+    </div>
+  </section>
+
+  <!-- 單一案場相簿 -->
+  <section id="viewAlbum" style="display:none">
+    <div class="album-head">
+      <h2 id="albumTitle"></h2>
+      <div class="meta" id="albumMeta"></div>
+    </div>
+    <div class="album-actions">
+      <button class="btn" id="btnAddPhotos">＋ 新增照片</button>
+      <button class="btn ghost" id="btnExport">匯出相簿 PDF</button>
+      <button class="btn danger small" id="btnDeleteSite">刪除案場</button>
+    </div>
+    <input class="search-box" id="searchBox" type="search" placeholder="搜尋備註或工種…">
+    <div class="filter-row" id="filterRow"></div>
+    <div id="albumBody"></div>
+    <div class="empty-state" id="albumEmpty" style="display:none">
+      這個案場還沒有照片。<br>按「＋ 新增照片」把工地照片歸進來。
+    </div>
+  </section>
+</main>
+
+<p class="privacy-note">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+  照片與紀錄只儲存在這台裝置的瀏覽器內，不上傳雲端；清除瀏覽器資料前請先匯出備份。
+</p>
+
+<button class="fab" id="fab" title="新增照片">＋</button>
+
+<!-- 新增案場 sheet -->
+<div class="overlay" id="overlay"></div>
+<div class="sheet" id="sheetSite">
+  <h3>新增案場</h3>
+  <div class="field">
+    <label>案場名稱</label>
+    <input type="text" id="siteNameInput" placeholder="例：遠雄仰森 12F" maxlength="30">
+  </div>
+  <div class="sheet-actions">
+    <button class="btn ghost" data-close>取消</button>
+    <button class="btn" id="btnSaveSite">建立案場</button>
+  </div>
+</div>
+
+<!-- 新增照片 sheet -->
+<div class="sheet" id="sheetPhotos">
+  <h3>新增照片</h3>
+  <div class="field">
+    <label>工種／階段</label>
+    <div class="trade-select" id="tradeSelect"></div>
+  </div>
+  <div class="field">
+    <label>拍攝日期</label>
+    <input type="date" id="photoDateInput">
+  </div>
+  <div class="field">
+    <label>備註（選填，套用到這批照片）</label>
+    <textarea id="photoNoteInput" placeholder="例：主臥配電完成，待水電收尾複查"></textarea>
+  </div>
+  <div class="field">
+    <div class="file-drop" id="fileDrop">
+      <strong>拍照或選取照片</strong>
+      <div class="hint">可一次選多張，會自動壓縮存於裝置端</div>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
+    <div class="preview-strip" id="previewStrip"></div>
+  </div>
+  <div class="sheet-actions">
+    <button class="btn ghost" data-close>取消</button>
+    <button class="btn" id="btnSavePhotos" disabled>儲存照片</button>
+  </div>
+</div>
+
+<!-- 燈箱 -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-top">
+    <span class="lb-title" id="lbTitle"></span>
+    <button class="lb-close" id="lbClose">×</button>
+  </div>
+  <div class="lb-img"><img id="lbImg" alt="施工照片"></div>
+  <div class="lb-panel">
+    <div class="lb-row">
+      <select id="lbTrade"></select>
+      <input type="date" id="lbDate">
+    </div>
+    <textarea id="lbNote" placeholder="備註…"></textarea>
+    <div class="lb-actions">
+      <button class="btn danger small" id="lbDelete">刪除照片</button>
+      <button class="btn small" id="lbSave">儲存變更</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div id="report"></div>
+
+<script>
+(function(){
+"use strict";
+
+const TRADES = ["保護工程","拆除清運","水電配管","空調工程","泥作工程","木作工程","系統櫃","油漆工程","燈具窗簾","細清完工","驗屋修繕","其他"];
+
+/* ── IndexedDB ── */
+let db;
+function openDB(){
+  return new Promise((res,rej)=>{
+    const req = indexedDB.open("yuhe-photolog",1);
+    req.onupgradeneeded = e=>{
+      const d = e.target.result;
+      const s = d.createObjectStore("sites",{keyPath:"id"});
+      s.createIndex("createdAt","createdAt");
+      const p = d.createObjectStore("photos",{keyPath:"id"});
+      p.createIndex("siteId","siteId");
+    };
+    req.onsuccess = ()=>{db=req.result; res();};
+    req.onerror = ()=>rej(req.error);
+  });
+}
+function tx(store,mode){ return db.transaction(store,mode).objectStore(store); }
+function idbAll(store,indexName,key){
+  return new Promise((res,rej)=>{
+    const src = indexName ? tx(store).index(indexName) : tx(store);
+    const req = key!==undefined ? src.getAll(key) : src.getAll();
+    req.onsuccess=()=>res(req.result); req.onerror=()=>rej(req.error);
+  });
+}
+function idbPut(store,val){
+  return new Promise((res,rej)=>{
+    const req = tx(store,"readwrite").put(val);
+    req.onsuccess=()=>res(); req.onerror=()=>rej(req.error);
+  });
+}
+function idbDel(store,key){
+  return new Promise((res,rej)=>{
+    const req = tx(store,"readwrite").delete(key);
+    req.onsuccess=()=>res(); req.onerror=()=>rej(req.error);
+  });
+}
+const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const todayStr = ()=> new Date().toISOString().slice(0,10);
+
+/* ── 影像壓縮 ── */
+function compressImage(fileOrBlob,maxSide=1600,quality=.85){
+  return new Promise((res,rej)=>{
+    const url = URL.createObjectURL(fileOrBlob);
+    const img = new Image();
+    img.onload = ()=>{
+      const scale = Math.min(1, maxSide/Math.max(img.width,img.height));
+      const w = Math.round(img.width*scale), h = Math.round(img.height*scale);
+      const c = document.createElement("canvas");
+      c.width=w; c.height=h;
+      c.getContext("2d").drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      c.toBlob(b=> b?res(b):rej(new Error("toBlob failed")), "image/jpeg", quality);
+    };
+    img.onerror = ()=>{URL.revokeObjectURL(url); rej(new Error("image load failed"));};
+    img.src = url;
+  });
+}
+
+/* ── 狀態 ── */
+let sites=[], photos=[];          // photos = 目前開啟案場的照片
+let currentSite=null;
+let activeTrade="全部", searchTerm="";
+const urlCache = new Map();       // photoId -> objectURL
+function photoURL(p){
+  if(!urlCache.has(p.id)) urlCache.set(p.id, URL.createObjectURL(p.blob));
+  return urlCache.get(p.id);
+}
+
+/* ── DOM ── */
+const $ = id=>document.getElementById(id);
+const viewSites=$("viewSites"), viewAlbum=$("viewAlbum"), pageHead=$("pageHead");
+const overlay=$("overlay"), toast=$("toast");
+
+function showToast(msg){
+  toast.textContent=msg;
+  toast.classList.add("show");
+  clearTimeout(showToast._t);
+  showToast._t=setTimeout(()=>toast.classList.remove("show"),2200);
+}
+
+/* ── 案場列表 ── */
+async function renderSites(){
+  sites = (await idbAll("sites")).sort((a,b)=>b.createdAt-a.createdAt);
+  const allPhotos = await idbAll("photos");
+  const grid=$("sitesGrid");
+  grid.innerHTML="";
+  $("siteCount").textContent = sites.length ? sites.length+" 個案場" : "";
+  $("sitesEmpty").style.display = sites.length ? "none" : "block";
+
+  for(const s of sites){
+    const ps = allPhotos.filter(p=>p.siteId===s.id).sort((a,b)=>b.createdAt-a.createdAt);
+    const card=document.createElement("div");
+    card.className="site-card";
+    const cover=document.createElement("div");
+    cover.className="cover";
+    if(ps.length){
+      ps.slice(0,3).forEach(p=>{
+        const im=document.createElement("img");
+        im.src=photoURL(p); im.alt="";
+        cover.appendChild(im);
+      });
+    }else{
+      cover.innerHTML='<span class="empty-cover">尚無照片</span>';
+    }
+    const info=document.createElement("div");
+    info.className="info";
+    const last = ps.length ? "最近更新 "+ps[0].date : "—";
+    info.innerHTML = `<h3></h3><div class="meta">${ps.length} 張照片・${last}</div>`;
+    info.querySelector("h3").textContent = s.name;
+    card.append(cover,info);
+    card.addEventListener("click",()=>openAlbum(s));
+    grid.appendChild(card);
+  }
+  const add=document.createElement("button");
+  add.className="add-site-card";
+  add.innerHTML='<span class="plus">＋</span>新增案場';
+  add.addEventListener("click",()=>openSheet("sheetSite"));
+  grid.appendChild(add);
+}
+
+/* ── 相簿 ── */
+async function openAlbum(site){
+  currentSite=site;
+  activeTrade="全部"; searchTerm="";
+  $("searchBox").value="";
+  viewSites.style.display="none";
+  pageHead.style.display="none";
+  viewAlbum.style.display="block";
+  $("navBack").style.display="inline-block";
+  $("fab").style.display="flex";
+  await renderAlbum();
+  window.scrollTo(0,0);
+}
+function closeAlbum(){
+  currentSite=null;
+  viewAlbum.style.display="none";
+  pageHead.style.display="block";
+  viewSites.style.display="block";
+  $("navBack").style.display="none";
+  $("fab").style.display="none";
+  renderSites();
+}
+async function renderAlbum(){
+  photos = (await idbAll("photos","siteId",currentSite.id))
+    .sort((a,b)=> b.date===a.date ? b.createdAt-a.createdAt : (b.date>a.date?1:-1));
+  $("albumTitle").textContent=currentSite.name;
+  $("albumMeta").textContent=photos.length+" 張照片";
+
+  // 工種篩選 chips（全部 + 有照片的工種）
+  const tradesHere=[...new Set(photos.map(p=>p.trade))];
+  const row=$("filterRow");
+  row.innerHTML="";
+  ["全部",...TRADES.filter(t=>tradesHere.includes(t))].forEach(t=>{
+    const c=document.createElement("button");
+    c.className="chip"+(t===activeTrade?" active":"");
+    c.textContent=t;
+    c.addEventListener("click",()=>{activeTrade=t; renderAlbum();});
+    row.appendChild(c);
+  });
+
+  const list = photos.filter(p=>
+    (activeTrade==="全部"||p.trade===activeTrade) &&
+    (!searchTerm || (p.note||"").toLowerCase().includes(searchTerm) || p.trade.includes(searchTerm))
+  );
+  const body=$("albumBody");
+  body.innerHTML="";
+  $("albumEmpty").style.display = photos.length ? "none" : "block";
+
+  // 依日期分組
+  const byDate=new Map();
+  list.forEach(p=>{
+    if(!byDate.has(p.date)) byDate.set(p.date,[]);
+    byDate.get(p.date).push(p);
+  });
+  for(const [date,ps] of byDate){
+    const g=document.createElement("div");
+    g.className="date-group";
+    const h=document.createElement("h4");
+    h.textContent=date;
+    const grid=document.createElement("div");
+    grid.className="photo-grid";
+    ps.forEach(p=>{
+      const cell=document.createElement("div");
+      cell.className="photo-cell";
+      cell.innerHTML=`<img src="${photoURL(p)}" alt="" loading="lazy"><span class="tag"></span>${p.note?'<span class="note-dot"></span>':''}`;
+      cell.querySelector(".tag").textContent=p.trade;
+      cell.addEventListener("click",()=>openLightbox(p));
+      grid.appendChild(cell);
+    });
+    g.append(h,grid);
+    body.appendChild(g);
+  }
+}
+
+/* ── Sheets ── */
+let pendingFiles=[];
+function openSheet(id){
+  overlay.classList.add("open");
+  $(id).classList.add("open");
+  if(id==="sheetPhotos"){
+    $("photoDateInput").value=todayStr();
+    pendingFiles=[];
+    $("previewStrip").innerHTML="";
+    $("btnSavePhotos").disabled=true;
+    renderTradeSelect();
+  }
+  if(id==="sheetSite"){
+    $("siteNameInput").value="";
+    setTimeout(()=>$("siteNameInput").focus(),250);
+  }
+}
+function closeSheets(){
+  overlay.classList.remove("open");
+  document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open"));
+}
+overlay.addEventListener("click",closeSheets);
+document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",closeSheets));
+
+let selectedTrade=TRADES[0];
+function renderTradeSelect(){
+  const box=$("tradeSelect");
+  box.innerHTML="";
+  TRADES.forEach(t=>{
+    const c=document.createElement("button");
+    c.className="chip"+(t===selectedTrade?" active":"");
+    c.textContent=t;
+    c.addEventListener("click",()=>{selectedTrade=t; renderTradeSelect();});
+    box.appendChild(c);
+  });
+}
+
+$("btnSaveSite").addEventListener("click",async ()=>{
+  const name=$("siteNameInput").value.trim();
+  if(!name){showToast("請輸入案場名稱"); return;}
+  await idbPut("sites",{id:uid(),name,createdAt:Date.now()});
+  closeSheets();
+  await renderSites();
+  showToast("已建立案場「"+name+"」");
+});
+
+$("fileDrop").addEventListener("click",()=>$("fileInput").click());
+$("fileInput").addEventListener("change",e=>{
+  pendingFiles=[...e.target.files];
+  const strip=$("previewStrip");
+  strip.innerHTML="";
+  pendingFiles.slice(0,12).forEach(f=>{
+    const im=document.createElement("img");
+    im.src=URL.createObjectURL(f);
+    strip.appendChild(im);
+  });
+  $("btnSavePhotos").disabled = !pendingFiles.length;
+  e.target.value="";
+});
+
+$("btnSavePhotos").addEventListener("click",async ()=>{
+  if(!pendingFiles.length||!currentSite) return;
+  const btn=$("btnSavePhotos");
+  btn.disabled=true; btn.textContent="處理中…";
+  const date=$("photoDateInput").value||todayStr();
+  const note=$("photoNoteInput").value.trim();
+  let ok=0;
+  for(const f of pendingFiles){
+    try{
+      const blob=await compressImage(f);
+      await idbPut("photos",{id:uid(),siteId:currentSite.id,trade:selectedTrade,note,date,createdAt:Date.now(),blob});
+      ok++;
+    }catch(err){console.warn("skip file",err);}
+  }
+  btn.textContent="儲存照片";
+  $("photoNoteInput").value="";
+  closeSheets();
+  await renderAlbum();
+  showToast("已加入 "+ok+" 張照片");
+});
+
+/* ── 燈箱 ── */
+let lbPhoto=null;
+function openLightbox(p){
+  lbPhoto=p;
+  $("lbImg").src=photoURL(p);
+  $("lbTitle").textContent=currentSite.name+"・"+p.date;
+  const sel=$("lbTrade");
+  sel.innerHTML=TRADES.map(t=>`<option${t===p.trade?" selected":""}>${t}</option>`).join("");
+  $("lbDate").value=p.date;
+  $("lbNote").value=p.note||"";
+  $("lightbox").classList.add("open");
+}
+$("lbClose").addEventListener("click",()=>$("lightbox").classList.remove("open"));
+$("lbSave").addEventListener("click",async ()=>{
+  if(!lbPhoto) return;
+  lbPhoto.trade=$("lbTrade").value;
+  lbPhoto.date=$("lbDate").value||lbPhoto.date;
+  lbPhoto.note=$("lbNote").value.trim();
+  await idbPut("photos",lbPhoto);
+  $("lightbox").classList.remove("open");
+  await renderAlbum();
+  showToast("已儲存變更");
+});
+$("lbDelete").addEventListener("click",async ()=>{
+  if(!lbPhoto) return;
+  if(!confirm("確定刪除這張照片？")) return;
+  await idbDel("photos",lbPhoto.id);
+  urlCache.delete(lbPhoto.id);
+  $("lightbox").classList.remove("open");
+  await renderAlbum();
+  showToast("已刪除照片");
+});
+
+/* ── 刪除案場 ── */
+$("btnDeleteSite").addEventListener("click",async ()=>{
+  if(!currentSite) return;
+  if(!confirm(`確定刪除「${currentSite.name}」及其 ${photos.length} 張照片？此動作無法復原。`)) return;
+  for(const p of photos){ await idbDel("photos",p.id); urlCache.delete(p.id); }
+  await idbDel("sites",currentSite.id);
+  showToast("已刪除案場");
+  closeAlbum();
+});
+
+/* ── 匯出相簿（列印為 PDF） ── */
+$("btnExport").addEventListener("click",()=>{
+  if(!photos.length){showToast("這個案場還沒有照片"); return;}
+  const rp=$("report");
+  const byTrade=new Map();
+  TRADES.forEach(t=>{
+    const ps=photos.filter(p=>p.trade===t).sort((a,b)=>a.date>b.date?1:-1);
+    if(ps.length) byTrade.set(t,ps);
+  });
+  let html=`<div class="rp-head">
+    <p class="en">YUHE DESIGN</p>
+    <p class="zh">禹合制所室內裝修有限公司</p>
+    <h2>${escapeHTML(currentSite.name)}｜施工紀錄相簿</h2>
+    <div class="meta">共 ${photos.length} 張照片・匯出日期 ${todayStr()}</div>
+  </div>`;
+  for(const [t,ps] of byTrade){
+    html+=`<h3 class="rp-trade">${t}（${ps.length}）</h3><div class="rp-grid">`;
+    for(const p of ps){
+      html+=`<figure><img src="${photoURL(p)}"><figcaption>${p.date}${p.note?"・"+escapeHTML(p.note):""}</figcaption></figure>`;
+    }
+    html+=`</div>`;
+  }
+  rp.innerHTML=html;
+  setTimeout(()=>window.print(),150);
+});
+function escapeHTML(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ── 示範資料 ── */
+const DEMO = [
+  {site:"忠泰湛 B2-22F", items:[
+    ["images/zhongtai-living-photo.jpg","木作工程","客廳天花封板完成"],
+    ["images/zhongtai-master-photo.jpg","油漆工程","主臥面漆二道完成"],
+    ["images/zhongtai-guest-photo.jpg","細清完工","客房完工細清"],
+    ["images/zhongtai-bath-photo.jpg","泥作工程","主浴貼磚完成待矽利康"],
+  ]},
+  {site:"遇見 12F", items:[
+    ["images/yujian-living-photo.jpg","木作工程","電視牆骨架完成"],
+    ["images/yujian-living2-photo.jpg","油漆工程","客廳批土研磨"],
+    ["images/yujian-master-photo.jpg","系統櫃","主臥衣櫃安裝完成"],
+  ]},
+  {site:"茂海 8F", items:[
+    ["images/maohai-living-photo.jpg","細清完工","客餐廳完工紀錄"],
+    ["images/master-bedroom-photo.jpg","燈具窗簾","主臥窗簾燈具安裝"],
+  ]},
+];
+$("btnDemo").addEventListener("click",async ()=>{
+  const btn=$("btnDemo");
+  btn.disabled=true; btn.textContent="載入中…";
+  try{
+    let day=0;
+    for(const d of DEMO){
+      const siteId=uid();
+      await idbPut("sites",{id:siteId,name:d.site,createdAt:Date.now()-day*1000});
+      for(const [src,trade,note] of d.items){
+        const resp=await fetch(src);
+        if(!resp.ok) continue;
+        const blob=await compressImage(await resp.blob());
+        const date=new Date(Date.now()-(day*3+1)*86400000).toISOString().slice(0,10);
+        await idbPut("photos",{id:uid(),siteId,trade,note,date,createdAt:Date.now(),blob});
+        day++;
+      }
+    }
+    showToast("示範資料已載入");
+  }catch(err){
+    console.warn(err);
+    showToast("載入失敗：請透過網頁伺服器開啟本頁");
+  }
+  btn.disabled=false; btn.textContent="載入示範資料";
+  await renderSites();
+});
+
+/* ── 導覽 ── */
+$("navBack").addEventListener("click",closeAlbum);
+$("fab").addEventListener("click",()=>openSheet("sheetPhotos"));
+$("btnAddPhotos").addEventListener("click",()=>openSheet("sheetPhotos"));
+$("searchBox").addEventListener("input",e=>{
+  searchTerm=e.target.value.trim().toLowerCase();
+  renderAlbum();
+});
+
+/* ── 啟動 ── */
+openDB().then(renderSites).catch(err=>{
+  console.error(err);
+  $("sitesEmpty").style.display="block";
+  $("sitesEmpty").textContent="此瀏覽器不支援本機儲存（IndexedDB），請改用 Safari 或 Chrome 開啟。";
+});
+})();
+</script>
+</body>
+</html>
