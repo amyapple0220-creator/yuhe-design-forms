@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://amyapple0220-creator.github.io/yuhe-design-forms/sitemap.xml
