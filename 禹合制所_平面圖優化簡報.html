@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜平面圖優化提案 忠泰湛 B2-22F</title>
+<meta name="description" content="忠泰湛 B2-22F 室內設計案｜平面規劃優化提案。現況檢視、設計優化主軸，以及 PLAN-A / PLAN-B 兩套配置比較，供業主擇一。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="禹合制所 YUHE DESIGN｜平面圖優化提案 忠泰湛 B2-22F">
+<meta property="og:description" content="現況檢視、設計優化主軸，PLAN-A / PLAN-B 兩套平面配置比較。">
+<meta property="og:image" content="https://amyapple0220-creator.github.io/yuhe-design-forms/images/zhongtai22f-planA.png">
+<style>
+  :root{
+    --ink:#2f2e2b;
+    --paper:#f5f4f1;
+    --line:#e3e0da;
+    --accent:#8f7550;
+    --accent-light:#f1ede5;
+    --greige:#ebe8e2;
+    --muted:#8f8b83;
+    --serif:Georgia,"Times New Roman",serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.75;
+  }
+  /* ===== 頂列（行動版） ===== */
+  .site-bar{
+    position:sticky; top:0; z-index:60;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px 20px;
+    background:rgba(250,249,246,.93);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .site-bar .brand{
+    display:inline-flex; align-items:center; gap:10px;
+    text-decoration:none; color:var(--ink);
+    font-size:15px; font-weight:500; letter-spacing:3px;
+  }
+  .site-bar .brand img{height:26px; width:auto; display:block;}
+  .site-bar .brand span{
+    font-weight:300; font-size:11px; letter-spacing:2px;
+    color:var(--muted); margin-left:2px;
+  }
+  .menu-btn{
+    background:none; border:none; padding:6px; cursor:pointer;
+    color:var(--ink); display:flex; flex-direction:column; gap:5px;
+  }
+  .menu-btn i{display:block; width:22px; height:1.5px; background:var(--ink);}
+
+  /* ===== 側欄選單 ===== */
+  .side-menu{
+    position:fixed; top:0; left:0; bottom:0; width:250px;
+    background:#fbfaf8; border-right:1px solid var(--line);
+    padding:34px 30px 26px;
+    display:flex; flex-direction:column; gap:8px;
+    z-index:80; overflow-y:auto;
+    transform:translateX(-100%); transition:transform .3s ease;
+  }
+  .side-menu.open{transform:none; box-shadow:0 0 40px rgba(0,0,0,.18);}
+  .side-menu .menu-logo{display:block; margin-bottom:26px;}
+  .side-menu .menu-logo img{width:120px; height:auto; display:block;}
+  .side-menu nav{display:flex; flex-direction:column;}
+  .side-menu .mi, .side-menu summary{
+    display:block; padding:10px 0;
+    font-size:13px; letter-spacing:3px; color:#6d6960;
+    text-decoration:none; cursor:pointer; transition:color .2s;
+  }
+  .side-menu .mi span, .side-menu summary span{
+    margin-left:8px; font-size:11px; letter-spacing:2px; color:var(--muted);
+  }
+  .side-menu .mi:hover, .side-menu summary:hover{color:var(--ink);}
+  .side-menu .mi.active{color:var(--ink); font-weight:600;}
+  .side-menu details{border:0;}
+  .side-menu summary{list-style:none; position:relative;}
+  .side-menu summary::-webkit-details-marker{display:none;}
+  .side-menu summary::after{content:"▾"; position:absolute; right:2px; color:var(--muted); transition:transform .2s;}
+  .side-menu details[open] summary::after{transform:rotate(180deg);}
+  .side-menu .sub{
+    display:block; padding:7px 0 7px 18px;
+    font-size:12px; letter-spacing:2px; color:var(--muted); text-decoration:none;
+  }
+  .side-menu .sub:hover{color:var(--ink);}
+  .side-menu .menu-foot{margin-top:auto; padding-top:20px; font-size:11px; letter-spacing:2px; color:var(--muted);}
+  .menu-mask{
+    position:fixed; inset:0; background:rgba(0,0,0,.35);
+    opacity:0; pointer-events:none; transition:opacity .3s; z-index:70;
+  }
+  .menu-mask.show{opacity:1; pointer-events:auto;}
+
+  /* ===== 頁首 ===== */
+  header{text-align:center; padding:56px 20px 34px; border-bottom:1px solid var(--line);}
+  header .logo{width:150px; max-width:60%; height:auto; margin:0 auto 10px; display:block;}
+  header .slogan{font-size:12px; font-weight:300; letter-spacing:3px; color:var(--muted); margin:0 auto;}
+  header .en{
+    font-family:var(--serif); font-size:34px; font-weight:400; letter-spacing:10px;
+    color:var(--ink); margin:26px auto 4px; white-space:nowrap;
+  }
+  header h1{font-size:15px; font-weight:400; letter-spacing:8px; color:var(--muted); margin:0 0 18px;}
+  header p{margin:0 auto; max-width:600px; color:var(--muted); font-size:14px; letter-spacing:1px;}
+
+  main{max-width:1000px; margin:0 auto; padding:44px 20px 90px;}
+
+  /* ===== 專案資訊卡 ===== */
+  .project-meta{
+    background:#fff; border:1px solid var(--line);
+    padding:26px 30px; margin-bottom:56px;
+  }
+  .project-meta .pm-title{
+    font-size:20px; font-weight:600; letter-spacing:3px; margin:0 0 4px; text-align:center;
+  }
+  .project-meta .pm-sub{
+    display:block; text-align:center;
+    font-family:var(--serif); color:var(--muted); font-size:13px; letter-spacing:2px; margin-bottom:22px;
+  }
+  .pm-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line);
+  }
+  .pm-grid .cell{background:#fff; padding:15px 14px; text-align:center;}
+  .pm-grid .k{display:block; font-size:11px; letter-spacing:2px; color:var(--muted); margin-bottom:5px;}
+  .pm-grid .v{display:block; font-size:15px; letter-spacing:1px; color:var(--ink); font-weight:500;}
+  .pm-grid .v small{font-size:11px; color:var(--muted); font-weight:400; letter-spacing:1px;}
+  .area-strip{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:10px 26px;
+    margin-top:20px; padding-top:20px; border-top:1px dashed var(--line);
+    font-size:13.5px; letter-spacing:1px; color:#5d5a53;
+  }
+  .area-strip b{color:var(--accent); font-weight:600;}
+
+  /* ===== 區段標題 ===== */
+  .sec-head{text-align:center; margin:0 0 30px;}
+  .sec-head .no{
+    display:inline-block; font-family:var(--serif); font-size:12px; letter-spacing:3px;
+    color:var(--accent); border:1px solid var(--accent); border-radius:999px;
+    padding:3px 14px; margin-bottom:14px;
+  }
+  .sec-head h2{font-size:22px; font-weight:600; letter-spacing:4px; margin:0 0 6px;}
+  .sec-head .en{font-family:var(--serif); color:var(--muted); font-size:13px; letter-spacing:3px;}
+  .sec-head p{max-width:640px; margin:14px auto 0; font-size:14px; color:#5d5a53; letter-spacing:.5px;}
+  section.block{margin:0 0 78px; padding-top:56px; border-top:1px solid var(--line);}
+  section.block:first-of-type{border-top:0; padding-top:0;}
+
+  /* ===== 平面圖 ===== */
+  figure.plan{margin:0;}
+  .plan-frame{
+    position:relative; background:#fff; border:1px solid var(--line);
+    padding:14px; cursor:zoom-in;
+  }
+  .plan-frame img{display:block; width:100%; height:auto;}
+  .plan-frame .zoom-hint{
+    position:absolute; right:16px; bottom:16px;
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(47,46,43,.72); color:#fff;
+    font-size:11px; letter-spacing:1px; padding:5px 11px; border-radius:999px;
+    pointer-events:none;
+  }
+  figure.plan figcaption{
+    text-align:center; margin-top:14px; font-size:16px; letter-spacing:3px;
+  }
+  figure.plan figcaption .en{
+    display:block; font-family:var(--serif); font-size:11px; letter-spacing:2px; color:#a39d92; margin-top:2px;
+  }
+
+  /* 房間圖例 */
+  .legend{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:8px 10px; margin:22px auto 0; max-width:760px;
+  }
+  .legend span{
+    font-size:12px; letter-spacing:1px; color:#5d5a53;
+    background:var(--accent-light); border:1px solid var(--line);
+    padding:4px 12px; border-radius:999px;
+  }
+
+  /* ===== 優化重點格 ===== */
+  .opt-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px;}
+  .opt{
+    background:#fff; border:1px solid var(--line); padding:22px 24px;
+    display:flex; gap:16px; align-items:flex-start;
+  }
+  .opt .idx{
+    flex:0 0 auto; width:38px; height:38px; border-radius:50%;
+    border:1px solid var(--accent); color:var(--accent);
+    font-family:var(--serif); font-size:16px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .opt h3{margin:2px 0 6px; font-size:15.5px; font-weight:600; letter-spacing:1.5px;}
+  .opt p{margin:0; font-size:13.5px; color:#5d5a53; line-height:1.8; letter-spacing:.3px;}
+
+  /* ===== A/B 兩案 ===== */
+  .ab-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:26px;}
+  .ab-card{background:#fff; border:1px solid var(--line); display:flex; flex-direction:column;}
+  .ab-card .ab-top{padding:20px 22px 14px; border-bottom:1px solid var(--line);}
+  .ab-tag{
+    display:inline-block; font-family:var(--serif); font-size:12px; letter-spacing:3px;
+    color:#fff; background:var(--accent); padding:3px 14px; border-radius:999px; margin-bottom:10px;
+  }
+  .ab-card.b .ab-tag{background:#6d6960;}
+  .ab-card h3{margin:0 0 4px; font-size:18px; font-weight:600; letter-spacing:2px;}
+  .ab-card .ab-mood{margin:0; font-size:13px; color:var(--muted); letter-spacing:1px;}
+  .ab-card .plan-frame{border:0; border-bottom:1px solid var(--line); padding:12px;}
+  .ab-card ul{margin:0; padding:18px 22px 22px; list-style:none;}
+  .ab-card li{
+    position:relative; padding:0 0 12px 20px; font-size:13.5px; color:#4f4c46; letter-spacing:.3px; line-height:1.7;
+  }
+  .ab-card li:last-child{padding-bottom:0;}
+  .ab-card li::before{
+    content:""; position:absolute; left:2px; top:9px;
+    width:7px; height:7px; border-radius:50%; background:var(--accent);
+  }
+  .ab-card.b li::before{background:#6d6960;}
+  .ab-card li b{color:var(--ink); font-weight:600;}
+
+  /* ===== 差異對照表 ===== */
+  .cmp-wrap{overflow-x:auto; border:1px solid var(--line);}
+  table.cmp{width:100%; border-collapse:collapse; background:#fff; min-width:620px;}
+  table.cmp th, table.cmp td{
+    padding:14px 18px; text-align:left; border-bottom:1px solid var(--line);
+    font-size:13.5px; letter-spacing:.5px; vertical-align:top;
+  }
+  table.cmp thead th{
+    background:var(--greige); font-size:13px; letter-spacing:2px; font-weight:600;
+    border-bottom:1px solid var(--line);
+  }
+  table.cmp thead th.a{color:var(--accent);}
+  table.cmp thead th.b{color:#5b584f;}
+  table.cmp td.item{
+    font-weight:600; color:var(--ink); background:#fbfaf8; white-space:nowrap;
+    width:120px; letter-spacing:1px;
+  }
+  table.cmp tr:last-child td{border-bottom:0;}
+  table.cmp .same td{color:#7a766e;}
+  table.cmp .same td.item{color:#7a766e;}
+
+  .note-line{
+    margin:22px auto 0; max-width:760px; text-align:center;
+    font-size:13px; color:var(--muted); letter-spacing:.5px; line-height:1.9;
+  }
+  .note-line b{color:var(--accent); font-weight:600;}
+
+  /* ===== 下一步 ===== */
+  .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  .step{background:#fff; border:1px solid var(--line); padding:20px 18px; text-align:center;}
+  .step .sn{font-family:var(--serif); color:var(--accent); font-size:20px; letter-spacing:1px;}
+  .step h4{margin:8px 0 6px; font-size:14.5px; font-weight:600; letter-spacing:1.5px;}
+  .step p{margin:0; font-size:12.5px; color:var(--muted); line-height:1.7; letter-spacing:.3px;}
+
+  .signoff{
+    margin:40px auto 0; max-width:720px; background:var(--accent-light);
+    border:1px solid var(--line); padding:26px 30px; text-align:center;
+  }
+  .signoff p{margin:0 0 4px; font-size:14px; color:#5d5a53; letter-spacing:1px;}
+  .signoff .print-btn{
+    display:inline-flex; align-items:center; gap:8px; margin-top:14px;
+    padding:9px 24px; border:1px solid var(--accent); border-radius:999px;
+    color:var(--accent); font-size:13px; letter-spacing:2px;
+    background:none; cursor:pointer; text-decoration:none; transition:background .2s,color .2s;
+  }
+  .signoff .print-btn:hover{background:var(--accent); color:#fff;}
+
+  /* ===== 燈箱 ===== */
+  .lightbox{
+    position:fixed; inset:0; z-index:120; background:rgba(30,29,27,.92);
+    display:none; align-items:center; justify-content:center; padding:24px; cursor:zoom-out;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:100%; max-height:100%; box-shadow:0 8px 40px rgba(0,0,0,.5);}
+  .lightbox .lb-close{
+    position:absolute; top:18px; right:22px; color:#fff; font-size:30px;
+    background:none; border:none; cursor:pointer; line-height:1;
+  }
+  .lightbox .lb-hint{
+    position:absolute; bottom:18px; left:0; right:0; text-align:center;
+    color:rgba(255,255,255,.7); font-size:12px; letter-spacing:2px;
+  }
+
+  footer{
+    background:var(--greige); border-top:1px solid var(--line);
+    text-align:center; padding:36px 20px 46px;
+    font-size:13px; color:var(--muted); letter-spacing:1px;
+  }
+  footer .brand{font-size:15px; color:var(--ink); letter-spacing:3px; margin-bottom:4px;}
+
+  html.js .reveal{opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease;}
+  html.js .reveal.in{opacity:1; transform:none;}
+
+  @media (min-width:1020px){
+    .site-bar{display:none;}
+    header .logo, header .slogan{display:none;}
+    header{padding-top:64px;}
+    .menu-mask{display:none;}
+    .side-menu{transform:none; box-shadow:none;}
+    body{padding-left:250px;}
+  }
+  @media (max-width:720px){
+    .pm-grid{grid-template-columns:repeat(2,1fr);}
+    .opt-grid{grid-template-columns:1fr;}
+    .ab-grid{grid-template-columns:1fr;}
+    .steps{grid-template-columns:repeat(2,1fr);}
+    header .en{font-size:26px; letter-spacing:6px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html.js .reveal{opacity:1; transform:none; transition:none;}
+  }
+
+  /* ===== 列印 / 另存 PDF ===== */
+  @media print{
+    .side-menu,.menu-mask,.site-bar,.zoom-hint,.signoff .print-btn,.lightbox{display:none !important;}
+    body{padding-left:0; background:#fff;}
+    main{max-width:none; padding:0;}
+    section.block{break-inside:avoid; border-top:0; padding-top:24px; margin-bottom:30px;}
+    .ab-grid{grid-template-columns:1fr 1fr;}
+    .plan-frame{cursor:auto;}
+    header{padding:20px;}
+    .opt,.ab-card,.project-meta,.step,.plan-frame{box-shadow:none;}
+    a{color:inherit; text-decoration:none;}
+  }
+</style>
+</head>
+<body>
+
+<aside class="side-menu" id="sideMenu" aria-label="網站選單">
+  <a class="menu-logo" href="https://www.yu-he-design.com">
+    <img src="images/logo.png" alt="禹合制所 YUHE DESIGN" width="479" height="352">
+  </a>
+  <nav>
+    <a class="mi" href="https://www.yu-he-design.com">HOME<span>官網首頁</span></a>
+    <a class="mi active" href="#top">FLOOR PLAN<span>平面提案</span></a>
+    <a class="mi" href="https://amyapple0220-creator.github.io/yuhe-design-forms/禹合制所_3D渲染比對.html">3D RENDER<span>渲染比對</span></a>
+    <a class="mi" href="https://amyapple0220-creator.github.io/yuhe-design-forms/video/">VIDEO<span>影像作品</span></a>
+    <details class="mi-group">
+      <summary>WORKFLOW<span>委託流程</span></summary>
+      <a class="sub" href="https://www.yu-he-design.com/paper/services_index.php" target="_blank" rel="noopener">SERVICES｜服務內容</a>
+      <a class="sub" href="https://www.yu-he-design.com/paper/services_index.php" target="_blank" rel="noopener">FEE｜收費方式</a>
+    </details>
+    <a class="mi" href="https://www.yu-he-design.com/paper/contact_index.php" target="_blank" rel="noopener">CONTACT<span>聯絡我們</span></a>
+  </nav>
+  <div class="menu-foot">以「禹合」為名，「制所」於心。</div>
+</aside>
+<div class="menu-mask" id="menuMask"></div>
+
+<nav class="site-bar">
+  <a class="brand" href="https://www.yu-he-design.com"><img src="images/logo-mark.png" alt="禹合制所 logo">禹合制所<span>YUHE DESIGN</span></a>
+  <button class="menu-btn" id="menuBtn" aria-label="開啟選單" aria-expanded="false"><i></i><i></i><i></i></button>
+</nav>
+
+<header id="top">
+  <img class="logo" src="images/logo.png" alt="禹合制所室內裝修有限公司 YUHE DESIGN CO., LTD." width="479" height="352">
+  <p class="slogan">以「禹合」為名，「制所」於心。</p>
+  <p class="en">FLOOR PLAN</p>
+  <h1>平面圖優化提案</h1>
+  <p>從空間現況出發，梳理採光、動線與收納，<br>
+     並提供 PLAN-A / PLAN-B 兩套配置，讓您依生活習慣，選出最貼近日常的那一種。</p>
+</header>
+
+<main>
+
+  <!-- ===== 專案資訊 ===== -->
+  <div class="project-meta reveal">
+    <div class="pm-title">忠泰湛 B2-22F　室內設計案</div>
+    <span class="pm-sub">ZHONGTAI ZHAN · Residential Interior</span>
+    <div class="pm-grid">
+      <div class="cell"><span class="k">案　號 PROJECT</span><span class="v">202607003</span></div>
+      <div class="cell"><span class="k">格　局 LAYOUT</span><span class="v">3 房 <small>／ 主臥・客房・書房</small></span></div>
+      <div class="cell"><span class="k">比　例 SCALE</span><span class="v">A3　1:50</span></div>
+      <div class="cell"><span class="k">日　期 DATE</span><span class="v">2026.08.07</span></div>
+    </div>
+    <div class="area-strip">
+      <span>室內約 <b>33.6 坪</b>（含衛浴 ×2）</span>
+      <span>廚房 <b>2 坪</b></span>
+      <span>後陽台 <b>3.2 坪</b></span>
+      <span>合計約 <b>38.8 坪</b></span>
+      <span>樓層淨高 <b>CH 331.6</b></span>
+    </div>
+  </div>
+
+  <!-- ===== 01 空間現況 ===== -->
+  <section class="block reveal">
+    <div class="sec-head">
+      <span class="no">01</span>
+      <h2>空間現況</h2>
+      <span class="en">EXISTING &amp; DEMOLITION</span>
+      <p>先讀懂房子——採光面、結構樑位與既有隔間，是所有優化的起點。以下為現況暨拆除範圍，作為後續配置的依據。</p>
+    </div>
+    <figure class="plan">
+      <div class="plan-frame" data-full="images/zhongtai22f-existing.png">
+        <img src="images/zhongtai22f-existing.png" alt="忠泰湛 B2-22F 現況暨拆除圖" loading="lazy" decoding="async">
+        <span class="zoom-hint">🔍 點擊放大</span>
+      </div>
+      <figcaption>現況暨拆除圖<span class="en">EXISTING / DEMOLITION PLAN</span></figcaption>
+    </figure>
+    <div class="opt-grid" style="margin-top:30px;">
+      <div class="opt">
+        <div class="idx">A</div>
+        <div><h3>優勢｜完整採光面</h3><p>主要立面為一整排大面窗（W636、W245、W336），採光條件佳，適合把客廳、餐廳與主要臥房順沿窗面配置，全室通透明亮。</p></div>
+      </div>
+      <div class="opt">
+        <div class="idx">B</div>
+        <div><h3>條件｜結構樑位</h3><p>現況存在數道下垂樑（如 BW73／BH245、BW41.5／BH269 等），配置時將樑位對齊隔間與櫃體收整，維持室內天花的完整與俐落。</p></div>
+      </div>
+      <div class="opt">
+        <div class="idx">C</div>
+        <div><h3>調整｜釋放公共區</h3><p>拆除原有零碎隔間與封閉廚房牆，把最好的採光留給客餐廳，重新界定玄關、公私領域的分界。</p></div>
+      </div>
+      <div class="opt">
+        <div class="idx">D</div>
+        <div><h3>機能｜家務後場</h3><p>保留後陽台（3.2 坪）作為洗晾與家務後場，並整合儲物空間，讓收納與家事動線各就各位。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 02 設計優化主軸 ===== -->
+  <section class="block reveal">
+    <div class="sec-head">
+      <span class="no">02</span>
+      <h2>設計優化主軸</h2>
+      <span class="en">KEY OPTIMIZATIONS</span>
+      <p>兩套配置共同遵循的七項優化原則——這是我們為這個家定下的空間骨架，PLAN-A 與 PLAN-B 皆以此為基礎。</p>
+    </div>
+    <div class="opt-grid">
+      <div class="opt"><div class="idx">1</div><div><h3>開放廚房串聯客餐廳</h3><p>拆除廚房隔間，一字型廚具整合冰箱（REF），開放連結餐廳與客廳，讓公共區的視野與採光一氣呵成。</p></div></div>
+      <div class="opt"><div class="idx">2</div><div><h3>玄關落塵・內外分界</h3><p>入口設玄關轉折動線，避免開門見廳，界定內外、兼顧回家的收納與儀式感。</p></div></div>
+      <div class="opt"><div class="idx">3</div><div><h3>主臥完整套房化</h3><p>主臥（6×6.2）納入更衣區與主浴（浴缸、雙面盆、玻璃淋浴間、w150 檯面），私領域機能一次到位。</p></div></div>
+      <div class="opt"><div class="idx">4</div><div><h3>客浴隱藏門收整立面</h3><p>客浴入口以隱藏門處理，並整合餐櫃於同一立面，維持公共廳區的乾淨與完整。</p></div></div>
+      <div class="opt"><div class="idx">5</div><div><h3>三房・成長彈性</h3><p>客房／孝親房（5×6.2）與書房（未來小孩房）預留家庭階段變化，一室多用、隨生活調整。</p></div></div>
+      <div class="opt"><div class="idx">6</div><div><h3>順沿窗面採光帶</h3><p>客廳、餐廳、主臥與各房皆貼近開窗，把整排採光面的優勢發揮到最大。</p></div></div>
+    </div>
+    <div class="legend" aria-label="房間圖例">
+      <span>玄關</span><span>客廳</span><span>餐廳</span><span>開放廚房</span><span>後陽台</span>
+      <span>主臥房</span><span>主浴</span><span>客房／孝親房</span><span>客浴</span><span>書房（未來小孩房）</span><span>儲物間</span>
+    </div>
+  </section>
+
+  <!-- ===== 03 兩案比較 ===== -->
+  <section class="block reveal">
+    <div class="sec-head">
+      <span class="no">03</span>
+      <h2>兩套配置提案</h2>
+      <span class="en">PLAN&nbsp;A&nbsp;/&nbsp;PLAN&nbsp;B</span>
+      <p>房間格局、主臥、主浴、客浴、書房與廚房位置皆相同；差異集中在「玄關機能」與「客餐廳的使用個性」。以下兩案，供您擇一。</p>
+    </div>
+
+    <div class="ab-grid">
+      <div class="ab-card a">
+        <div class="ab-top">
+          <span class="ab-tag">PLAN&nbsp;A</span>
+          <h3>機能玄關・小酌吧台</h3>
+          <p class="ab-mood">回家動線完整，社交小酌的生活感</p>
+        </div>
+        <div class="plan-frame" data-full="images/zhongtai22f-planA.png">
+          <img src="images/zhongtai22f-planA.png" alt="忠泰湛 B2-22F 平面配置圖 PLAN-A" loading="lazy" decoding="async">
+          <span class="zoom-hint">🔍 點擊放大</span>
+        </div>
+        <ul>
+          <li><b>機能玄關</b>：整合外出衣物櫃＋穿鞋椅，回家換裝、收納一次完成。</li>
+          <li><b>BAR 吧台</b>：客餐廳間設吧台（W280）與轉角櫃，多一處備餐、小酌與展示的界面。</li>
+          <li><b>餐桌 160×90 伸縮桌</b>：平日精巧、宴客可延伸，彈性因應人數。</li>
+          <li><b>客廳</b>：沙發正向配置，儲物間鄰玄關，入口機能集中。</li>
+        </ul>
+      </div>
+
+      <div class="ab-card b">
+        <div class="ab-top">
+          <span class="ab-tag">PLAN&nbsp;B</span>
+          <h3>開闊廳區・大桌聚餐</h3>
+          <p class="ab-mood">純粹放大的公共廳，全家共餐的重心</p>
+        </div>
+        <div class="plan-frame" data-full="images/zhongtai22f-planB.png">
+          <img src="images/zhongtai22f-planB.png" alt="忠泰湛 B2-22F 平面配置圖 PLAN-B" loading="lazy" decoding="async">
+          <span class="zoom-hint">🔍 點擊放大</span>
+        </div>
+        <ul>
+          <li><b>完整儲物間</b>：入口改為獨立儲物間，把收納量體最大化。</li>
+          <li><b>取消吧台</b>：省去 BAR 與穿鞋椅，換取更開闊、純粹的公共廳。</li>
+          <li><b>餐桌 180×90 大桌</b>：固定大桌，主打全家與親友的聚餐重心。</li>
+          <li><b>客廳</b>：L 型模組沙發＋地毯圍塑，休憩感更放鬆。</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="note-line">
+      兩案的 <b>主臥、主浴、客浴、書房、開放廚房與三房格局完全相同</b>，<br>
+      差異僅在玄關機能與客餐廳的個性——<b>重機能招待選 A，重開闊共餐選 B</b>。
+    </p>
+  </section>
+
+  <!-- ===== 04 差異對照表 ===== -->
+  <section class="block reveal">
+    <div class="sec-head">
+      <span class="no">04</span>
+      <h2>差異對照表</h2>
+      <span class="en">A / B COMPARISON</span>
+    </div>
+    <div class="cmp-wrap">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th class="a">PLAN A｜機能玄關・小酌吧台</th>
+            <th class="b">PLAN B｜開闊廳區・大桌聚餐</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="item">玄關</td>
+            <td>外出衣物櫃＋穿鞋椅，回家動線完整</td>
+            <td>精簡入口，換取更大儲物空間</td>
+          </tr>
+          <tr>
+            <td class="item">吧台 BAR</td>
+            <td>設 BAR 吧台（W280）＋轉角櫃，備餐／小酌界面</td>
+            <td>取消吧台，公共廳更開闊純粹</td>
+          </tr>
+          <tr>
+            <td class="item">餐桌</td>
+            <td>160×90 伸縮桌（平日精巧・宴客延伸）</td>
+            <td>180×90 大桌（主打全家／親友聚餐）</td>
+          </tr>
+          <tr>
+            <td class="item">客廳沙發</td>
+            <td>正向沙發配置</td>
+            <td>L 型模組沙發＋地毯，休憩感放鬆</td>
+          </tr>
+          <tr>
+            <td class="item">收納</td>
+            <td>儲物間鄰玄關，入口機能集中</td>
+            <td>獨立儲物間，收納量體最大化</td>
+          </tr>
+          <tr>
+            <td class="item">適合</td>
+            <td>重視玄關機能與招待小酌的生活</td>
+            <td>重視開闊感與大桌共餐的日常</td>
+          </tr>
+          <tr class="same">
+            <td class="item">兩案相同</td>
+            <td colspan="2">主臥（含更衣＋主浴）・客浴（隱藏門）・客房／孝親房・書房（未來小孩房）・開放廚房・後陽台・三房格局與座向</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 05 下一步 ===== -->
+  <section class="block reveal">
+    <div class="sec-head">
+      <span class="no">05</span>
+      <h2>接下來的流程</h2>
+      <span class="en">NEXT STEPS</span>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="sn">01</div><h4>選定配置</h4><p>就 PLAN-A / PLAN-B 擇一，或提出想融合的細節。</p></div>
+      <div class="step"><div class="sn">02</div><h4>細部調整</h4><p>依生活習慣微調櫃體、尺寸與動線。</p></div>
+      <div class="step"><div class="sn">03</div><h4>3D 模擬</h4><p>製作空間 3D 渲染，確認風格與材質。</p></div>
+      <div class="step"><div class="sn">04</div><h4>簽約發包</h4><p>確認圖面與預算，進入工程發包。</p></div>
+    </div>
+    <div class="signoff">
+      <p>本簡報之尺寸以現場丈量為準；如需修正，本圖以最新版本為準。</p>
+      <p>期待與您一同，把這個家的每一天，安放得剛剛好。</p>
+      <button class="print-btn" type="button" id="printBtn">🖨　列印 ／ 另存 PDF</button>
+    </div>
+  </section>
+
+</main>
+
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lb-close" type="button" aria-label="關閉">×</button>
+  <img src="" alt="平面圖放大檢視">
+  <div class="lb-hint">點擊任意處關閉</div>
+</div>
+
+<footer>
+  <div style="font-size:13px; letter-spacing:2px; color:var(--muted); margin-bottom:10px;">以「禹合」為名，「制所」於心。</div>
+  <div class="brand">禹合制所室內裝修有限公司</div>
+  桃園市桃園區藝文一街86之2號4樓<br>
+  <a href="https://www.yu-he-design.com" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none; letter-spacing:1px;">官方網站 www.yu-he-design.com</a>
+  <div style="margin-top:14px; font-size:11.5px; color:#a39d92; letter-spacing:1px;">本圖版權為禹合制所室內裝修有限公司所有・請勿由圖面直接量取尺寸</div>
+</footer>
+
+<script>
+(function(){
+  // 側欄選單
+  var menu = document.getElementById('sideMenu');
+  var mask = document.getElementById('menuMask');
+  var btn = document.getElementById('menuBtn');
+  function close(){ menu.classList.remove('open'); mask.classList.remove('show'); btn.setAttribute('aria-expanded','false'); }
+  btn.addEventListener('click', function(){
+    var open = menu.classList.toggle('open');
+    mask.classList.toggle('show', open);
+    btn.setAttribute('aria-expanded', open);
+  });
+  mask.addEventListener('click', close);
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', close); });
+
+  // 進場淡入
+  document.documentElement.classList.add('js');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var targets = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduced){
+    var ro = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target); } });
+    }, {rootMargin:'0px 0px -6% 0px'});
+    targets.forEach(function(el){ ro.observe(el); });
+  } else {
+    targets.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // 燈箱放大
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  function openLb(src, alt){ lbImg.src = src; lbImg.alt = alt || ''; lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); }
+  function closeLb(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); lbImg.src=''; }
+  document.querySelectorAll('.plan-frame').forEach(function(f){
+    f.addEventListener('click', function(){
+      var full = f.getAttribute('data-full');
+      var im = f.querySelector('img');
+      openLb(full, im ? im.alt : '');
+    });
+  });
+  lb.addEventListener('click', closeLb);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLb(); });
+
+  // 列印
+  document.getElementById('printBtn').addEventListener('click', function(){ window.print(); });
+})();
+</script>
+
+</body>
+</html>
