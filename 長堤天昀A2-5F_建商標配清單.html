@@ -66,6 +66,36 @@
   .tips b{color:var(--accent-deep);}
 
   .foot{text-align:center; font-size:12px; color:var(--muted); margin-top:18px; line-height:1.9;}
+
+  /* ── 客戶需求表單 ── */
+  .cn h2{color:var(--accent-deep);}
+  .cn .lead{font-size:12.5px; color:var(--muted); margin:0 0 14px 15px;}
+  .field{margin-bottom:16px;}
+  label.title{display:block; font-weight:600; margin-bottom:8px; font-size:14px;}
+  .hint{font-size:12px; color:var(--muted); margin-left:6px; font-weight:400;}
+  .req{color:var(--red); margin-left:2px;}
+  input[type=text],input[type=tel],textarea{width:100%; padding:12px 13px; border:1.5px solid var(--line);
+    border-radius:10px; font-size:16px; background:var(--card); color:var(--ink); font-family:inherit; color-scheme:light;}
+  html[data-theme="dark"] input, html[data-theme="dark"] textarea{color-scheme:dark;}
+  input:focus,textarea:focus{outline:none; border-color:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent);}
+  textarea{resize:vertical; min-height:62px;}
+  .row{display:flex; gap:10px; flex-wrap:wrap;} .row .field{flex:1; min-width:150px;}
+  .pills{display:flex; flex-wrap:wrap; gap:8px;}
+  .pill{position:relative; display:inline-flex;}
+  .pill input{position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer;}
+  .pill span{display:inline-flex; align-items:center; padding:9px 15px; border:1.5px solid var(--line);
+    border-radius:99px; font-size:14px; background:var(--card); color:var(--ink); cursor:pointer; user-select:none;
+    transition:background .15s,border-color .15s,color .15s;}
+  .pill input:checked + span{background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:600;}
+  .pill input[type=checkbox]:checked + span::before{content:"✓"; margin-right:5px; font-weight:800;}
+  @media(hover:hover){.pill input:not(:checked) + span:hover{border-color:var(--accent); color:var(--accent-deep);}}
+  .submit-btn{width:100%; border:none; cursor:pointer; font-family:inherit; font-size:16px; font-weight:700;
+    letter-spacing:2px; padding:15px 10px; border-radius:12px; background:var(--accent); color:var(--on-accent); margin-top:4px;}
+  .submit-btn:active{transform:scale(.99);}
+  .cn-note{font-size:12.5px; color:var(--muted); text-align:center; margin-top:10px;}
+  .cn-fallback{background:none; border:none; color:var(--accent-deep); text-decoration:underline;
+    font-size:13px; cursor:pointer; font-family:inherit; display:block; margin:8px auto 0;}
 </style>
 </head>
 <body>
@@ -142,6 +172,124 @@
   </ul>
 </div>
 
+<!-- ── 客戶需求表單 ── -->
+<section class="cn">
+  <h2><span class="em">📝</span>客戶需求（請您填寫）</h2>
+  <p class="lead">看完上面的建商標配後，請告訴我們您的需求，我們會據此規劃客變。約 3 分鐘。</p>
+
+  <form id="cnForm" action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="d0792706-dda7-4d46-9be3-bef7d4dc6554">
+    <input type="hidden" name="subject" value="禹合制所｜長堤天昀 A2-5F 客戶需求（標配對照）">
+    <input type="hidden" name="from_name" value="禹合制所 網站需求表">
+    <input type="hidden" name="redirect" value="https://amyapple0220-creator.github.io/yuhe-design-forms/thanks.html">
+    <input type="checkbox" name="botcheck" style="display:none;" tabindex="-1" autocomplete="off">
+    <input type="hidden" name="案名" value="長堤天昀 A2-5F（客變）">
+
+    <div class="row">
+      <div class="field"><label class="title">稱呼<span class="req">＊</span></label><input type="text" name="owner_name" value="邱怡如（邱小姐）" required></div>
+      <div class="field"><label class="title">電話<span class="req">＊</span></label><input type="tel" name="owner_phone" required></div>
+    </div>
+
+    <!-- 成員 -->
+    <div class="field">
+      <label class="title">① 居住成員 <span class="hint">(誰會住、年齡；有無長輩／小孩／寵物)</span></label>
+      <div class="pills" style="margin-bottom:10px;">
+        <label class="pill"><input type="radio" name="household_count" value="1人"><span>1人</span></label>
+        <label class="pill"><input type="radio" name="household_count" value="2人"><span>2人</span></label>
+        <label class="pill"><input type="radio" name="household_count" value="3人"><span>3人</span></label>
+        <label class="pill"><input type="radio" name="household_count" value="4人"><span>4人</span></label>
+        <label class="pill"><input type="radio" name="household_count" value="尚未確定"><span>尚未確定</span></label>
+      </div>
+      <textarea name="members" placeholder="例：夫妻 2 人 / 夫妻＋1 小孩（3歲）＋貓…"></textarea>
+    </div>
+
+    <!-- 格局 -->
+    <div class="field">
+      <label class="title">② 是否想調整格局？ <span class="hint">(隔間為石膏磚牆，變更較有彈性)</span></label>
+      <div class="pills">
+        <label class="pill"><input type="radio" name="layout_change" value="想調整隔間"><span>想調整隔間</span></label>
+        <label class="pill"><input type="radio" name="layout_change" value="維持原格局"><span>維持原格局</span></label>
+        <label class="pill"><input type="radio" name="layout_change" value="想聽設計師建議"><span>想聽設計師建議</span></label>
+      </div>
+      <textarea name="layout_note" style="margin-top:10px;" placeholder="若想調整：例如書房改開放、想併大客廳、主臥加更衣區…（沒有可留白）"></textarea>
+    </div>
+
+    <!-- 床尺寸 -->
+    <div class="row">
+      <div class="field"><label class="title">③ 主臥床尺寸 <span class="hint">(如加大 6×6.2 尺)</span></label><input type="text" name="bed_master" placeholder="例：加大 6×6.2 尺 / King"></div>
+      <div class="field"><label class="title">書房 / 次臥床尺寸 <span class="hint">(不放床可寫「不放床」)</span></label><input type="text" name="bed_study" placeholder="例：單人加大 4×6.2 尺 / 沙發床 / 不放床"></div>
+    </div>
+
+    <!-- 家具家電 -->
+    <div class="field">
+      <label class="title">④ 廚具是否升級？ <span class="hint">(標配：哥德＋林內＋BOSCH＋亞爾浦，矽鋼石檯面)</span></label>
+      <div class="pills">
+        <label class="pill"><input type="radio" name="kitchen_upgrade" value="維持建商標配"><span>維持標配</span></label>
+        <label class="pill"><input type="radio" name="kitchen_upgrade" value="想更換/升級"><span>想更換/升級</span></label>
+        <label class="pill"><input type="radio" name="kitchen_upgrade" value="還不確定"><span>還不確定</span></label>
+      </div>
+      <textarea name="kitchen_note" style="margin-top:10px;" placeholder="想升級的話：檯面、桶身、電器、中島、想要的品牌…"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="title">⑤ 衛浴是否升級？ <span class="hint">(標配：INAX＋免治＋台達暖風＋鏡櫃浴櫃)</span></label>
+      <div class="pills">
+        <label class="pill"><input type="radio" name="bath_upgrade" value="維持建商標配"><span>維持標配</span></label>
+        <label class="pill"><input type="radio" name="bath_upgrade" value="想更換/升級"><span>想更換/升級</span></label>
+        <label class="pill"><input type="radio" name="bath_upgrade" value="還不確定"><span>還不確定</span></label>
+      </div>
+      <textarea name="bath_note" style="margin-top:10px;" placeholder="想升級的話：馬桶、面盆浴櫃、龍頭、花灑、乾濕分離、想要的品牌…"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="title">⑥ 想「退掉」的標配設備 <span class="hint">(SPC 地板此案不可退)</span></label>
+      <div class="pills">
+        <label class="pill"><input type="checkbox" name="remove[]" value="廚具"><span>廚具</span></label>
+        <label class="pill"><input type="checkbox" name="remove[]" value="衛浴設備"><span>衛浴設備</span></label>
+        <label class="pill"><input type="checkbox" name="remove[]" value="系統櫃"><span>系統櫃</span></label>
+        <label class="pill"><input type="checkbox" name="remove[]" value="其他"><span>其他</span></label>
+        <label class="pill"><input type="checkbox" name="remove[]" value="沒有要退"><span>沒有要退</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="title">⑦ 地板 SPC 改磁磚做法？ <span class="hint">(SPC 不可退)</span></label>
+      <div class="pills">
+        <label class="pill"><input type="radio" name="floor_plan" value="爭取不鋪素地交屋後全室改磁磚"><span>不鋪素地→全室改</span></label>
+        <label class="pill"><input type="radio" name="floor_plan" value="全室拆SPC改磁磚"><span>全室拆改</span></label>
+        <label class="pill"><input type="radio" name="floor_plan" value="僅玄關/廚房等局部改磁磚"><span>局部改</span></label>
+        <label class="pill"><input type="radio" name="floor_plan" value="維持SPC不改"><span>維持SPC</span></label>
+        <label class="pill"><input type="radio" name="floor_plan" value="尚未決定/需討論"><span>尚未決定</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="title">⑧ 需「額外預留」的家電 <span class="hint">(標配已含洗碗機/淨水/免治/暖風，這裡填標配以外)</span></label>
+      <div class="pills">
+        <label class="pill"><input type="checkbox" name="appliance[]" value="掃拖地機器人(自動集塵/自動上下水基座)"><span>掃拖地機器人（自動上下水）</span></label>
+        <label class="pill"><input type="checkbox" name="appliance[]" value="製冰/濾水冰箱(需給水)"><span>製冰/濾水冰箱（給水）</span></label>
+        <label class="pill"><input type="checkbox" name="appliance[]" value="蒸烤箱/電器櫃(專用迴路)"><span>蒸烤箱/電器櫃</span></label>
+        <label class="pill"><input type="checkbox" name="appliance[]" value="洗衣機/乾衣機"><span>洗衣機/乾衣機</span></label>
+        <label class="pill"><input type="checkbox" name="appliance[]" value="其他"><span>其他</span></label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="title">⑨ 想配置的家具 / 家電或預留位置說明 <span class="hint">(想擺的家具尺寸、想做的木作、家電位置)</span></label>
+      <textarea name="furniture_note" placeholder="例：想放 3 人沙發＋餐桌 4 人、玄關要鞋櫃、主臥要衣櫃、書房要 90cm 頂天書櫃、掃地機基座放玄關…"></textarea>
+    </div>
+
+    <div class="field" style="margin-bottom:6px;">
+      <label class="title">⑩ 其他想補充</label>
+      <textarea name="other_note" placeholder="任何想先讓我們知道的都可以寫（沒有可留白）"></textarea>
+    </div>
+
+    <button type="submit" class="submit-btn" id="cnSubmit">送出需求</button>
+    <button type="button" class="cn-fallback" id="cnFallback">送出遇到問題？點此複製內容，改用 LINE 傳給我們</button>
+    <p class="cn-note">送出後請在 LINE 跟我們說一聲「已填寫完成」，我們會盡快與您聯繫。</p>
+  </form>
+</section>
+
 <div class="foot">
   禹合制所 YUHE DESIGN｜長堤天昀 A2-5F 客變案<br>
   資料依建商建材配備表整理，實際規格與可變更範圍以建商正式客變規章／圖面為準
@@ -156,6 +304,66 @@
   var s=null; try{s=localStorage.getItem('yuhe_hx_theme');}catch(e){}
   setTheme(s==='dark'?'dark':'light');
   tb.onclick=function(){setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');};
+})();
+</script>
+<script>
+(function(){
+  var form=document.getElementById('cnForm');
+  if(!form)return;
+  function fieldLabel(el){
+    var f=el.closest('.field');
+    if(f){var t=f.querySelector('label.title'); if(t)return t.childNodes[0].textContent.trim();}
+    return el.name;
+  }
+  function toChinese(form){
+    var seen={},list=[];
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.type==='hidden'||el.tagName==='BUTTON')return;
+      if(el.name==='botcheck')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=(el.value||'').trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(seen[label]!==undefined){list[seen[label]].v+='、'+v;}
+      else{seen[label]=list.length;list.push({k:label,v:v});}
+    });
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.tagName==='BUTTON')return;
+      if(['access_key','subject','from_name','redirect','案名','botcheck'].indexOf(el.name)>=0)return;
+      el.disabled=true; el.setAttribute('data-cndis','1');
+    });
+    list.forEach(function(p){
+      var h=document.createElement('input');
+      h.type='hidden'; h.name=p.k; h.value=p.v; h.setAttribute('data-cnadd','1');
+      form.appendChild(h);
+    });
+  }
+  window.addEventListener('pageshow',function(){
+    document.querySelectorAll('[data-cndis]').forEach(function(el){el.disabled=false;el.removeAttribute('data-cndis');});
+    document.querySelectorAll('[data-cnadd]').forEach(function(el){el.remove();});
+  });
+  function buildSummary(form){
+    var lines=['【長堤天昀 A2-5F 客戶需求】'],seen={};
+    Array.prototype.forEach.call(form.elements,function(el){
+      if(!el.name||el.name.charAt(0)==='_'||el.type==='hidden')return;
+      if((el.type==='radio'||el.type==='checkbox')&&!el.checked)return;
+      var v=el.value.trim(); if(!v)return;
+      var label=fieldLabel(el);
+      if(el.type==='checkbox'&&seen[el.name]){lines[seen[el.name]-1]+='、'+v;}
+      else{lines.push(label+'：'+v); if(el.type==='checkbox')seen[el.name]=lines.length;}
+    });
+    return lines.join('\n');
+  }
+  function copyText(text){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){alert('已複製！請貼到 LINE 傳給我們。');},
+        function(){prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);});
+    }else{prompt('請手動複製以下內容，貼到 LINE 傳給我們：',text);}
+  }
+  document.getElementById('cnFallback').onclick=function(){copyText(buildSummary(form));};
+  form.addEventListener('submit',function(){
+    toChinese(this);
+    document.getElementById('cnSubmit').textContent='送出中…';
+  });
 })();
 </script>
 </body>
