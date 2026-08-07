@@ -366,13 +366,27 @@
         </div>
       </div>
 
+      <div class="known-box" style="background:var(--accent-light); border-color:var(--line); color:var(--ink);">
+        <b>地坪提醒</b>：此案 <b>SPC 為建商標配、不可退料折抵</b>。若要改磁磚，SPC 這筆費用無法取回（屬沉沒成本），改磁磚是額外的拆除＋泥作＋磁磚費用。建議先確認建商能否「<b>不鋪、素地交屋</b>」以省下拆除，再決定做法。
+      </div>
+
       <div class="field">
-        <label class="title">地坪：拆除建商附 SPC 改鋪磁磚 — 是否已向建商確認可行 / 可退料折抵？
-          <span class="hint">(牽涉地坪高度、洩水、重量與退料，客變階段須先與建商確認)</span></label>
+        <label class="title">地坪：SPC 不可退，改磁磚的做法傾向？<span class="hint">(可與我們討論後再定，會影響預算配置)</span></label>
         <div class="pills">
-          <label class="pill"><input type="radio" name="floor_spc" value="已確認可退料/可改磁磚"><span>已確認可退/可改</span></label>
-          <label class="pill"><input type="radio" name="floor_spc" value="尚未確認"><span>尚未確認</span></label>
-          <label class="pill"><input type="radio" name="floor_spc" value="需協助向建商詢問"><span>需協助詢問建商</span></label>
+          <label class="pill"><input type="radio" name="floor_plan" value="爭取不鋪素地交屋後全室改磁磚"><span>不鋪素地→全室改磁磚</span></label>
+          <label class="pill"><input type="radio" name="floor_plan" value="全室拆SPC改磁磚"><span>全室拆SPC改磁磚</span></label>
+          <label class="pill"><input type="radio" name="floor_plan" value="僅玄關/廚房等局部改磁磚"><span>局部改磁磚（玄關/廚房）</span></label>
+          <label class="pill"><input type="radio" name="floor_plan" value="維持SPC不改"><span>維持SPC不改</span></label>
+          <label class="pill"><input type="radio" name="floor_plan" value="尚未決定/需討論"><span>尚未決定</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="title">是否已向建商確認可否「不鋪、素地交屋」？<span class="hint">(可不鋪就能省下拆除 SPC 的費用)</span><span class="tag todo">待確認</span></label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="floor_bare" value="可不鋪素地交屋"><span>可不鋪素地</span></label>
+          <label class="pill"><input type="radio" name="floor_bare" value="一定要鋪好交屋"><span>一定要鋪好</span></label>
+          <label class="pill"><input type="radio" name="floor_bare" value="尚未確認/需協助詢問"><span>需協助詢問建商</span></label>
         </div>
       </div>
 
