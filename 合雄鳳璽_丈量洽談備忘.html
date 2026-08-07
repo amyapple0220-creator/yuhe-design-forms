@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜合雄鳳璽 丈量洽談備忘（8/15）</title>
+<style>
+  :root{
+    --paper:#faf8f4; --card:#ffffff; --ink:#2b2b28; --line:#ddd6c9;
+    --accent:#8a6d4b; --accent-deep:#6f563a; --accent-light:#f1ebe0;
+    --muted:#8b8578; --on-accent:#fff; --red:#c0563c; --red-bg:#f7e7e1;
+    --green:#5c7a52; --shadow:0 1px 3px rgba(60,50,30,.06);
+  }
+  html[data-theme="dark"]{
+    --paper:#1c1a17; --card:#26231e; --ink:#ece7dd; --line:#423b2f;
+    --accent:#c9a15f; --accent-deep:#d9b476; --accent-light:#332d24;
+    --muted:#9a917f; --on-accent:#241d12; --red:#e08a6f; --red-bg:#3a2620;
+    --green:#9ab98c; --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper); color:var(--ink); line-height:1.7;}
+  .wrap{max-width:720px; margin:0 auto; padding:22px 16px 70px;}
+  header{text-align:center; padding:26px 16px 10px; position:relative;}
+  header h1{font-size:23px; letter-spacing:2px; margin:0 0 4px;}
+  header .sub{color:var(--muted); font-size:13px; letter-spacing:1px;}
+  .theme-btn{position:absolute; top:14px; right:6px; width:40px; height:40px;
+    border-radius:50%; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); font-size:17px; cursor:pointer; box-shadow:var(--shadow);}
+
+  .snap{background:var(--accent-light); border:1px solid var(--line);
+    border-radius:14px; padding:14px 16px; margin:14px 0 6px; font-size:13.5px;}
+  .snap b{color:var(--accent-deep);}
+  .snap .g{display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:6px;}
+  .snap .g span{white-space:nowrap;}
+
+  section{background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 18px 8px; margin:14px 0; box-shadow:var(--shadow);}
+  section h2{font-size:16.5px; letter-spacing:.5px; border-left:4px solid var(--accent);
+    padding-left:11px; margin:0 0 6px; display:flex; align-items:center; gap:8px;}
+  section h2 .em{font-size:19px;}
+  .lead{font-size:12.5px; color:var(--muted); margin:0 0 12px 15px;}
+
+  ul.chk{list-style:none; margin:0; padding:0;}
+  ul.chk li{display:flex; gap:11px; align-items:flex-start; padding:9px 4px;
+    border-bottom:1px dashed var(--line); font-size:14.5px; cursor:pointer;}
+  ul.chk li:last-child{border-bottom:0;}
+  ul.chk .box{flex:none; width:21px; height:21px; margin-top:1px; border:1.6px solid var(--accent);
+    border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:var(--on-accent); background:var(--card); transition:.12s;}
+  ul.chk li.done .box{background:var(--accent);}
+  ul.chk li.done .txt{color:var(--muted); text-decoration:line-through;}
+  ul.chk .txt small{display:block; color:var(--muted); font-size:12px; text-decoration:none; margin-top:1px;}
+
+  .must{border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 20%,transparent),var(--shadow);}
+  .must h2{color:var(--accent-deep);}
+  .decide{border:1.4px solid var(--line); border-radius:11px; padding:12px 14px; margin:10px 0;}
+  .decide .q{font-weight:700; font-size:14.5px; margin-bottom:3px;}
+  .decide .q .em{margin-right:6px;}
+  .decide .a{font-size:13px; color:var(--muted);}
+  .decide .a b{color:var(--ink);}
+
+  .warn{background:var(--red-bg); border:1px solid color-mix(in srgb,var(--red) 40%,var(--line));
+    border-radius:14px; padding:16px 18px; margin:14px 0; font-size:14px;}
+  .warn h2{border:0; padding:0; margin:0 0 8px; color:var(--red); font-size:16px;}
+  .warn b{color:var(--red);}
+  .say{background:var(--card); border-left:3px solid var(--accent); padding:8px 12px;
+    margin-top:10px; font-size:13.5px; border-radius:0 8px 8px 0; font-style:italic;}
+
+  .foot{text-align:center; font-size:12px; color:var(--muted); margin-top:18px; line-height:1.9;}
+  .reset{background:none; border:1px solid var(--line); color:var(--muted);
+    border-radius:8px; padding:6px 14px; font-size:12px; cursor:pointer; font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<button class="theme-btn" id="themeBtn" type="button" title="切換深淺色">🌙</button>
+<header>
+  <h1>合雄鳳璽 · 丈量洽談備忘</h1>
+  <div class="sub">8/15（六）下午 · 現場丈量＋需求訪談＋現況勘查</div>
+</header>
+
+<div class="snap">
+  <b>案件快照</b>
+  <div class="g">
+    <span>◆ 業主 <b>Way（李俊緯）</b></span><span>◆ 合雄鳳璽 B1／7F</span>
+    <span>◆ 約 40 初坪</span><span>◆ 12 年成屋</span><span>◆ 全室翻新</span>
+    <span>◆ 預算 300–400 萬（<b>不含空調</b>）</span><span>◆ 空調指定大金</span>
+    <span>◆ 房間：主臥／幫傭房／兩個女兒</span><span>◆ 已提供原始格局圖</span>
+    <span>◆ 業主已入住</span><span>◆ 目標：二寶回家前</span>
+    <span>◆ 完工暫估：<b>農曆年後（約 3 月）</b></span>
+  </div>
+</div>
+
+<!-- A -->
+<section>
+  <h2><span class="em">🧰</span>A. 出發前帶齊 / 請業主先備</h2>
+  <p class="lead">自帶工具＋當天請業主提供的資料</p>
+  <ul class="chk" data-k="A">
+    <li><span class="box">✓</span><span class="txt">雷射測距儀、捲尺、相機、平面草稿紙</span></li>
+    <li><span class="box">✓</span><span class="txt">水分計 / 手電筒<small>查漏水、壁癌、角落濕氣</small></span></li>
+    <li><span class="box">✓</span><span class="txt">向業主要：權狀 / 建物平面圖（有 CAD 更好）</span></li>
+    <li><span class="box">✓</span><span class="txt">社區「裝修管理規約」<small>施工時間、電梯保護、垃圾清運、押金、假日能否施工</small></span></li>
+    <li><span class="box">✓</span><span class="txt">確認管委會 / 大樓的裝修申請流程與工期限制</span></li>
+  </ul>
+</section>
+
+<!-- B -->
+<section>
+  <h2><span class="em">🔍</span>B. 12 年屋現況勘查</h2>
+  <p class="lead">決定「要不要管線全換」——這是 300–400 萬夠不夠的最大變數</p>
+  <ul class="chk" data-k="B">
+    <li><span class="box">✓</span><span class="txt">核對原始格局圖 vs 現場<small>12 年屋前手可能已改隔間 / 移管線，以現況為準</small></span></li>
+    <li><span class="box">✓</span><span class="txt">漏水 / 壁癌 / 天花水漬<small>特別看窗邊、外牆、浴廁背牆、雙陽台雨遮交界</small></span></li>
+    <li><span class="box">✓</span><span class="txt">給排水管況、水壓、排水順暢度</span></li>
+    <li><span class="box">✓</span><span class="txt">總電量 / 配電箱迴路數<small>12 年屋常需增設專迴、換總開關</small></span></li>
+    <li><span class="box">✓</span><span class="txt">地磚是否膨拱、地坪是否需打除重做</span></li>
+    <li><span class="box">✓</span><span class="txt">窗戶 / 氣密 / 隔音是否更換</span></li>
+    <li><span class="box">✓</span><span class="txt">既有天花高度、樑位、管道間位置</span></li>
+    <li><span class="box">✓</span><span class="txt">空調型式與位置（雖不含空調，仍要預留管線 / 迴路）</span></li>
+  </ul>
+</section>
+
+<!-- C -->
+<section>
+  <h2><span class="em">💬</span>C. 需求訪談（趁業主在場，問「住起來」）</h2>
+  <p class="lead">已入住是優勢——直接問實際痛點，比空屋想像準太多</p>
+  <ul class="chk" data-k="C">
+    <li><span class="box">✓</span><span class="txt">現在住起來「最不順」的三件事？</span></li>
+    <li><span class="box">✓</span><span class="txt">兩個女兒：<b>各一間 or 先共用一間</b>？年齡差、是否預留日後隔間<small>直接影響房數與 40 坪坪效</small></span></li>
+    <li><span class="box">✓</span><span class="txt">幫傭房：位置（近廚房？）、<b>是否需獨立衛浴</b>、對外窗、坪數</span></li>
+    <li><span class="box">✓</span><span class="txt">主臥：更衣室 / 主衛（現況左下大套含浴缸+乾濕分離）是否沿用</span></li>
+    <li><span class="box">✓</span><span class="txt">大金空調：室內外機位置、雨遮 / 陽台落點、木作包管範圍</span></li>
+    <li><span class="box">✓</span><span class="txt">收納量、家電清單、風格偏好、參考圖、想保留的家具</span></li>
+    <li><span class="box">✓</span><span class="txt">提醒填「線上需求表」補齊細項（LINE 傳連結）</span></li>
+  </ul>
+</section>
+
+<!-- D -->
+<section class="must">
+  <h2><span class="em">📌</span>D. 今天要「敲定」的 5 件事</h2>
+  <p class="lead">這 5 項不確認，回去無法報價 / 排程</p>
+
+  <div class="decide">
+    <div class="q"><span class="em">🏠</span>房數可行性（40 坪要放主臥＋幫傭房＋女兒房）</div>
+    <div class="a">主臥＋幫傭房＋兩個女兒房，對 40 坪實內<b>偏滿</b>。當場先定：<b>兩個女兒各一間或共用</b>、<b>幫傭房是否需獨立衛浴</b>，才能定隔間數與坪效，其餘才好談。</div>
+  </div>
+  <div class="decide">
+    <div class="q"><span class="em">1️⃣</span>預算是否「含管線全換」</div>
+    <div class="a">依 B 的勘查結果，當場跟業主說明：<b>300–400 萬含不含全室水電更新</b>，避免報價才發現要加錢。</div>
+  </div>
+  <div class="decide">
+    <div class="q"><span class="em">2️⃣</span>完工共識 → 走 A 方案</div>
+    <div class="a">誠實估 <b>農曆年後約 3 月</b>完工。<b>設計做扎實、工程一次到位</b>比搶年前留一堆收尾更值得。</div>
+  </div>
+  <div class="decide">
+    <div class="q"><span class="em">3️⃣</span>搬遷 / 淨空時程</div>
+    <div class="a">全室翻新須淨空 → 開工前業主完成<b>搬遷＋大型家具寄倉</b>，暫估 <b>10/15 淨空點交</b>、10/19 開工。提醒現在就排。</div>
+  </div>
+  <div class="decide">
+    <div class="q"><span class="em">4️⃣</span>設計流程與收費</div>
+    <div class="a">說明後續：3D 提案 → 二修定案 → 工程報價簽約，及<b>設計約 / 一期款</b>時間點。</div>
+  </div>
+</section>
+
+<!-- E -->
+<div class="warn">
+  <h2>⚠️ 別鬆口的一句話</h2>
+  施工期間須淨空、業主得在外暫住，完工壓力容易變成中途催工。<b>別承諾「盡量年前」</b>，一旦說了，日後就會被回頭壓工期。
+  <div class="say">「工期會白紙黑字寫進合約：開工日、完工日、過年停工天數都列清楚。完工誠實估農曆年後，若能提早交屋是驚喜，但我不會給您做不到的承諾。」</div>
+</div>
+
+<div style="text-align:center;">
+  <button class="reset" id="resetBtn" type="button">清除所有勾選</button>
+</div>
+<div class="foot">
+  禹合制所 YUHE DESIGN｜完工暫估 2027 年 3 月（農曆年後）<br>
+  勾選狀態自動存於本機，可離線使用
+</div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, tb=document.getElementById('themeBtn');
+  function setTheme(t){root.setAttribute('data-theme',t);tb.textContent=t==='dark'?'☀️':'🌙';
+    try{localStorage.setItem('yuhe_hx_theme',t);}catch(e){}}
+  var s=null; try{s=localStorage.getItem('yuhe_hx_theme');}catch(e){}
+  setTheme(s==='dark'?'dark':'light');
+  tb.onclick=function(){setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');};
+
+  var KEY='yuhe_hx_check';
+  var state={}; try{state=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  document.querySelectorAll('ul.chk').forEach(function(ul){
+    var g=ul.dataset.k;
+    Array.prototype.forEach.call(ul.children,function(li,i){
+      var id=g+i;
+      if(state[id]){li.classList.add('done');}
+      li.addEventListener('click',function(){
+        var on=li.classList.toggle('done');
+        state[id]=on; save();
+      });
+    });
+  });
+  document.getElementById('resetBtn').onclick=function(){
+    if(!confirm('清除全部勾選？'))return;
+    state={}; save();
+    document.querySelectorAll('ul.chk li.done').forEach(function(li){li.classList.remove('done');});
+  };
+})();
+</script>
+</body>
+</html>
