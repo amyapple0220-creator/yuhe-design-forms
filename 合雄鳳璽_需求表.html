@@ -224,13 +224,14 @@
       <h2>一、基本資料</h2>
 
       <div class="known-box">
-        <b>已確認</b>：社區「合雄鳳璽」｜約 40 坪成屋、屋齡約 12 年｜全室翻新｜
-        預算約 300–400 萬（不含空調）｜業主現居中，施工期間暫住娘家｜
-        8/15（六）現場丈量
+        <b>已確認</b>：社區「合雄鳳璽」B1／7 樓｜約 40 坪成屋、屋齡約 12 年｜全室翻新｜
+        預算約 300–400 萬（不含空調，空調指定大金 DAIKIN）｜業主現居中，施工期間暫住娘家｜
+        家庭成員：夫妻＋兩個女兒＋幫傭｜房間規劃：主臥、幫傭房、女兒房｜
+        已提供原始格局圖｜<b>8/15（六）下午</b>現場丈量
       </div>
 
       <div class="row">
-        <div class="field"><label class="title">男業主 稱呼<span class="req">＊</span></label><input type="text" name="owner1_name" required></div>
+        <div class="field"><label class="title">男業主 稱呼<span class="req">＊</span></label><input type="text" name="owner1_name" value="Way（李俊緯）" required></div>
         <div class="field"><label class="title">男業主 電話<span class="req">＊</span></label><input type="tel" name="owner1_phone" required></div>
         <div class="field"><label class="title">男業主 Line ID</label><input type="text" name="owner1_line"></div>
       </div>
@@ -244,7 +245,7 @@
       <div class="field"><label class="title">Email</label><input type="email" name="email"></div>
 
       <div class="field">
-        <label class="title">居住人數 <span class="hint">(含即將報到的二寶)</span></label>
+        <label class="title">居住人數 <span class="hint">(夫妻＋兩個女兒＋幫傭，約 5 人)</span></label>
         <div class="pills">
           <label class="pill"><input type="radio" name="household_count" value="1人"><span>1人</span></label>
           <label class="pill"><input type="radio" name="household_count" value="2人"><span>2人</span></label>
@@ -282,8 +283,8 @@
       <h2>二、房屋現況（12 年成屋）</h2>
 
       <div class="known-box">
-        <b>已確認</b>：社區「合雄鳳璽」｜約 40 坪、屋齡約 12 年｜業主現居中、全室翻新｜
-        非預售屋、無須客變｜實際格局與屋況以 8/15 丈量為準
+        <b>已確認</b>：社區「合雄鳳璽」B1／7 樓｜約 40 坪、屋齡約 12 年｜業主現居中、全室翻新｜
+        非預售屋、無須客變｜已提供原始格局圖，實際格局與屋況以 8/15 下午丈量為準
       </div>
 
       <div class="field"><label class="title">完整地址（含樓層／戶別）<span class="tag todo">待確認</span></label><input type="text" name="address" placeholder="例：○○市○○區○○路○號○樓"></div>
@@ -337,7 +338,7 @@
 
       <div class="known-box">
         <b>已確認</b>：全室翻新，基礎工程（水電、防水、泥作）做到位為前提｜
-        空調自理（不在 300–400 萬內）｜施工期間業主暫住娘家，室內會全部淨空
+        空調自理、指定大金 DAIKIN（不在 300–400 萬內）｜施工期間業主暫住娘家，室內會全部淨空
       </div>
 
       <div class="field">
@@ -408,7 +409,8 @@
           <label class="pill"><input type="checkbox" name="spaces[]" value="餐廳"><span>餐廳</span></label>
           <label class="pill"><input type="checkbox" name="spaces[]" value="廚房"><span>廚房</span></label>
           <label class="pill"><input type="checkbox" name="spaces[]" value="主臥房"><span>主臥房</span></label>
-          <label class="pill"><input type="checkbox" name="spaces[]" value="小孩房/二寶房"><span>小孩房/二寶房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="女兒房"><span>女兒房</span></label>
+          <label class="pill"><input type="checkbox" name="spaces[]" value="幫傭房"><span>幫傭房</span></label>
           <label class="pill"><input type="checkbox" name="spaces[]" value="客房"><span>客房</span></label>
           <label class="pill"><input type="checkbox" name="spaces[]" value="儲藏室"><span>儲藏室</span></label>
           <label class="pill"><input type="checkbox" name="spaces[]" value="書房/工作區"><span>書房/工作區</span></label>
@@ -422,10 +424,12 @@
       <div class="field"><label class="title">廚房需求</label><textarea name="need_kitchen" placeholder="例：一字型/L型/中島、電器櫃、冰箱尺寸…"></textarea></div>
       <div class="field"><label class="title">玄關需求</label><textarea name="need_entry" placeholder="例：鞋櫃數量、穿鞋椅、全身鏡、嬰兒車停放…"></textarea></div>
       <div class="field"><label class="title">浴室需求</label><textarea name="need_bath" placeholder="例：乾濕分離、浴缸、暖風機、免治馬桶…"></textarea></div>
-      <div class="field"><label class="title">主臥需求</label><textarea name="need_master" placeholder="例：床型、衣櫃、化妝桌、是否要與二寶房相鄰…"></textarea></div>
+      <div class="field"><label class="title">主臥需求</label><textarea name="need_master" placeholder="例：床型、衣櫃、化妝桌、更衣室、是否需與女兒房相鄰…"></textarea></div>
+      <div class="field"><label class="title">女兒房需求 <span class="hint">(兩個女兒：各一間或先共用一間？年齡差、上下舖、書桌)</span></label><textarea name="need_daughters" placeholder="例：兩姊妹先共用、預留日後隔成兩間、各自書桌與衣櫃…"></textarea></div>
+      <div class="field"><label class="title">幫傭房需求 <span class="hint">(位置偏好、是否需獨立衛浴／對外窗、坪數)</span></label><textarea name="need_maid" placeholder="例：靠近廚房、需獨立衛浴、有對外窗即可…"></textarea></div>
       <div class="field" style="margin-bottom:4px;">
-        <label class="title">小孩房／二寶房／儲藏室 <span class="hint">(二寶成長需求、嬰兒期陪睡動線等，有想法都可寫)</span></label>
-        <textarea name="need_soft" placeholder="例：二寶房初期做嬰兒床區、預留書桌未來擴充、儲藏收納量…"></textarea>
+        <label class="title">儲藏 / 其他空間需求</label>
+        <textarea name="need_soft" placeholder="例：儲藏收納量、電器櫃、鞋櫃、行李箱收納…"></textarea>
       </div>
     </section>
   </div>
