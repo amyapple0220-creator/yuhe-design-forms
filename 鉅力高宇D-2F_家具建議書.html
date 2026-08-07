@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜鉅力高宇 D-2F 家具建議書</title>
+<meta name="description" content="鉅力高宇 D-2F 兩房單元家具建議書——依平面圖逐空間規劃活動家具與訂製櫃體之建議尺寸、數量與配置說明。">
+<style>
+  :root{
+    --paper:#faf8f4;
+    --card:#ffffff;
+    --ink:#2b2b28;
+    --line:#ddd6c9;
+    --accent:#8a6d4b;
+    --accent-deep:#6f563a;
+    --accent-light:#f1ebe0;
+    --muted:#8b8578;
+    --on-accent:#ffffff;
+    --greige:#ebe8e2;
+    --shadow:0 1px 3px rgba(60,50,30,.06);
+    --serif:Georgia,"Times New Roman",serif;
+    --tag-move:#6f7a55;      /* 活動家具 */
+    --tag-built:#8a6d4b;     /* 系統訂製 */
+    --tag-opt:#9a8f7a;       /* 選配 */
+  }
+  html[data-theme="dark"]{
+    --paper:#1c1a17;
+    --card:#26231e;
+    --ink:#ece7dd;
+    --line:#423b2f;
+    --accent:#c9a15f;
+    --accent-deep:#d9b476;
+    --accent-light:#332d24;
+    --muted:#9a917f;
+    --on-accent:#241d12;
+    --greige:#221f1a;
+    --shadow:0 1px 3px rgba(0,0,0,.3);
+    --tag-move:#9db07a;
+    --tag-built:#c9a15f;
+    --tag-opt:#b3a890;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.75;
+    transition:background .25s,color .25s;
+  }
+
+  /* ── 頁首 ── */
+  header{
+    text-align:center;
+    padding:52px 20px 30px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  header .logo{width:132px; max-width:52%; height:auto; margin:0 auto 10px; display:block;}
+  header .slogan{font-size:12px; font-weight:300; letter-spacing:3px; color:var(--muted); margin:0;}
+  header .en{
+    font-family:var(--serif); font-size:30px; font-weight:400;
+    letter-spacing:8px; margin:24px auto 4px; color:var(--ink);
+  }
+  header h1{font-size:15px; font-weight:400; letter-spacing:7px; color:var(--muted); margin:0;}
+  .theme-btn{
+    position:absolute; top:18px; right:16px;
+    width:42px; height:42px; border-radius:50%;
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    font-size:18px; cursor:pointer; box-shadow:var(--shadow);
+  }
+
+  main{max-width:860px; margin:0 auto; padding:36px 18px 90px;}
+
+  /* ── 專案資訊 ── */
+  .project-title{text-align:center; margin:6px 0 30px;}
+  .project-title h2{font-size:23px; font-weight:600; letter-spacing:3px; margin:0 0 8px;}
+  .project-title .sub{font-family:var(--serif); color:var(--muted); font-size:14px; letter-spacing:2px;}
+  .project-title .sub::before,.project-title .sub::after{content:"—"; color:var(--line); margin:0 10px;}
+
+  .meta-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px; background:var(--line);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden;
+    margin-bottom:22px; box-shadow:var(--shadow);
+  }
+  .meta-grid div{background:var(--card); padding:14px 16px;}
+  .meta-grid dt{font-size:11.5px; letter-spacing:2px; color:var(--muted); margin:0 0 3px;}
+  .meta-grid dd{margin:0; font-size:14.5px; font-weight:600; letter-spacing:.5px;}
+
+  .lead{
+    background:var(--accent-light); border:1px solid var(--line);
+    border-radius:12px; padding:18px 20px; margin-bottom:14px;
+    font-size:14px; color:var(--ink);
+  }
+  .lead b{color:var(--accent-deep);}
+
+  .legend{
+    display:flex; flex-wrap:wrap; gap:10px 18px;
+    font-size:12.5px; color:var(--muted); margin:0 2px 30px; padding:2px;
+  }
+  .legend .tag{margin-right:6px;}
+
+  .tag{
+    display:inline-block; font-size:11px; font-weight:700; letter-spacing:1px;
+    padding:2px 9px; border-radius:99px; color:#fff; white-space:nowrap;
+    vertical-align:middle;
+  }
+  .tag.move{background:var(--tag-move);}
+  .tag.built{background:var(--tag-built);}
+  .tag.opt{background:var(--tag-opt);}
+
+  /* ── 空間卡片 ── */
+  section.room{
+    background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:22px 20px 8px; margin-bottom:20px;
+    box-shadow:var(--shadow);
+  }
+  section.room > h3{
+    font-size:18px; letter-spacing:2px; margin:0 0 4px;
+    border-left:4px solid var(--accent); padding-left:12px;
+  }
+  section.room > h3 .en{
+    font-family:var(--serif); font-size:12px; letter-spacing:2px;
+    color:var(--muted); margin-left:10px; font-weight:400;
+  }
+  section.room .room-note{
+    font-size:13px; color:var(--muted); margin:0 0 14px; padding-left:16px;
+  }
+
+  .tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; margin-bottom:14px;}
+  table.furn{width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px;}
+  table.furn th,table.furn td{
+    text-align:left; padding:10px 12px; border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  table.furn thead th{
+    font-size:12px; letter-spacing:1px; color:var(--muted);
+    background:var(--accent-light); border-bottom:1.5px solid var(--line);
+    white-space:nowrap;
+  }
+  table.furn tbody tr:last-child td{border-bottom:none;}
+  table.furn .item{font-weight:600; letter-spacing:.5px; white-space:nowrap;}
+  table.furn .dim{font-family:var(--serif); color:var(--accent-deep); white-space:nowrap;}
+  table.furn .qty{text-align:center; white-space:nowrap;}
+  table.furn .desc{color:var(--muted); min-width:180px;}
+
+  /* ── 整體建議 ── */
+  section.overall{
+    background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:24px 22px; margin:34px 0 0;
+    box-shadow:var(--shadow);
+  }
+  section.overall h3{
+    font-size:18px; letter-spacing:2px; margin:0 0 16px;
+    border-left:4px solid var(--accent); padding-left:12px;
+  }
+  section.overall .blk{margin-bottom:16px;}
+  section.overall .blk:last-child{margin-bottom:0;}
+  section.overall .blk h4{
+    margin:0 0 6px; font-size:14.5px; letter-spacing:1px; color:var(--accent-deep);
+  }
+  section.overall .blk p{margin:0; font-size:13.5px; color:var(--ink);}
+  section.overall ul{margin:6px 0 0; padding-left:20px; font-size:13.5px;}
+  section.overall li{margin-bottom:5px;}
+
+  .disclaimer{
+    font-size:12.5px; color:var(--muted); line-height:1.9;
+    border-top:1px solid var(--line); margin-top:34px; padding-top:18px;
+  }
+
+  .actions{text-align:center; margin:28px 0 4px;}
+  .actions button{
+    border:1px solid var(--accent); background:var(--card); color:var(--accent-deep);
+    border-radius:999px; padding:10px 26px; font-size:13.5px; letter-spacing:2px;
+    cursor:pointer; font-family:inherit; transition:background .2s,color .2s;
+  }
+  .actions button:hover{background:var(--accent); color:var(--on-accent);}
+
+  footer{
+    background:var(--greige); border-top:1px solid var(--line);
+    text-align:center; padding:34px 20px 44px;
+    font-size:13px; color:var(--muted); letter-spacing:1px;
+  }
+  footer .brand{font-size:15px; color:var(--ink); letter-spacing:3px; margin-bottom:4px;}
+  footer a{color:var(--accent); text-decoration:none; letter-spacing:1px;}
+
+  @media print{
+    .theme-btn,.actions{display:none !important;}
+    body{background:#fff;}
+    section.room,section.overall,.meta-grid,.lead{box-shadow:none; break-inside:avoid;}
+    header{border-color:#ccc;}
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-btn" id="themeBtn" type="button" title="切換深淺色">🌙</button>
+
+<header>
+  <img class="logo" src="images/logo.png" alt="禹合制所 YUHE DESIGN" width="479" height="352">
+  <p class="slogan">以「禹合」為名，「制所」於心。</p>
+  <p class="en">FURNITURE PROPOSAL</p>
+  <h1>家具建議書</h1>
+</header>
+
+<main>
+
+  <div class="project-title">
+    <h2>鉅力高宇 D-2F</h2>
+    <span class="sub">Furniture Layout Recommendation</span>
+  </div>
+
+  <dl class="meta-grid">
+    <div><dt>案　　名</dt><dd>鉅力高宇 D-2F</dd></div>
+    <div><dt>格　　局</dt><dd>兩房兩廳兩衛</dd></div>
+    <div><dt>房間配置</dt><dd>主臥 ＋ 次臥</dd></div>
+    <div><dt>天花高度</dt><dd>H236（新作天花）</dd></div>
+    <div><dt>床　　型</dt><dd>5×6.2 尺｜標準雙人</dd></div>
+    <div><dt>其　　他</dt><dd>玄關・儲藏間・雙陽台</dd></div>
+  </dl>
+
+  <div class="lead">
+    本建議書依 <b>鉅力高宇 D-2F 平面配置圖</b> 逐空間整理家具建議，區分「活動家具（可採購）」與「系統／木作訂製櫃體」兩類，並標註建議尺寸、數量與配置重點，作為採購與後續深化設計之參考。<br>
+    整體以 <b>現代簡約 × 溫潤木質</b> 為基調（可依業主喜好調整），開放式客餐廳強調通透與動線順暢。
+  </div>
+
+  <div class="legend">
+    <span><span class="tag move">活動家具</span>可直接採購之現成家具</span>
+    <span><span class="tag built">系統訂製</span>建議系統櫃或木作訂製</span>
+    <span><span class="tag opt">選配</span>視需求與預算增設</span>
+  </div>
+
+  <!-- ── 玄關 ── -->
+  <section class="room">
+    <h3>玄關 <span class="en">ENTRANCE</span></h3>
+    <p class="room-note">入口設屏風界定內外，家具以「落塵、穿脫、收納」三機能為主。</p>
+    <div class="tbl-wrap">
+      <table class="furn">
+        <thead><tr><th>品項</th><th>建議尺寸 (cm，W×D×H)</th><th class="qty">數量</th><th>類型</th><th>配置說明</th></tr></thead>
+        <tbody>
+          <tr><td class="item">玄關收納櫃</td><td class="dim">依現場（建議整合鞋櫃）</td><td class="qty">1</td><td><span class="tag built">系統訂製</span></td><td class="desc">整合鞋櫃、電箱與屏風端景，上櫃下懸空放常穿鞋。</td></tr>
+          <tr><td class="item">穿鞋椅</td><td class="dim">100×35×45</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">進出穿脫鞋使用，下方可置外出鞋。</td></tr>
+          <tr><td class="item">全身穿衣鏡</td><td class="dim">50×—×170</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">出門儀容檢視，靠屏風側牆立放或壁掛。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 客廳 ── -->
+  <section class="room">
+    <h3>客廳 <span class="en">LIVING ROOM</span></h3>
+    <p class="room-note">主坐向面對電視牆（65" 電視），家具高度建議 ≤120cm 以維持開放式空間的通透感。</p>
+    <div class="tbl-wrap">
+      <table class="furn">
+        <thead><tr><th>品項</th><th>建議尺寸 (cm，W×D×H)</th><th class="qty">數量</th><th>類型</th><th>配置說明</th></tr></thead>
+        <tbody>
+          <tr><td class="item">三人座沙發</td><td class="dim">220×95×85</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">主坐向，米灰布面為建議；空間充裕可改 L 型。</td></tr>
+          <tr><td class="item">單人休閒椅</td><td class="dim">80×85×90</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">斜置於窗側，增加坐向彈性與閱讀角落。</td></tr>
+          <tr><td class="item">大茶几</td><td class="dim">120×60×38</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">木面或石面，搭配沙發比例。</td></tr>
+          <tr><td class="item">邊几</td><td class="dim">Ø45×55</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">置於單椅旁，放置茶水／燈具。</td></tr>
+          <tr><td class="item">立燈</td><td class="dim">—×—×150</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">補足間接照明，營造夜間氛圍。</td></tr>
+          <tr><td class="item">電視櫃</td><td class="dim">240×40×45</td><td class="qty">1</td><td><span class="tag built">系統訂製</span></td><td class="desc">結合電視牆，承載 65" 電視與線材收納。</td></tr>
+          <tr><td class="item">地毯</td><td class="dim">200×290</td><td class="qty">1</td><td><span class="tag opt">選配</span></td><td class="desc">界定客廳範圍，柔化石地磚觸感。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 餐廳 ── -->
+  <section class="room">
+    <h3>餐廳 <span class="en">DINING</span></h3>
+    <p class="room-note">鄰接廚房與客廳，餐桌與沙發背牆間走道建議保留 ≥90cm。</p>
+    <div class="tbl-wrap">
+      <table class="furn">
+        <thead><tr><th>品項</th><th>建議尺寸 (cm，W×D×H)</th><th class="qty">數量</th><th>類型</th><th>配置說明</th></tr></thead>
+        <tbody>
+          <tr><td class="item">餐桌（4人）</td><td class="dim">130×80×75</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">一般四人；如常有訪客可考慮延伸桌。</td></tr>
+          <tr><td class="item">餐椅</td><td class="dim">45×50×80</td><td class="qty">4</td><td><span class="tag move">活動家具</span></td><td class="desc">木質或布面，與餐桌調性一致。</td></tr>
+          <tr><td class="item">餐邊櫃／電器高身櫃</td><td class="dim">64×69×182</td><td class="qty">1</td><td><span class="tag built">系統訂製</span></td><td class="desc">對應圖面既有高身櫃位置，整合電器與餐櫃收納。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 廚房 ── -->
+  <section class="room">
+    <h3>廚房 <span class="en">KITCHEN</span></h3>
+    <p class="room-note">廚具與電器櫃多為系統規劃；以下為活動家具建議。</p>
+    <div class="tbl-wrap">
+      <table class="furn">
+        <thead><tr><th>品項</th><th>建議尺寸 (cm，W×D×H)</th><th class="qty">數量</th><th>類型</th><th>配置說明</th></tr></thead>
+        <tbody>
+          <tr><td class="item">吧台高腳椅</td><td class="dim">40×40×座高65</td><td class="qty">2</td><td><span class="tag opt">選配</span></td><td class="desc">若設置吧台／中島時搭配，供輕食與陪伴。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 主臥 ── -->
+  <section class="room">
+    <h3>主臥 <span class="en">MASTER BEDROOM</span></h3>
+    <p class="room-note">床型 5×6.2 尺（標準雙人 152×188），床兩側建議各留 ≥60cm 通道。</p>
+    <div class="tbl-wrap">
+      <table class="furn">
+        <thead><tr><th>品項</th><th>建議尺寸 (cm，W×D×H)</th><th class="qty">數量</th><th>類型</th><th>配置說明</th></tr></thead>
+        <tbody>
+          <tr><td class="item">雙人床架＋床墊</td><td class="dim">152×188（5×6.2尺）</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">對應圖面床位；床頭靠實牆。</td></tr>
+          <tr><td class="item">床頭櫃</td><td class="dim">45×40×50</td><td class="qty">2</td><td><span class="tag move">活動家具</span></td><td class="desc">床兩側對稱，放置檯燈與隨身物。</td></tr>
+          <tr><td class="item">梳妝桌＋化妝椅</td><td class="dim">100×40×75</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">靠窗採光佳處；亦可兼作書桌。</td></tr>
+          <tr><td class="item">衣櫃</td><td class="dim">依現場（建議 ≥240 寬）</td><td class="qty">1</td><td><span class="tag built">系統訂製</span></td><td class="desc">系統櫃規劃吊掛、層板與抽屜。</td></tr>
+          <tr><td class="item">單椅（閱讀角）</td><td class="dim">70×75×85</td><td class="qty">1</td><td><span class="tag opt">選配</span></td><td class="desc">窗邊休憩，空間充裕時增設。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 次臥 ── -->
+  <section class="room">
+    <h3>次臥 <span class="en">SECOND BEDROOM</span></h3>
+    <p class="room-note">圖面現況為金屬吊衣架＋雙人床；可依用途調整為臥房、書房或客房。</p>
+    <div class="tbl-wrap">
+      <table class="furn">
+        <thead><tr><th>品項</th><th>建議尺寸 (cm，W×D×H)</th><th class="qty">數量</th><th>類型</th><th>配置說明</th></tr></thead>
+        <tbody>
+          <tr><td class="item">雙人床架＋床墊</td><td class="dim">152×188（5×6.2尺）</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">對應圖面床位；若作單人房可改單人加大。</td></tr>
+          <tr><td class="item">書桌</td><td class="dim">120×60×75</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">靠窗設置，兼書房／工作機能。</td></tr>
+          <tr><td class="item">書椅</td><td class="dim">50×55×85</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">搭配書桌。</td></tr>
+          <tr><td class="item">床頭櫃</td><td class="dim">45×40×50</td><td class="qty">1</td><td><span class="tag move">活動家具</span></td><td class="desc">單側床頭櫃即可。</td></tr>
+          <tr><td class="item">衣櫃（取代金屬吊架）</td><td class="dim">依現場</td><td class="qty">1</td><td><span class="tag built">系統訂製</span></td><td class="desc">建議改系統衣櫃，收納更完整、視覺更整齊。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 衛浴 ── -->
+  <section class="room">
+    <h3>主浴 / 客浴 <span class="en">BATHROOM</span></h3>
+    <p class="room-note">衛浴設備與櫃體多為系統／成品，依現場管線與尺寸規劃。</p>
+    <div class="tbl-wrap">
+      <table class="furn">
+        <thead><tr><th>品項</th><th>建議尺寸 (cm，W×D×H)</th><th class="qty">數量</th><th>類型</th><th>配置說明</th></tr></thead>
+        <tbody>
+          <tr><td class="item">鏡櫃</td><td class="dim">依現場</td><td class="qty">2</td><td><span class="tag built">系統訂製</span></td><td class="desc">主浴、客浴各一，整合照明與收納。</td></tr>
+          <tr><td class="item">面盆浴櫃</td><td class="dim">依現場</td><td class="qty">2</td><td><span class="tag built">系統訂製</span></td><td class="desc">下方收納備品，防潮材質為佳。</td></tr>
+          <tr><td class="item">淋浴椅</td><td class="dim">40×35×45</td><td class="qty">1</td><td><span class="tag opt">選配</span></td><td class="desc">友善長輩／久站需求。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 儲藏間 & 陽台 ── -->
+  <section class="room">
+    <h3>儲藏間・陽台 <span class="en">STORAGE · BALCONY</span></h3>
+    <p class="room-note">收納與家務機能空間，以耐用、可調整為原則。</p>
+    <div class="tbl-wrap">
+      <table class="furn">
+        <thead><tr><th>品項</th><th>建議尺寸 (cm，W×D×H)</th><th class="qty">數量</th><th>類型</th><th>配置說明</th></tr></thead>
+        <tbody>
+          <tr><td class="item">儲藏間層架</td><td class="dim">依現場（可調層板）</td><td class="qty">1</td><td><span class="tag built">系統訂製</span></td><td class="desc">收納行李、季節寢具與備品。</td></tr>
+          <tr><td class="item">後陽台家務收納</td><td class="dim">依現場</td><td class="qty">1</td><td><span class="tag built">系統訂製</span></td><td class="desc">洗衣／烘衣機位、曬衣桿與清潔用品櫃。</td></tr>
+          <tr><td class="item">前陽台戶外桌椅組</td><td class="dim">桌Ø60＋椅×2</td><td class="qty">1</td><td><span class="tag opt">選配</span></td><td class="desc">小型休憩角落，享受採光與通風。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── 整體建議 ── -->
+  <section class="overall">
+    <h3>整體配置建議 <span style="font-family:var(--serif);font-size:12px;letter-spacing:2px;color:var(--muted);font-weight:400;margin-left:8px;">OVERALL NOTES</span></h3>
+
+    <div class="blk">
+      <h4>一、動線與尺度</h4>
+      <ul>
+        <li>開放式客餐廳：主要走道建議 ≥90cm，家具高度以 ≤120cm 維持通透。</li>
+        <li>雙人床兩側各留 ≥60cm 通道，衣櫃開門前保留 ≥75cm 使用空間。</li>
+        <li>餐桌四周建議留 75–90cm 拉椅距離。</li>
+      </ul>
+    </div>
+
+    <div class="blk">
+      <h4>二、風格與材質</h4>
+      <p>以溫潤木皮搭配米灰布沙發為主調，局部點綴石材與金屬，呼應天花 H236 帶來的立面比例。整體維持大地色系（米、灰、原木、淺咖）為基底，單椅、抱枕或掛畫作跳色，增添層次而不喧賓奪主。</p>
+    </div>
+
+    <div class="blk">
+      <h4>三、活動家具 vs. 訂製櫃體</h4>
+      <p><span class="tag built">系統訂製</span> 建議：玄關鞋櫃、電視櫃、餐廳電器高身櫃、主臥／次臥衣櫃、衛浴鏡櫃與浴櫃、儲藏間層架。<br>
+         <span class="tag move">活動家具</span> 建議採購：沙發、單椅、茶几、餐桌椅、床架床墊、床頭櫃、梳妝桌、書桌椅、燈具與地毯。</p>
+    </div>
+
+    <div class="disclaimer">
+      ※ 本表所列尺寸與數量為 <b>建議參考值</b>，實際採購與訂製前，請以現場丈量、系統櫃深化圖面及設備規格為準。<br>
+      ※ 家具款式、色彩與材質可依業主喜好與預算調整；如需搭配 3D 示意，禹合制所可另行提供渲染建議。
+    </div>
+  </section>
+
+  <div class="actions">
+    <button type="button" onclick="window.print()">列印 / 儲存 PDF</button>
+  </div>
+
+</main>
+
+<footer>
+  <div style="font-size:13px; letter-spacing:2px; color:var(--muted); margin-bottom:10px;">以「禹合」為名，「制所」於心。</div>
+  <div class="brand">禹合制所室內裝修有限公司</div>
+  桃園市桃園區藝文一街86之2號4樓<br>
+  <a href="https://www.yu-he-design.com" target="_blank" rel="noopener">官方網站 www.yu-he-design.com</a>
+</footer>
+
+<script>
+(function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setTheme(t){
+    document.documentElement.setAttribute('data-theme',t);
+    themeBtn.textContent=t==='dark'?'☀️':'🌙';
+    try{localStorage.setItem('yuhe_form_theme',t);}catch(e){}
+  }
+  var saved=null;
+  try{saved=localStorage.getItem('yuhe_form_theme');}catch(e){}
+  setTheme(saved==='dark'?'dark':'light');
+  themeBtn.addEventListener('click',function(){
+    setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+  });
+})();
+</script>
+
+</body>
+</html>
