@@ -351,7 +351,7 @@ function doPost(e) {
     if (uid) {
       const key = 'upd_' + uid;
       if (CACHE.get(key)) { console.log('⚠️ 重複 update_id=' + uid); return ContentService.createTextOutput('OK'); }
-      CACHE.put(key, '1', 60);
+      CACHE.put(key, '1', 21600); // 修正0809:60秒太短,Telegram重送間隔更長會穿透→改6小時(上限)
     }
     try { handleTelegramUpdate(update); } catch(err) { console.error('handleUpdate 錯誤：' + err.message); }
   } catch(err) { console.error('JSON 錯誤：' + err.message); }
