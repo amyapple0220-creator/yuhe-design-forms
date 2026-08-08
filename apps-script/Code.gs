@@ -75,7 +75,10 @@ function canonicalProjectName_(text) {
 // 📒 V4 單一帳本：02_收付款總帳 讀取工具
 // 欄位：A日期 B收付 C案件 D類別 E項目 F金額 G狀態 H付款方式 I備註
 // ═══════════════════════════════════════════════════════════════
-const YH_YH_LEDGER_SHEET = '02_收付款總帳';
+// 修正0808：原本誤打成 YH_YH_LEDGER_SHEET，但全檔 10 處引用的是 YH_LEDGER_SHEET，
+// 導致現金流/收付款/成本毛利讀不到總帳。若貼回後編輯器報「已宣告」錯誤，
+// 表示其他 .gs 檔已有同名定義，刪除本行即可。
+const YH_LEDGER_SHEET = '02_收付款總帳';
 
 // 案件總控名稱 ↔ 總帳案件欄的對應（收款用全名、付款用「短名｜」開頭）
 const LEDGER_CASE_MAP = {
@@ -1831,4 +1834,90 @@ function addDefectRecord(data) {
   } catch(e) {
     return { success: false, error: e.message };
   }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 🛠 一鍵維護 0808（執行一次即可；只改狀態與設定，不刪任何列）
+// 內容：
+//   1. 自動備份主表副本（BACKUP_維護前_0808）
+//   2. 試算表時區 America/Los_Angeles → Asia/Taipei
+//      （全 App 日期都寫死 GMT+8，切換安全；且修正 App 寫入日期在表上少一天的位移）
+//   3. ERP_03_工作安排：案件ID 空白列，依同案件已有的 ID 補齊
+//   4. ERP_03_工作安排：同案件+同日期+同工作項目的重複列，
+//      保留一列，其餘「狀態」標成『取消(重複)』——App 與提醒都會自動略過，
+//      隨時可手動改回，資料不會消失
+// ═══════════════════════════════════════════════════════════════
+function runMaintenance_0808() {
+  var log = [];
+  var ss = SpreadsheetApp.openById(SS_ID);
+
+  // 1) 備份
+  try {
+    DriveApp.getFileById(SS_ID).makeCopy('BACKUP_維護前_0808');
+    log.push('✅ 已備份主表：BACKUP_維護前_0808');
+  } catch(e) { log.push('⚠️ 備份失敗：' + e.message + '（可先手動建立副本再執行）'); }
+
+  // 2) 時區
+  try {
+    var tz = ss.getSpreadsheetTimeZone();
+    if (tz !== 'Asia/Taipei') {
+      ss.setSpreadsheetTimeZone('Asia/Taipei');
+      log.push('✅ 時區已切換：' + tz + ' → Asia/Taipei');
+    } else log.push('✅ 時區已是 Asia/Taipei，未變更');
+  } catch(e) { log.push('⚠️ 時區切換失敗：' + e.message); }
+
+  // 3+4) ERP_03_工作安排
+  var sh = ss.getSheetByName('ERP_03_工作安排');
+  if (!sh) { log.push('⚠️ 找不到 ERP_03_工作安排，略過'); }
+  else {
+    var rows = sh.getDataRange().getValues();
+    // 3) 每個案件名稱 → 該案件已出現最多次的案件ID
+    var idCount = {};
+    for (var i = 1; i < rows.length; i++) {
+      var cse = String(rows[i][1]||'').trim(), cid = String(rows[i][7]||'').trim();
+      if (!cse || !cid) continue;
+      var key = normalizeProjectText_(cse);
+      idCount[key] = idCount[key] || {};
+      idCount[key][cid] = (idCount[key][cid]||0) + 1;
+    }
+    var bestId = {};
+    Object.keys(idCount).forEach(function(k){
+      var best = '', n = 0;
+      Object.keys(idCount[k]).forEach(function(id){ if (idCount[k][id] > n) { n = idCount[k][id]; best = id; } });
+      bestId[k] = best;
+    });
+    var filled = 0;
+    for (var i = 1; i < rows.length; i++) {
+      var cse = String(rows[i][1]||'').trim(), cid = String(rows[i][7]||'').trim();
+      if (!cse || cid) continue;
+      var candidate = bestId[normalizeProjectText_(cse)];
+      if (candidate) { sh.getRange(i+1, 8).setValue(candidate); filled++; }
+    }
+    log.push('✅ ERP_03：補上案件ID ' + filled + ' 列');
+
+    // 4) 重複列標「取消(重複)」（保留第一列；若後出現的那列是已完成，改保留已完成的）
+    rows = sh.getDataRange().getValues();
+    var seen = {}, dup = 0;
+    for (var i = 1; i < rows.length; i++) {
+      var d = rows[i][0], cse = String(rows[i][1]||'').trim(), item = String(rows[i][3]||'').trim();
+      var st = String(rows[i][5]||'').trim();
+      if (!d || !cse || !item || /取消/.test(st)) continue;
+      var ds = d instanceof Date ? Utilities.formatDate(d,'GMT+8','yyyy/MM/dd') : String(d).replace(/-/g,'/').trim();
+      var key = normalizeProjectText_(cse) + '|' + ds + '|' + syncNormTitle_(item);
+      if (seen[key] !== undefined) {
+        if (st === '已完成' && String(rows[seen[key]][5]||'').trim() !== '已完成') {
+          sh.getRange(seen[key]+1, 6).setValue('取消(重複)');
+          seen[key] = i;
+        } else {
+          sh.getRange(i+1, 6).setValue('取消(重複)');
+        }
+        dup++;
+      } else seen[key] = i;
+    }
+    log.push('✅ ERP_03：重複列已標「取消(重複)」' + dup + ' 列（未刪除，可隨時改回）');
+  }
+
+  Logger.log(log.join('\n'));
+  try { sendTelegramSelfReminder('🛠 維護0808完成\n' + log.join('\n')); } catch(e) {}
+  return log;
 }
