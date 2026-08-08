@@ -1738,6 +1738,9 @@ function setupTelegramWebhook() {
 }
 
 function ensureTelegramWebhook_() {
+  // 停用0809:webhook 統一由「禹合戰情室 V3」專案持有(功能較完整)。
+  // 本函式原本每6小時把 webhook 搶回 App,造成兩專案互搶、指令時好時壞。
+  return 'disabled_0809_webhook_owned_by_V3';
   var token=PROPS.getProperty('TELEGRAM_BOT_TOKEN'); if(!token) return 'no_token';
   var now=Date.now(), last=Number(PROPS.getProperty('TELEGRAM_WEBHOOK_LAST_CHECK')||0);
   if(now-last<6*3600000) return 'recently_checked';

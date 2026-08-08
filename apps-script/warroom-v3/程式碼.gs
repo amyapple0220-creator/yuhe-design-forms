@@ -386,10 +386,11 @@ function handleTelegramUpdate(update) {
     if (text.startsWith('#缺失')) { handleDefectHashtag(text, chatId, userId, role); return; }
     if (text.startsWith('#')) { handleHashtagLog(text, chatId, userId, role); return; }
     if (/^[\d今明][\d\/\-]*_/.test(text)) { handleQuickCalendar(text, chatId, role); return; }
+    if (/^(完成|done)$/i.test(text)) { v3_sendTelegramTo(chatId,'用法：完成 關鍵字\n例：完成 系統櫃下單'); return; }
     if (/^(完成|done)[\s_]/i.test(text)) { v3_completeErp03(text.replace(/^(完成|done)[\s_]+/i,''), chatId); return; }
     const cmd = text.toLowerCase().split(' ')[0];
     if (['/start','/help','/today','/cases','/log','/photos','/calendar','/finance','/stuck','/report','/checklist',
-         '今天','記錄','工地記錄','收款','案件','照片','行事曆','卡住','收尾'].includes(cmd)) {
+         '今天','記錄','工地記錄','收款','案件','照片','行事曆','行程','幫助','卡住','收尾'].includes(cmd)) {
       handleCommand(cmd, chatId, userId, role, text); return;
     }
     handleConversationFlow(text, chatId, userId, role);
@@ -1183,7 +1184,8 @@ function handleCommand(cmd, chatId, userId, role, text) {
   if (cmd==='/cases'||cmd==='案件')                           { sendCaseList(chatId); return; }
   if (cmd==='/log'||cmd==='記錄'||cmd==='工地記錄')           { startLogFlow(chatId,userId); return; }
   if (cmd==='/photos'||cmd==='照片')                          { sendTodayLogSummary(chatId); return; }
-  if (cmd==='/calendar'||cmd==='行事曆')                      { sendCalendarPreview(chatId); return; }
+  if (cmd==='/calendar'||cmd==='行事曆'||cmd==='行程')        { sendCalendarPreview(chatId); return; }
+  if (cmd==='幫助')                                           { sendHelpMenu(chatId,role); return; }
   if (cmd==='/report')                                        { handleReportCommand(text,chatId,role); return; }
   if (cmd==='/checklist'||cmd==='收尾')                       { handleChecklistCommand(text,chatId,role); return; }
   if (cmd==='/finance'||cmd==='收款') {
