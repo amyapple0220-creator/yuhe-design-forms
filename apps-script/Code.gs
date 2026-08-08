@@ -1933,7 +1933,8 @@ function finishDoneTasks_0808() {
     ['忠泰', '設計簽約會議'],
     ['忠泰', '業主平配'],
     ['高宇C', '第一次3D提案'],
-    ['台北華府', '業主木工進場']
+    ['台北華府', '業主木工進場'],
+    ['高宇', '系統櫃']   // 0808老闆確認:已下單→改圖/覆量/下單皆完成(只標過期列,未來安裝不動)
   ];
   var ss = SpreadsheetApp.openById(SS_ID);
   var sh = ss.getSheetByName('ERP_03_工作安排');
