@@ -37,13 +37,16 @@ const SS_ID = PROPS.getProperty('SPREADSHEET_ID') || '12jvGBSEvjEYhtJi5vynQeT2vF
 const PROJECT_CATALOG = [
   { id:'PRJ-GY-C2F', name:'鉅力高宇 C-2F', aliases:['鉅力高宇C-2F','鉅力高宇 C-2F','高宇C-2F','高宇 C-2F','高宇C2'] },
   { id:'PRJ-GY-D2F', name:'鉅力高宇 D-2F', aliases:['鉅力高宇D-2F','鉅力高宇 D-2F','高宇D-2F','高宇 D-2F','高宇D2','鉅力高宇','高宇','鉅力'] },
+  { id:'PRJ-ZTZ-B2-21F', name:'忠泰湛 B2-21F', aliases:['忠泰湛B2-21F','忠泰湛 B2-21F','忠泰湛B2-21','忠泰湛 B2-21'] },
   { id:'PRJ-ZTZ-B2-22F', name:'忠泰湛 B2-22F', aliases:['忠泰湛B2-22F','忠泰湛 B2-22F','忠泰湛'] },
   { id:'PRJ-FY-YS-A1', name:'豐邑氧森 A1-5F', aliases:['豐邑氧森A1-5F','豐邑氧森 A1-5F','豐邑氧森A1','豐邑氧森','豐邑養森','豐邑'] },
   { id:'PRJ-HX-HX', name:'合新合心', aliases:['合新合心','合新'] },
   { id:'PRJ-TB-HF', name:'台北華府', aliases:['台北華府','華府'] },
   { id:'PRJ-FY-YS', name:'遠雄仰森 A3-22', aliases:['遠雄仰森A3-22','遠雄仰森 A3-22','遠雄仰森','遠雄'] },
   { id:'PRJ-DJ6', name:'帝景六・新哥自宅', aliases:['帝景六・新哥自宅','帝景六新哥自宅','帝景六','新哥自宅'] },
-  { id:'PRJ-SJ-HY', name:'世界花園', aliases:['世界花園'] },
+  { id:'PRJ-SJ-HY', name:'世界花園', aliases:['世界花園I5-6F','世界花園 I5-6F','世界花園'] },
+  { id:'PRJ-CH-B5', name:'春宏遇見 B5-7F', aliases:['春宏遇見B5-7F','春宏遇見 B5-7F','春宏遇見','春宏'] },
+  { id:'PRJ-LM-ST', name:'藍沫攝影棚', aliases:['藍沫攝影棚','藍沫'] },
   { id:'PRJ-LK', name:'林口', aliases:['林口'] }
 ];
 const CASE_KEYWORDS = ['合新','豐邑','世界花園','台北華府','遠雄','林口','忠泰湛'];
