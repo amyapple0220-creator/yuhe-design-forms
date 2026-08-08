@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, "Microsoft JhengHei", sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    header div {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    main {
+      padding: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      color: #111827;
+    }
+
+    .item {
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .item:last-child {
+      border-bottom: 0;
+    }
+
+    .muted {
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .loading {
+      padding: 20px;
+      color: #64748b;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>禹合戰情室</h1>
+    <div id="today">載入中...</div>
+  </header>
+
+  <main>
+    <div id="app" class="loading">讀取 V6 資料中...</div>
+  </main>
+
+  <script>
+    function loadDashboard() {
+      google.script.run
+        .withSuccessHandler(renderDashboard)
+        .withFailureHandler(renderError)
+        .V6_getAppDashboardData();
+    }
+
+    function renderDashboard(data) {
+      document.getElementById('today').textContent =
+        '今日營運總覽｜' + new Date().toLocaleDateString('zh-TW');
+
+      const ledger = data.ledger || {};
+      const receivables = ledger.receivables || [];
+      const payables = ledger.payables || [];
+
+      document.getElementById('app').className = 'grid';
+      document.getElementById('app').innerHTML = `
+        ${card('財務總覽', (data.dashboard || []).map(x => item(x)).join(''))}
+        ${card('今日工作', renderTodayWork(data.todayWork || []))}
+        ${card('待收款', renderLedger(receivables))}
+        ${card('待付款', renderLedger(payables))}
+        ${card('案件狀態', renderProjects(data.projects || []))}
+        ${card('收尾 / 缺失', renderFinishing(data.finishing || []))}
+      `;
+    }
+
+    function card(title, content) {
+      return `
+        <section class="card">
+          <h2>${escapeHtml(title)}</h2>
+          ${content || '<div class="muted">目前沒有資料</div>'}
+        </section>
+      `;
+    }
+
+    function item(text) {
+      return `<div class="item">${escapeHtml(text)}</div>`;
+    }
+
+    function renderTodayWork(rows) {
+      if (!rows.length) return '<div class="muted">今天沒有排程資料</div>';
+
+      return rows.map(row => `
+        <div class="item">
+          <strong>${escapeHtml(row['案件'] || '未指定案件')}</strong><br>
+          育瑄：${escapeHtml(row['育瑄工作'] || '-')}<br>
+          阿祥/工務：${escapeHtml(row['阿祥/工務'] || '-')}<br>
+          <span class="muted">${escapeHtml(row['KPI/提醒'] || '')}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderLedger(rows) {
+      if (!rows.length) return '<div class="muted">目前沒有提醒</div>';
+
+      return rows.slice(0, 10).map(row => `
+        <div class="item">
+          <strong>${escapeHtml(row['案件'] || '未指定案件')}</strong><br>
+          ${escapeHtml(row['項目'] || '未指定項目')}｜${escapeHtml(row['金額'] || '')}<br>
+          <span class="muted">${escapeHtml(row['備註'] || '')}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderProjects(rows) {
+      if (!rows.length) return '<div class="muted">目前沒有案件資料</div>';
+
+      return rows.slice(0, 8).map(row => `
+        <div class="item">
+          <strong>${escapeHtml(row['案件'] || '未指定案件')}</strong><br>
+          ${escapeHtml(row['目前狀態'] || '')}<br>
+          下一步：${escapeHtml(row['下一步'] || '-')}<br>
+          <span class="muted">完工目標：${escapeHtml(row['完工目標'] || '-')}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderFinishing(rows) {
+      if (!rows.length) return '<div class="muted">目前沒有高優先收尾提醒</div>';
+
+      return rows.slice(0, 10).map(row => `
+        <div class="item">
+          <strong>${escapeHtml(row['案件'] || '未指定案件')}</strong><br>
+          ${escapeHtml(row['工種'] || '')}｜${escapeHtml(row['項目／描述'] || '')}<br>
+          <span class="muted">${escapeHtml(row['狀態'] || '')}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderError(error) {
+      document.getElementById('app').className = '';
+      document.getElementById('app').innerHTML =
+        '<div class="error">讀取失敗：' + escapeHtml(error.message || error) + '</div>';
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>
