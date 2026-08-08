@@ -2004,33 +2004,60 @@ function v3_completeErp03(kw, chatId) {
 }
 
 
-// ═══ 清除 Drive 巡邏垃圾列 0808（執行一次）═══
-// 刪除 20_工地日誌 與 11_工地管理 中「Drive自動/drive_scan 且案件=未指定」的重複垃圾列。
-// 先自動備份整份試算表,正常紀錄(有案件名的)完全不動。
+// ═══ 修復照片分頁 0808：從備份還原 20_工地日誌 與 11_工地管理 ═══
+// 上一版清理在寫回時被儲存格「資料驗證(下拉選單)」擋下,分頁可能不完整。
+// 這支從 BACKUP_清照片垃圾前_0808 把兩張分頁完整還原(會先解除該分頁的驗證規則,
+// 之後就不會再被擋;下拉選單樣式會消失,但資料完整)。先跑這支,再跑清理。
+function v3_repairPhotoSheets_0808() {
+  const log = [];
+  const it = DriveApp.getFilesByName('BACKUP_清照片垃圾前_0808');
+  if (!it.hasNext()) { Logger.log('❌ 找不到 BACKUP_清照片垃圾前_0808'); return; }
+  let newest = it.next();
+  while (it.hasNext()) { const f = it.next(); if (f.getDateCreated() > newest.getDateCreated()) newest = f; }
+  const backup = SpreadsheetApp.open(newest);
+  const master = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  [CONFIG.SHEET_LOG, CONFIG.SHEET_SITE_MGMT].forEach(function(name){
+    const src = backup.getSheetByName(name);
+    const dst = master.getSheetByName(name);
+    if (!src || !dst) { log.push('⚠️ 找不到分頁 ' + name); return; }
+    const vals = src.getDataRange().getValues();
+    if (!vals.length) { log.push('⚠️ 備份的 ' + name + ' 是空的，略過'); return; }
+    const rows = Math.max(dst.getMaxRows(), vals.length);
+    const cols = Math.max(dst.getMaxColumns(), vals[0].length);
+    dst.getRange(1, 1, rows, cols).clearDataValidations();
+    dst.clearContents();
+    dst.getRange(1, 1, vals.length, vals[0].length).setValues(vals);
+    log.push('✅ ' + name + '：已從備份還原 ' + vals.length + ' 列');
+  });
+  Logger.log(log.join('\n'));
+  try { v3_sendTelegramTo(CONFIG.BOSS_TELEGRAM_ID || CONFIG.TELEGRAM_CHAT_ID, '🛟 照片分頁還原完成\n' + log.join('\n')); } catch(e) {}
+}
+
+// ═══ 清除 Drive 巡邏垃圾列 0808 v2（逐列刪除版,不會再被驗證規則擋）═══
+// 刪除 20_工地日誌 與 11_工地管理 中「Drive自動/drive_scan 且含 未指定」的垃圾列。
+// 用 deleteRows 直接刪列(不重寫任何儲存格),正常紀錄一列不動。
 function cleanupDriveScanJunk_0808() {
   const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
   const log = [];
-  try { DriveApp.getFileById(CONFIG.SPREADSHEET_ID).makeCopy('BACKUP_清照片垃圾前_0808'); log.push('✅ 已備份'); }
-  catch(e) { log.push('⚠️ 備份失敗：' + e.message); }
   [CONFIG.SHEET_LOG, CONFIG.SHEET_SITE_MGMT].forEach(function(name){
     const sh = ss.getSheetByName(name);
-    if (!sh || sh.getLastRow() < 2) return;
+    if (!sh || sh.getLastRow() < 2) { log.push('⚠️ ' + name + ' 空白，略過'); return; }
     const values = sh.getDataRange().getValues();
-    const keep = [values[0]];
-    let removed = 0;
+    const junk = [];
     for (let i = 1; i < values.length; i++) {
       const rowStr = values[i].join('|');
-      const isJunk = (rowStr.indexOf('Drive自動') >= 0 || rowStr.indexOf('drive_scan') >= 0)
-                     && rowStr.indexOf('未指定') >= 0;
-      if (isJunk) { removed++; } else { keep.push(values[i]); }
+      if ((rowStr.indexOf('Drive自動') >= 0 || rowStr.indexOf('drive_scan') >= 0)
+          && rowStr.indexOf('未指定') >= 0) junk.push(i + 1);
     }
-    if (removed > 0) {
-      sh.clearContents();
-      sh.getRange(1, 1, keep.length, keep[0].length).setValues(keep);
-      log.push('✅ ' + name + '：刪除 ' + removed + ' 列垃圾，保留 ' + (keep.length - 1) + ' 列');
-    } else {
-      log.push('✅ ' + name + '：沒有垃圾列');
+    let end = junk.length - 1, batches = 0;
+    while (end >= 0) {
+      let start = end;
+      while (start > 0 && junk[start - 1] === junk[start] - 1) start--;
+      sh.deleteRows(junk[start], end - start + 1);
+      batches++;
+      end = start - 1;
     }
+    log.push('✅ ' + name + '：刪除 ' + junk.length + ' 列垃圾（分 ' + batches + ' 段）');
   });
   Logger.log(log.join('\n'));
   try { v3_sendTelegramTo(CONFIG.BOSS_TELEGRAM_ID || CONFIG.TELEGRAM_CHAT_ID, '🧹 照片垃圾清理完成\n' + log.join('\n')); } catch(e) {}
