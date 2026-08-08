@@ -4,7 +4,7 @@
 <style>
 :root{
   --bg:#f5f6f4; --card:#ffffff; --ink:#1f2622; --sub:#6b746e; --line:#e4e7e3;
-  --green:#4b6b52; --green2:#eef3ee; --amber:#e0a300; --amber2:#fff5df;
+  --green:#4b6b52; --green2:#eef3ee; --amber:#c98a00; --amber2:#fff5df;
   --red:#c0392b; --red2:#fdecea; --blue:#2e6b8f; --blue2:#e9f2f7;
   --shadow:0 1px 3px rgba(0,0,0,.06),0 6px 18px rgba(0,0,0,.05);
 }
@@ -25,66 +25,59 @@ body{margin:0;background:var(--bg);color:var(--ink);
   font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
   line-height:1.6;-webkit-text-size-adjust:100%}
 .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 64px}
-header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;margin:4px 0 18px}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;margin:4px 0 8px}
 header.top h1{font-size:22px;margin:0;letter-spacing:.5px}
 header.top .date{color:var(--sub);font-size:14px}
-.hint{color:var(--sub);font-size:12.5px;margin:-8px 0 18px}
-.hint b{color:var(--ink)}
-/* KPI */
+.src{font-size:12.5px;color:var(--sub);margin:0 0 16px}
+.src b{color:var(--green)}
+.src.live b{color:var(--blue)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
 .kpi .k{font-size:12.5px;color:var(--sub);margin-bottom:4px}
-.kpi .v{font-size:24px;font-weight:700;letter-spacing:.3px}
-.kpi .v small{font-size:13px;font-weight:600;color:var(--sub)}
+.kpi .v{font-size:23px;font-weight:700;letter-spacing:.3px}
+.kpi .v small{font-size:12px;font-weight:600;color:var(--sub)}
 .kpi.red .v{color:var(--red)} .kpi.green .v{color:var(--green)} .kpi.amber .v{color:var(--amber)}
-/* sections */
 section{margin:26px 0}
-section > h2{font-size:16px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+section > h2{font-size:16px;margin:0 0 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 section > h2 .badge{font-size:12px;font-weight:600;color:var(--sub);background:var(--card);
   border:1px solid var(--line);border-radius:999px;padding:1px 9px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
-/* table */
-table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
-th{font-size:12.5px;color:var(--sub);font-weight:600;background:var(--green2)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;color:var(--sub);font-weight:600;background:var(--green2);white-space:nowrap}
 tr:last-child td{border-bottom:none}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.money-in input{width:92px;text-align:right;font:inherit;color:var(--ink);background:transparent;
-  border:1px dashed var(--line);border-radius:7px;padding:3px 6px;font-variant-numeric:tabular-nums}
-.money-in input:focus{outline:none;border-color:var(--green);border-style:solid}
-.bar{height:7px;border-radius:6px;background:var(--line);overflow:hidden;min-width:70px}
+tr.total td{font-weight:700;background:var(--green2)}
+.bar{height:7px;border-radius:6px;background:var(--line);overflow:hidden;min-width:60px}
 .bar>i{display:block;height:100%;background:var(--green)}
 .mut{color:var(--sub)}
-.tag{display:inline-block;font-size:11.5px;font-weight:600;border-radius:999px;padding:1px 8px}
+.pos{color:var(--green);font-weight:600}.neg{color:var(--red);font-weight:700}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;border-radius:999px;padding:1px 8px;white-space:nowrap}
 .t-build{background:var(--green2);color:var(--green)} .t-design{background:var(--blue2);color:var(--blue)}
-.t-finish{background:var(--amber2);color:var(--amber)}
-/* project cards grid */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.t-done{background:var(--line);color:var(--sub)} .t-designonly{background:var(--amber2);color:var(--amber)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
 .pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px}
 .pcard h3{margin:0 0 2px;font-size:15.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.pcard .stage{color:var(--sub);font-size:13px;margin-bottom:10px}
-.pcard .prog{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--sub);margin-bottom:10px}
-.od{margin-top:8px}
-.od .od-h{font-size:12.5px;color:var(--red);font-weight:700;margin-bottom:4px}
-.li{font-size:13px;padding:3px 0;display:flex;gap:8px;align-items:flex-start;cursor:pointer}
-.li .dot{flex:none;margin-top:8px;width:6px;height:6px;border-radius:50%;background:var(--sub)}
-.li.over .dot{background:var(--red)} .li .d{color:var(--sub);font-variant-numeric:tabular-nums;flex:none}
-.li.done{opacity:.45;text-decoration:line-through}
-.li .over-txt{color:var(--red);font-weight:600}
+.pcard .stage{color:var(--sub);font-size:12.5px;margin-bottom:8px}
+.pcard .next{font-size:13px;background:var(--blue2);color:var(--blue);border-radius:8px;padding:5px 9px;margin-bottom:8px}
+.od .od-h{font-size:12.5px;color:var(--red);font-weight:700;margin:6px 0 4px;cursor:pointer;user-select:none}
+.od .od-h .arr{display:inline-block;transition:transform .15s}
+.od.open .od-h .arr{transform:rotate(90deg)}
+.od .od-list{display:none}
+.od.open .od-list{display:block}
+.li{font-size:12.5px;padding:2px 0;display:flex;gap:7px;align-items:flex-start;cursor:pointer}
+.li .dot{flex:none;margin-top:7px;width:6px;height:6px;border-radius:50%;background:var(--red)}
+.li.done{opacity:.4;text-decoration:line-through}
+.li .over-txt{color:var(--red);font-weight:600;flex:none;font-variant-numeric:tabular-nums}
 .none{color:var(--sub);font-size:13px;padding:2px 0}
-/* trades */
-.trades{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
-.trade{font-size:12px;background:var(--green2);color:var(--green);border-radius:8px;padding:2px 8px}
-.vend input{width:120px;font:inherit;background:transparent;border:1px dashed var(--line);
-  border-radius:7px;padding:2px 6px;color:var(--ink)}
-.vend input:focus{outline:none;border-color:var(--green);border-style:solid}
 footer{margin-top:40px;color:var(--sub);font-size:12px;text-align:center}
 .reset{background:none;border:1px solid var(--line);color:var(--sub);border-radius:8px;
   padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}
+.hint{color:var(--sub);font-size:12.5px;margin:8px 0 0}
 @media(max-width:560px){
-  .hide-sm{display:none}
   header.top h1{font-size:19px}
-  .kpi .v{font-size:20px}
+  .kpi .v{font-size:19px}
 }
 </style>
 
@@ -93,306 +86,239 @@ footer{margin-top:40px;color:var(--sub);font-size:12px;text-align:center}
     <h1>🎯 禹合戰情室</h1>
     <span class="date" id="today"></span>
     <span style="flex:1"></span>
-    <button class="reset" id="reset" title="清除本機所有編輯(已收/廠商/勾選)">重設本機資料</button>
+    <button class="reset" id="reset" title="清除本機勾選">重設勾選</button>
   </header>
-  <p class="hint">
-    資料底稿來自 <b>全案件甘特圖</b>。看板會依<b>今天</b>自動算進度、逾期與收款。
-    <b>已收金額、廠商名稱、節點勾選</b>可直接點改,存在你這台裝置(不上傳)。
-  </p>
+  <p class="src" id="srcLine">資料:讀取中…</p>
 
   <div class="kpis" id="kpis"></div>
 
-  <section id="s-cash">
-    <h2>💰 現金流總覽 <span class="badge">單位：萬元</span></h2>
-    <div class="card"><table>
+  <section>
+    <h2>💰 現金流總覽 <span class="badge">設計費＋工程款,單位:元</span></h2>
+    <div class="card scroll"><table>
       <thead><tr>
         <th>案件</th><th>狀態</th>
-        <th class="num">合約總價</th><th class="num">已收</th>
-        <th class="num">未收</th><th class="hide-sm">收款進度</th>
+        <th class="num">設計費<br>已收/總額</th>
+        <th class="num">工程款<br>已收/簽約</th>
+        <th class="num">待收合計</th><th>收款進度</th>
       </tr></thead>
       <tbody id="cashBody"></tbody>
     </table></div>
-    <p class="hint">💡 點「已收/合約」數字即可編輯。<b>近期收款節點</b>見下方各案卡片。</p>
   </section>
 
-  <section id="s-prog">
-    <h2>📌 各案進度 &amp; 逾期 <span class="badge" id="odCount"></span></h2>
+  <section>
+    <h2>📌 各案進度 &amp; 逾期任務 <span class="badge" id="odCount"></span></h2>
     <div class="grid" id="progGrid"></div>
-    <p class="hint">💡 點任一節點可切換「已完成」——完成後就不再算逾期。</p>
+    <p class="hint">⚠️ 逾期數大多是「實際做完但表上狀態沒改」——點任務可先在本機勾掉;根治要回 ERP_03_工作安排 更新狀態。</p>
   </section>
 
-  <section id="s-vend">
-    <h2>🧰 廠商 / 發包資訊</h2>
-    <div class="card"><table>
-      <thead><tr><th>案件</th><th>工種(依時程)</th><th class="hide-sm">木工廠商</th><th class="hide-sm">油漆廠商</th></tr></thead>
-      <tbody id="vendBody"></tbody>
-    </table></div>
-    <p class="hint">💡 廠商欄可直接填,方便之後「木工是誰、油漆是誰」一眼查到。</p>
-  </section>
-
-  <section id="s-next">
-    <h2>➡️ 下一步待辦(每案最近節點)</h2>
-    <div class="card"><table>
-      <thead><tr><th>日期</th><th>案件</th><th>待辦 / 節點</th><th class="num hide-sm">距今</th></tr></thead>
+  <section>
+    <h2>➡️ 未來 14 天待辦</h2>
+    <div class="card scroll"><table>
+      <thead><tr><th>日期</th><th>案件</th><th>待辦</th><th>負責人</th><th class="num">距今</th></tr></thead>
       <tbody id="nextBody"></tbody>
     </table></div>
   </section>
 
-  <footer>禹合制所 YUHE DESIGN ｜ 戰情室看板(自製輕量版)</footer>
+  <footer>禹合制所 YUHE DESIGN｜戰情室看板 v2</footer>
 </div>
 
 <script>
 /* ============================================================
-   基礎資料：8 案(來自 全案件甘特圖.html)
-   t:[工項, 起, 迄(可省=當天)]   MM-DD 視為 2026 年；完整寫 YYYY-MM-DD
-   m:[日期, 說明]                重要節點(逾期/下一步 以此為準)
-   pay:[名稱, 金額萬, 日期, 預設已收?]   收款節點
+   ▍活資料接口(選填)
+   把 MASTER 試算表用「檔案 → 共用 → 發佈到網路」發佈成 CSV,
+   將兩個分頁的 CSV 網址貼進來,看板就會改抓活資料:
+     ctrl  = 01_案件總控   (欄位:案件,類型,狀態,設計費總額,已收設計費,
+             待收設計費,工程簽約/預估,已收工程款,待收工程款,下一步,完工目標,案件ID)
+     tasks = ERP_03_工作安排 (欄位:日期,案件,階段,工作項目,負責人,狀態,…)
+   留空 = 用下面內嵌的快照資料。
    ============================================================ */
-var PROJECTS=[
- {name:'豐邑氧森A1', type:'finish', typeTxt:'收尾期',
-  t:[['缺失修繕期','07-13','07-17'],['正式交屋','07-18']],
-  m:[['07-18','正式交屋']], pay:[]},
+var LIVE = {
+  ctrl:  '',   // 例:'https://docs.google.com/spreadsheets/d/e/2PACX-…/pub?gid=…&single=true&output=csv'
+  tasks: ''
+};
 
- {name:'鉅力高宇', type:'build', typeTxt:'施工中',
-  t:[['保護工程','06-12'],['空調工程','06-17','06-18'],['水電工程前置','06-22','06-26'],
-     ['木作工程','06-29','07-17'],['油漆工程','07-20','08-14'],['系統櫃討論/丈量/下單','07-20','07-29'],
-     ['系統櫃工廠製作','07-30','08-16'],['系統櫃進料','08-17'],['系統櫃安裝','08-18','08-26'],
-     ['玻璃＋鋁框門安裝','08-27','08-28'],['壁紙施工','08-31','09-02'],['空調收尾','09-03','09-04'],
-     ['水電收尾','09-07','09-11'],['玄關地板施工','09-14'],['粗清＋細清','09-16','09-17'],
-     ['矽利康工程','09-18'],['窗簾/現成家具安裝','09-19'],['Deco＋拍攝','09-20'],
-     ['交屋前點檢/缺失改善','09-21','09-23'],['正式交屋','09-24']],
-  m:[['07-17','木工退場會勘'],['07-29','系統櫃下單截止'],['08-14','油漆退場會勘'],['09-24','正式交屋']],
-  pay:[['油漆款','34.5','07-20',true],['尾款','11.5','09-22',false]]},
-
- {name:'合新合心', type:'build', typeTxt:'施工中',
-  t:[['保護工程','06-15'],['拆除＋清運','06-16','06-18'],['空調配管','06-22','06-24'],
-     ['水電配管','06-25','07-01'],['木作工程(含鋁框軌道)','07-02','08-05'],['油漆工程','08-06','09-01'],
-     ['玻璃＋壁紙施工','09-02'],['燈具/開關/衛浴五金','09-03','09-09'],['空調收尾','09-10','09-11'],
-     ['地板施工(木地板&玄關)','09-11','09-15'],['粗清＋細清','09-17','09-18'],['矽利康工程','09-19'],
-     ['窗簾安裝','09-21'],['家具家電進場','09-22','09-23'],['DECO＆完工拍攝','09-29'],['正式交屋','10-01']],
-  m:[['08-06','出油漆請款單 36.6萬'],['09-30','完工目標'],['10-01','正式交屋']],
-  pay:[['油漆請款','36.6','08-06',false]]},
-
- {name:'台北華府', type:'build', typeTxt:'泥作中',
-  t:[['抹牆面粗底','07-14','07-16'],['牆面/地板基礎防水','07-17'],['抹地板粗底','07-20','07-21'],
-     ['地板塗抹防水','07-22'],['防水養護','07-23','07-27'],['試水','07-28'],['貼磁磚','07-29','08-04'],
-     ['木工進場','08-03']],
-  m:[['07-20','出調整版後3D圖'],['07-27','立面圖交付期限'],['08-03','木工進場']], pay:[]},
-
- {name:'鉅力高宇C-2F', type:'design', typeTxt:'設計中',
-  t:[['簽設計約＆請一期款','07-17'],['3D發想・設計規劃(內部)','07-24'],['內部圖面與報價準備','08-21'],
-     ['預計工程期間(暫)','09-15','12-15']],
-  m:[['07-17','簽約＆一期款'],['07-31','第一次3D提案'],['08-14','二次3D修改＋材質挑選'],
-     ['08-31','工程報價＋簽約'],['09-15','吉日開工']],
-  pay:[['設計一期款','','07-17',true]]},
-
- {name:'遠雄仰森', type:'design', typeTxt:'設計中',
-  t:[['驗屋＋現場丈量','07-20'],['調整後3D＋迴路圖準備','07-22','07-31'],['工程估價與報價準備','08-04','08-23']],
-  m:[['07-20','驗屋＋丈量完成'],['08-03','業主碰面：3D＋迴路圖＋收尾款3萬'],['08-24','工程報價會議'],
-     ['09-22','預計開工(暫)']],
-  pay:[['設計尾款','3','08-03',true]]},
-
- {name:'忠泰湛B2-22F', type:'design', typeTxt:'設計中',
-  t:[['平配＋簡報內部作業','07-13','07-25'],['預計工程期間(130工作天,暫)','09-29','2027-04-14']],
-  m:[['07-26','14:00 平配＋簡報提案'],['09-29','預計進場(暫)'],['2027-04-14','預計完工(130工作天)']],
-  pay:[]},
-
- {name:'合雄鳳璽', type:'design', typeTxt:'洽談/設計',
-  t:[['假日現場丈量','08-15'],['3D發想・規劃(內部)','08-17','09-11'],['二次3D修改＋材質挑選(內部)','09-14','09-25'],
-     ['工程估價與報價準備','09-28','10-09'],['預計工程期間(約90工作天,暫)','10-19','2027-03-05']],
-  m:[['08-15','洽談＋丈量＋現況勘查'],['09-11','第一次3D提案'],['09-25','二次3D＋材質定案'],
-     ['10-12','工程報價＋簽約'],['10-19','預計開工(暫)'],['2027-03-05','預計完工(暫)']],
-  pay:[]}
-];
+/* ▍快照資料(擷取自 禹合真正營運版_V5_3_MASTER:01_案件總控 + ERP_03_工作安排) */
+var SNAP_DATE='2026-08-08';
+var CASES=[{"name": "豐邑氧森A1", "type": "done", "typeTxt": "已結案", "status": "已交屋結案／帳務全清", "dTotal": 35000, "dRecv": 35000, "eTotal": 1976000, "eRecv": 1976000, "next": "—(已結案)", "target": "2026/7/18 已交屋"}, {"name": "鉅力高宇D-2F", "type": "build", "typeTxt": "施工中", "status": "6/12開工保護~9/24交屋", "dTotal": 70000, "dRecv": 70000, "eTotal": 1150000, "eRecv": 690000, "next": "油漆進場款345,000待收(7/20單)", "target": "2026/9/24前"}, {"name": "合新合心", "type": "build", "typeTxt": "施工中", "status": "6/15開工保護~10/1交屋", "dTotal": 62500, "dRecv": 62500, "eTotal": 1220000, "eRecv": 732000, "next": "油漆進場款待收366,000(8/6出請款單)", "target": "2026/10/1前"}, {"name": "遠雄仰森A3-22", "type": "design", "typeTxt": "設計中", "status": "8/26工程報價;建商8月底~9月初交屋", "dTotal": 63000, "dRecv": 33000, "eTotal": 2000000, "eRecv": 0, "eDue": 1800000, "next": "8/26工程報價;確認建商交屋日後鎖定開工", "target": "預計9/22開工(暫)"}, {"name": "台北華府", "type": "designonly", "typeTxt": "純設計", "status": "8/4泥作退場;8/10木工退場;立面施工圖繪製中", "dTotal": 98000, "dRecv": 98000, "eTotal": 0, "eRecv": 0, "next": "立面施工圖繪製", "target": "純設計案"}, {"name": "鉅力高宇C-2F", "type": "design", "typeTxt": "設計中", "status": "8/4已提第一次3D;8/14材質挑選;9/15開工", "dTotal": 100000, "dRecv": 0, "eTotal": 1500000, "eRecv": 0, "next": "8/14材質挑選→施工圖、報價與簽約", "target": "預計9/15進場"}, {"name": "忠泰湛B2-22F", "type": "design", "typeTxt": "設計中", "status": "8/5簽設計約收126,000;8/6已提兩版平配", "dTotal": 183750, "dRecv": 126000, "eTotal": 5000000, "eRecv": 0, "next": "8/29提出兩版3D→3D修改、材質、施工圖", "target": "預計10/19吉日開工"}, {"name": "帝景六・新哥自宅", "type": "design", "typeTxt": "毛胚/純設計", "status": "9/18 09:30驗屋(已確認);約10/9暫定交屋", "dTotal": 0, "dRecv": 0, "eTotal": 0, "eRecv": 0, "next": "9/18驗屋;驗屋後約三週交屋(暫定10/9)", "target": "預計10/9交屋(暫)"}];
+var TASKS=[{"d": "2026/07/10", "case": "忠泰湛B2-22F", "stage": "設計", "item": "整理初洽需求、建立平配方向", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/13", "case": "忠泰湛B2-22F", "stage": "設計", "item": "平面配置草案＋風格簡報架構", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/16", "case": "鉅力高宇C-2F", "stage": "會議", "item": "第一次提案：平面配置圖＋風格簡報", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/20", "case": "鉅力高宇C-2F", "stage": "設計", "item": "第一次提案後修改方向整理", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/24", "case": "鉅力高宇C-2F", "stage": "設計", "item": "第一次3D發想、建模與設計規劃", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/26", "case": "忠泰湛B2-22F", "stage": "會議", "item": "14:00 平面配置＋風格簡報提案", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/30", "case": "鉅力高宇C-2F", "stage": "會議", "item": "第一次3D提案", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/20", "case": "忠泰湛B2-22F", "stage": "會議", "item": "第一次3D提案", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/13", "case": "鉅力高宇C-2F", "stage": "會議", "item": "第二次3D修改會議＋材質挑選", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/03", "case": "忠泰湛B2-22F", "stage": "會議", "item": "第二次3D修改會議＋材質挑選", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/27", "case": "鉅力高宇C-2F", "stage": "報價", "item": "工程報價準備／報價會議", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/24", "case": "忠泰湛B2-22F", "stage": "報價", "item": "工程報價會議", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/15", "case": "鉅力高宇C-2F", "stage": "開工", "item": "預計開工／祈福儀式", "owner": "育瑄/阿祥", "status": "待處理"}, {"d": "2026/10/02", "case": "忠泰湛B2-22F", "stage": "行政", "item": "社區辦理開工申請", "owner": "育瑄", "status": "待處理"}, {"d": "2026/10/05", "case": "忠泰湛B2-22F", "stage": "開工", "item": "吉日開工、祈福儀式", "owner": "育瑄/阿祥", "status": "待處理"}, {"d": "2026/07/09", "case": "忠泰湛 B2-22F", "stage": "會議", "item": "初洽會議", "owner": "育瑄", "status": "已完成"}, {"d": "2026/07/16", "case": "忠泰湛 B2-22F", "stage": "設計", "item": "簡報＆配置圖規劃（內部作業）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/26", "case": "忠泰湛 B2-22F", "stage": "會議", "item": "設計簽約會議", "owner": "7/26已提平配＋簡報＋參觀實績B2-21（未簽設計約）", "status": "待處理"}, {"d": "2026/08/13", "case": "忠泰湛 B2-22F", "stage": "設計", "item": "3D發想、設計規劃（內部作業）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/20", "case": "忠泰湛 B2-22F", "stage": "會議", "item": "第一次3D提案會議", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/03", "case": "忠泰湛 B2-22F", "stage": "會議", "item": "第二次3D修改會議＋材質挑選", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/10", "case": "忠泰湛 B2-22F", "stage": "設計", "item": "內部圖面與報價準備（內部作業）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/24", "case": "忠泰湛 B2-22F", "stage": "會議", "item": "工程報價會議", "owner": "育瑄", "status": "待處理"}, {"d": "2026/10/02", "case": "忠泰湛 B2-22F", "stage": "行政", "item": "社區辦理開工申請", "owner": "育瑄", "status": "待處理"}, {"d": "2026/10/05", "case": "忠泰湛 B2-22F", "stage": "會議", "item": "吉日開工、祈福儀式", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/26", "case": "忠泰湛 B2-22F", "stage": "會議", "item": "業主平配＋簡報會議（下午2:00）", "owner": "業主平配＋簡報會議完成；參觀實績B2-21（未簽設計約）", "status": "待處理"}, {"d": "2026/07/02", "case": "鉅力高宇C-2F", "stage": "會議", "item": "初洽會議", "owner": "育瑄", "status": "已完成"}, {"d": "2026/07/16", "case": "鉅力高宇C-2F", "stage": "會議", "item": "設計簽約會議（平配簡報提案＋簽約）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/09", "case": "鉅力高宇C-2F", "stage": "設計", "item": "簡報＆配置圖規劃（內部作業）", "owner": "育瑄", "status": "已完成"}, {"d": "2026/07/24", "case": "鉅力高宇C-2F", "stage": "設計", "item": "3D發想、設計規劃（內部作業）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/31", "case": "鉅力高宇C-2F", "stage": "會議", "item": "第一次3D提案會議", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/14", "case": "鉅力高宇C-2F", "stage": "會議", "item": "第二次3D修改會議＋材質挑選", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/21", "case": "鉅力高宇C-2F", "stage": "設計", "item": "內部圖面與報價準備（內部作業）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/31", "case": "鉅力高宇C-2F", "stage": "會議", "item": "工程報價＋簽約會議", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/07", "case": "鉅力高宇C-2F", "stage": "行政", "item": "社區辦理開工申請", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/15", "case": "鉅力高宇C-2F", "stage": "會議", "item": "吉日開工、祈福儀式", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/14", "case": "台北華府", "stage": "現場", "item": "泥作進場：防水、打粗底（追蹤）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/15", "case": "台北華府", "stage": "設計", "item": "收斂業主第一次3D回饋（7/7已提）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/16", "case": "台北華府", "stage": "現場", "item": "磁磚送現場（追蹤）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/20", "case": "台北華府", "stage": "現場", "item": "現場覆量地磚、確認地磚加工圖（並問加工天數）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/22", "case": "台北華府", "stage": "設計", "item": "第二次3D修改（含7/20覆量數據）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/22", "case": "台北華府", "stage": "行政", "item": "工班聯繫：淋浴門（玻璃隔間框料＋施工圖）、磁磚、大門", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/24", "case": "台北華府", "stage": "設計", "item": "材質挑選確認", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/27", "case": "台北華府", "stage": "設計", "item": "全部3D設計圖完稿", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/29", "case": "台北華府", "stage": "設計", "item": "立面圖＋櫃內圖交付業主木工（留看圖備料緩衝）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/01", "case": "台北華府", "stage": "現場", "item": "業主木工進場（圖面須全數完稿）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/12", "case": "合新合心", "stage": "設計", "item": "木工立面圖說＋櫃內圖 客戶確認完畢", "owner": "育瑄", "status": "已完成"}, {"d": "2026/07/14", "case": "合新合心", "stage": "行政", "item": "通知木工送大板到現場看樣", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/08", "case": "遠雄仰森", "stage": "設計", "item": "3D確認＋初步材質挑選", "owner": "育瑄", "status": "已完成"}, {"d": "2026/07/17", "case": "遠雄仰森", "stage": "設計", "item": "水電燈具迴路初稿", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/20", "case": "遠雄仰森", "stage": "現場", "item": "現場丈量＋驗屋（13:45）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/21", "case": "遠雄仰森", "stage": "行政", "item": "與建商確認交屋時間；啟動估價作業", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/21", "case": "遠雄仰森", "stage": "行政", "item": "出設計費第二期請款單 30,000（3D已確認）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/17", "case": "豐邑氧森A1", "stage": "現場", "item": "交屋前全屋總巡檢", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/18", "case": "豐邑氧森A1", "stage": "現場", "item": "正式交屋（改期自7/11）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/17", "case": "鉅力高宇", "stage": "現場", "item": "木工退場會勘", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/20", "case": "鉅力高宇", "stage": "請款", "item": "油漆進場30% 收款 345,000", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/20", "case": "鉅力高宇", "stage": "設計", "item": "系統櫃與客戶對圖討論（7/20-7/22）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/23", "case": "鉅力高宇", "stage": "現場", "item": "系統櫃丈量（確認＋壁紙後）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/27", "case": "鉅力高宇", "stage": "設計", "item": "系統櫃改圖完成（7/24-7/27）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/28", "case": "鉅力高宇", "stage": "現場", "item": "系統櫃覆量＋工廠對圖", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/29", "case": "鉅力高宇", "stage": "行政", "item": "⚠️系統櫃下單（最重要！影響8/17進料→8/26安裝→9/24交屋）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/14", "case": "鉅力高宇", "stage": "現場", "item": "油漆退場會勘", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/26", "case": "鉅力高宇", "stage": "現場", "item": "系統櫃安裝完成確認", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/05", "case": "鉅力高宇", "stage": "行政", "item": "燈具／開關面板／衛浴五金 到貨確認（9/5前，避免影響工期）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/20", "case": "鉅力高宇", "stage": "現場", "item": "Deco＋拍攝", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/21", "case": "鉅力高宇", "stage": "現場", "item": "交屋前點檢／缺失改善（9/21-9/23）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/22", "case": "鉅力高宇", "stage": "請款", "item": "尾款請款 115,000", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/24", "case": "鉅力高宇", "stage": "現場", "item": "正式交屋", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/05", "case": "合新合心", "stage": "現場", "item": "木作工程完成會勘", "owner": "育瑄", "status": "待處理"}, {"d": "2026/08/06", "case": "合新合心", "stage": "請款", "item": "油漆進場30% 收款 366,000", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/01", "case": "合新合心", "stage": "現場", "item": "油漆完成會勘；燈具／開關面板到貨期限（業主自備）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/03", "case": "合新合心", "stage": "行政", "item": "衛浴五金到貨期限（業主自備）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/09", "case": "合新合心", "stage": "現場", "item": "水電收尾驗收", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/23", "case": "合新合心", "stage": "現場", "item": "家具家電定位確認", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/29", "case": "合新合心", "stage": "現場", "item": "DECO＆完工拍攝", "owner": "育瑄", "status": "待處理"}, {"d": "2026/09/30", "case": "合新合心", "stage": "現場", "item": "收尾點檢", "owner": "育瑄", "status": "待處理"}, {"d": "2026/10/01", "case": "合新合心", "stage": "現場", "item": "正式交屋", "owner": "育瑄", "status": "待處理"}, {"d": "2026/10/01", "case": "合新合心", "stage": "請款", "item": "尾款請款 122,000（驗收日）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/13", "case": "忠泰湛 B2-22F", "stage": "設計", "item": "平面配置草案＋風格簡報架構（7/26提案準備）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/13", "case": "鉅力高宇C-2F", "stage": "設計", "item": "7/16簽約簡報整理", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/24", "case": "忠泰湛 B2-22F", "stage": "設計", "item": "7/26提案Final準備", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/14", "case": "豐邑氧森A1", "stage": "現場", "item": "08:30 缺失修繕督工：人造石檯面/變電箱/門擋/貓跳台/壁紙（7/17前完成）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/17", "case": "豐邑氧森A1", "stage": "現場", "item": "交屋前總巡檢＋完工紀錄照拍攝", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/18", "case": "豐邑氧森A1", "stage": "現場", "item": "交屋支援／缺失清單封存", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/14", "case": "鉅力高宇", "stage": "現場", "item": "下午 木工巡場＋照片日報（至7/17退場）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/17", "case": "鉅力高宇", "stage": "現場", "item": "木工退場會勘（陪同記錄）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/20", "case": "鉅力高宇", "stage": "現場", "item": "油漆進場：保護與交接確認", "owner": "阿祥", "status": "待處理"}, {"d": "2026/08/14", "case": "鉅力高宇", "stage": "現場", "item": "油漆退場會勘（陪同記錄）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/09/05", "case": "鉅力高宇", "stage": "現場", "item": "燈具／開關面板／衛浴五金 到貨點收拍照", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/15", "case": "合新合心", "stage": "現場", "item": "木工大板到場看樣：現場接應＋拍照回報（7/15送達）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/15", "case": "合新合心", "stage": "現場", "item": "木工巡場＋照片日報（每週至8/5木作完成）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/08/05", "case": "合新合心", "stage": "現場", "item": "木作完成會勘（陪同記錄）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/08/06", "case": "合新合心", "stage": "現場", "item": "油漆進場：保護與交接確認", "owner": "阿祥", "status": "待處理"}, {"d": "2026/09/01", "case": "合新合心", "stage": "現場", "item": "燈具／開關面板到貨點收（業主自備）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/09/03", "case": "合新合心", "stage": "現場", "item": "衛浴五金到貨點收（業主自備）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/14", "case": "台北華府", "stage": "現場", "item": "泥作進場（防水/打粗底）拍照記錄", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/16", "case": "台北華府", "stage": "現場", "item": "磁磚到場點收拍照", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/15", "case": "合新合心", "stage": "會議", "item": "晚上與客戶大板定色會議（暫定）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/12", "case": "忠泰湛 B2-22F", "stage": "現場", "item": "現場丈量完成", "owner": "育瑄", "status": "已完成"}, {"d": "2026/07/12", "case": "鉅力高宇C-2F", "stage": "現場", "item": "現場丈量完成", "owner": "育瑄", "status": "已完成"}, {"d": "2026/07/13", "case": "鉅力高宇C-2F", "stage": "設計", "item": "放樣（丈量成果繪製）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/14", "case": "鉅力高宇C-2F", "stage": "設計", "item": "平面配置規劃", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/15", "case": "鉅力高宇C-2F", "stage": "設計", "item": "風格簡報製作（7/16簽約會議用）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/14", "case": "忠泰湛 B2-22F", "stage": "設計", "item": "放樣（丈量成果繪製）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/21", "case": "忠泰湛 B2-22F", "stage": "設計", "item": "風格簡報製作（7/26提案用）", "owner": "育瑄", "status": "待處理"}, {"d": "2026/07/14", "case": "合新合心", "stage": "現場", "item": "11:30 合新巡場（木工進度確認）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/13", "case": "豐邑氧森A1", "stage": "現場", "item": "木工修繕進場（變電箱/門擋/貓跳台）", "owner": "阿祥", "status": "待處理"}, {"d": "2026/07/13", "case": "豐邑氧森A1", "stage": "現場", "item": "壁紙修補進場", "owner": "阿祥", "status": "待處理"}];
+/* 老闆總表公司彙總(快照;活資料模式下改為現算) */
+var COMPANY_SNAP={paidOut:741825,knownPayable:2245880};
 
 /* ── 工具 ── */
 var $=function(id){return document.getElementById(id);};
-function parse(s){var p=String(s).replace(/\//g,'-').split('-');if(p.length===2)p.unshift('2026');
-  return new Date(+p[0],+p[1]-1,+p[2]);}
+function parse(s){var p=String(s).replace(/\//g,'-').split('-');return new Date(+p[0],+p[1]-1,+p[2]);}
 function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function md(d){return (d.getMonth()+1)+'/'+d.getDate();}
 var TODAY=new Date(); TODAY=new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());
 function dd(a,b){return Math.round((b-a)/864e5);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+function fmt(n){return n==null?'—':Number(n).toLocaleString('en-US');}
+function num(s){var v=parseFloat(String(s||'').replace(/[,\s]/g,''));return isNaN(v)?0:v;}
 
-/* ── 本機儲存(已收/廠商/勾選) ── */
-var LS='yuhe-warroom-v1';
+/* ── 本機勾選(任務先勾掉,等表上狀態更新) ── */
+var LS='yuhe-warroom-v2';
 var store=JSON.parse(localStorage.getItem(LS)||'{}');
-store.cash=store.cash||{};   // name -> {contract, received}
-store.vend=store.vend||{};   // name -> {wood, paint}
-store.done=store.done||{};   // "name|label|date" -> true
+store.done=store.done||{};
 function persist(){localStorage.setItem(LS,JSON.stringify(store));}
+function tKey(t){return t.case+'|'+t.d+'|'+t.item;}
 
-/* ── 正規化 ── */
-PROJECTS.forEach(function(p){
-  p.tasks=p.t.map(function(r){return {name:r[0],s:parse(r[1]),e:parse(r[2]||r[1])};});
-  p.ms=p.m.map(function(r){return {d:parse(r[0]),label:r[1]};});
-  p.pays=p.pay.map(function(r){return {label:r[0],val:r[1]===''?null:+r[1],d:parse(r[2]),paid:!!r[3]};});
-  // 進度(時程估算)
-  var starts=p.tasks.map(function(t){return t.s;}), ends=p.tasks.map(function(t){return t.e;});
-  var s0=new Date(Math.min.apply(null,starts)), e0=new Date(Math.max.apply(null,ends));
-  var pr=dd(s0,TODAY)/Math.max(1,dd(s0,e0));
-  p.prog=Math.max(0,Math.min(100,Math.round(pr*100)));
-  // 目前階段
-  var cur=p.tasks.find(function(t){return t.s<=TODAY&&TODAY<=t.e;});
-  if(!cur){var up=p.tasks.filter(function(t){return t.s>TODAY;}).sort(function(a,b){return a.s-b.s;});cur=up[0];}
-  p.stage=cur?cur.name:(p.tasks.length?'—':'—');
-  if(p.type==='finish'&&TODAY>e0)p.stage='已收尾/交屋';
-});
-function doneKey(p,m){return p.name+'|'+m.label+'|'+ymd(m.d);}
-function isDone(p,m){return !!store.done[doneKey(p,m)];}
+/* ── CSV 解析 ── */
+function parseCSV(text){
+  var rows=[],row=[],cur='',q=false;
+  for(var i=0;i<text.length;i++){
+    var ch=text[i];
+    if(q){ if(ch==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else if(ch==='"')q=true;
+    else if(ch===','){row.push(cur);cur='';}
+    else if(ch==='\n'||ch==='\r'){ if(ch==='\r'&&text[i+1]==='\n')i++; row.push(cur);cur=''; if(row.some(function(c){return c.trim();}))rows.push(row); row=[]; }
+    else cur+=ch;
+  }
+  if(cur||row.length){row.push(cur); if(row.some(function(c){return c.trim();}))rows.push(row);}
+  return rows;
+}
+function typeOf(txt){
+  if(/結案/.test(txt))return['done','已結案'];
+  if(/純設計|毛胚/.test(txt))return['designonly',txt.split('／')[0]||'純設計'];
+  if(/施工|開工|翻新|新成屋|中古/.test(txt))return['build','施工中'];
+  return['design','設計中'];
+}
+function loadLive(){
+  if(!LIVE.ctrl&&!LIVE.tasks)return Promise.resolve(false);
+  var jobs=[];
+  jobs.push(LIVE.ctrl?fetch(LIVE.ctrl).then(function(r){return r.text();}):Promise.resolve(null));
+  jobs.push(LIVE.tasks?fetch(LIVE.tasks).then(function(r){return r.text();}):Promise.resolve(null));
+  return Promise.all(jobs).then(function(res){
+    if(res[0]){
+      var rows=parseCSV(res[0]);
+      var hi=rows.findIndex(function(r){return r[0]&&r[0].indexOf('案件')===0;});
+      CASES=rows.slice(hi+1).filter(function(r){return r[0]&&r[0].trim();}).map(function(r){
+        var tt=typeOf((r[1]||'')+(r[2]||''));
+        return {name:r[0].trim(),type:tt[0],typeTxt:tt[1],status:r[2]||'',
+          dTotal:num(r[3]),dRecv:num(r[4]),eTotal:num(r[6]),eRecv:num(r[7]),
+          next:r[9]||'',target:r[10]||''};
+      });
+    }
+    if(res[1]){
+      var rows2=parseCSV(res[1]);
+      var hj=rows2.findIndex(function(r){return r[0]&&r[0].indexOf('日期')===0;});
+      TASKS=rows2.slice(hj+1).filter(function(r){return /^\d{4}\/\d{2}\/\d{2}/.test(r[0]||'')&&(r[1]||'').trim();}).map(function(r){
+        return {d:r[0].trim(),case:r[1].trim(),stage:r[2]||'',item:r[3]||'',owner:r[4]||'',status:r[5]||''};
+      });
+      COMPANY_SNAP=null; // 活資料模式不引用舊快照彙總
+    }
+    return true;
+  });
+}
+
+/* ── 任務歸戶 ── */
+function caseTasks(name){
+  var key=name.replace(/\s/g,'').replace(/A\d.*$|B\d.*$|[A-Z]-\dF.*$/,'');
+  return TASKS.filter(function(t){
+    var tc=t.case.replace(/\s/g,'');
+    return tc.indexOf(key.slice(0,3))===0||key.indexOf(tc.slice(0,3))===0;
+  });
+}
+function overdueOf(name){
+  return caseTasks(name).filter(function(t){
+    return t.status!=='已完成'&&!store.done[tKey(t)]&&parse(t.d)<TODAY;
+  }).sort(function(a,b){return parse(a.d)-parse(b.d);});
+}
 
 /* ── KPI ── */
-function fmtWan(v){return v==null?'—':(Math.round(v*10)/10);}
-function renderKPI(){
-  var received=0,unpaid=0,soon=0,odN=0,building=0;
-  PROJECTS.forEach(function(p){
-    if(p.type==='build'||p.type==='finish')building++;
-    var c=store.cash[p.name]||{};
-    if(typeof c.received==='number')received+=c.received;
-    p.pays.forEach(function(py){
-      if(py.val==null)return;
-      if(!py.paid){unpaid+=py.val; if(py.d>=TODAY&&dd(TODAY,py.d)<=30)soon+=py.val;}
-    });
-    p.ms.forEach(function(m){if(m.d<TODAY&&!isDone(p,m))odN++;});
+function render(){
+  var dRecv=0,dDue=0,eRecv=0,eDue=0;
+  CASES.forEach(function(c){
+    dRecv+=c.dRecv; dDue+=Math.max(0,c.dTotal-c.dRecv);
+    eRecv+=c.eRecv; eDue+=Math.max(0,c.eTotal-c.eRecv);
   });
-  // 若沒手動填已收,退而用 pays 已收合計
-  var payReceived=0;PROJECTS.forEach(function(p){p.pays.forEach(function(py){if(py.paid&&py.val!=null)payReceived+=py.val;});});
-  var recShow = received>0?received:payReceived;
+  var totalRecv=dRecv+eRecv,totalDue=dDue+eDue;
+  var odAll=TASKS.filter(function(t){return t.status!=='已完成'&&!store.done[tKey(t)]&&parse(t.d)<TODAY;});
   var k=[
-    {k:'進行中案件',v:PROJECTS.length,cls:''},
-    {k:'施工/收尾中',v:building,cls:'green'},
-    {k:'逾期節點',v:odN,cls:odN?'red':'green'},
-    {k:'待收款(萬)',v:fmtWan(unpaid),cls:'amber'},
-    {k:'未來30天預計收款(萬)',v:fmtWan(soon),cls:'green'},
-    {k:'已收(萬)',v:fmtWan(recShow),cls:'green'}
+    {k:'案件數',v:CASES.length,cls:''},
+    {k:'已收合計',v:fmt(totalRecv),cls:'green'},
+    {k:'待收合計',v:fmt(totalDue),cls:'amber'},
+    {k:'逾期任務',v:odAll.length,cls:odAll.length?'red':'green'}
   ];
+  if(COMPANY_SNAP){
+    var slack=totalRecv-COMPANY_SNAP.paidOut-COMPANY_SNAP.knownPayable;
+    k.push({k:'扣已知待付後暫餘',v:fmt(slack),cls:slack<0?'red':'green'});
+  }
   $('kpis').innerHTML=k.map(function(x){
     return '<div class="kpi '+x.cls+'"><div class="k">'+x.k+'</div><div class="v">'+x.v+'</div></div>';
   }).join('');
-  $('odCount').textContent='共 '+odN+' 項逾期';
-}
+  $('odCount').textContent='共 '+odAll.length+' 項逾期';
 
-/* ── 現金流表 ── */
-function renderCash(){
-  $('cashBody').innerHTML=PROJECTS.map(function(p){
-    var c=store.cash[p.name]||{};
-    var contract=typeof c.contract==='number'?c.contract:null;
-    var received=typeof c.received==='number'?c.received:null;
-    var unpaid=(contract!=null&&received!=null)?Math.max(0,contract-received):null;
-    var pct=(contract&&received!=null)?Math.min(100,Math.round(received/contract*100)):0;
+  /* 現金流表 */
+  var rows=CASES.map(function(c){
+    var due=Math.max(0,c.dTotal-c.dRecv)+Math.max(0,c.eTotal-c.eRecv);
+    var tot=c.dTotal+c.eTotal,recv=c.dRecv+c.eRecv;
+    var pct=tot?Math.min(100,Math.round(recv/tot*100)):0;
     return '<tr>'+
-      '<td>'+esc(p.name)+'</td>'+
-      '<td><span class="tag t-'+p.type+'">'+esc(p.typeTxt)+'</span></td>'+
-      '<td class="num money-in"><input data-n="'+esc(p.name)+'" data-f="contract" inputmode="decimal" placeholder="待填" value="'+(contract!=null?contract:'')+'"></td>'+
-      '<td class="num money-in"><input data-n="'+esc(p.name)+'" data-f="received" inputmode="decimal" placeholder="0" value="'+(received!=null?received:'')+'"></td>'+
-      '<td class="num '+(unpaid?'':'mut')+'">'+(unpaid!=null?unpaid:'—')+'</td>'+
-      '<td class="hide-sm"><div class="bar"><i style="width:'+pct+'%"></i></div></td>'+
+      '<td>'+esc(c.name)+'</td>'+
+      '<td><span class="tag t-'+c.type+'">'+esc(c.typeTxt)+'</span></td>'+
+      '<td class="num">'+fmt(c.dRecv)+' <span class="mut">/ '+fmt(c.dTotal)+'</span></td>'+
+      '<td class="num">'+fmt(c.eRecv)+' <span class="mut">/ '+fmt(c.eTotal)+'</span></td>'+
+      '<td class="num '+(due?'neg':'mut')+'">'+(due?fmt(due):'0')+'</td>'+
+      '<td><div class="bar"><i style="width:'+pct+'%"></i></div></td>'+
     '</tr>';
-  }).join('');
-  $('cashBody').querySelectorAll('input').forEach(function(inp){
-    inp.addEventListener('change',function(){
-      var n=inp.dataset.n,f=inp.dataset.f,v=inp.value.trim();
-      store.cash[n]=store.cash[n]||{};
-      if(v==='')delete store.cash[n][f]; else store.cash[n][f]=+v;
-      persist();renderCash();renderKPI();
-    });
   });
-}
+  var dSum=0,eSum=0,dueSum=0;
+  CASES.forEach(function(c){dSum+=c.dRecv;eSum+=c.eRecv;dueSum+=Math.max(0,c.dTotal-c.dRecv)+Math.max(0,c.eTotal-c.eRecv);});
+  rows.push('<tr class="total"><td>合計</td><td></td><td class="num">'+fmt(dSum)+'</td><td class="num">'+fmt(eSum)+'</td><td class="num">'+fmt(dueSum)+'</td><td></td></tr>');
+  $('cashBody').innerHTML=rows.join('');
 
-/* ── 進度 & 逾期 卡片 ── */
-function renderProg(){
-  $('progGrid').innerHTML=PROJECTS.map(function(p){
-    var over=p.ms.filter(function(m){return m.d<TODAY&&!isDone(p,m);})
-                 .sort(function(a,b){return a.d-b.d;});
-    var odHtml = over.length
-      ? '<div class="od"><div class="od-h">⚠️ 逾期節點 '+over.length+'</div>'+
-        over.map(function(m){return liHtml(p,m,true);}).join('')+'</div>'
-      : '<div class="od"><div class="none">✅ 無逾期節點</div></div>';
+  /* 各案卡片 */
+  $('progGrid').innerHTML=CASES.map(function(c){
+    var od=overdueOf(c.name);
+    var odHtml=od.length
+      ? '<div class="od" data-od><div class="od-h"><span class="arr">▸</span> ⚠️ 逾期任務 '+od.length+'(點開)</div><div class="od-list">'+
+        od.map(function(t){
+          return '<div class="li" data-k="'+esc(tKey(t))+'"><span class="dot"></span>'+
+            '<span style="flex:1">'+esc(t.item)+'</span>'+
+            '<span class="over-txt">逾 '+dd(parse(t.d),TODAY)+' 天</span></div>';
+        }).join('')+'</div></div>'
+      : '<div class="none">✅ 無逾期任務</div>';
     return '<div class="pcard">'+
-      '<h3>'+esc(p.name)+' <span class="tag t-'+p.type+'">'+esc(p.typeTxt)+'</span></h3>'+
-      '<div class="stage">目前：'+esc(p.stage)+'</div>'+
-      '<div class="prog"><div class="bar" style="flex:1"><i style="width:'+p.prog+'%"></i></div><span>'+p.prog+'%</span></div>'+
+      '<h3>'+esc(c.name)+' <span class="tag t-'+c.type+'">'+esc(c.typeTxt)+'</span></h3>'+
+      '<div class="stage">'+esc(c.status)+'<br>🎯 '+esc(c.target)+'</div>'+
+      '<div class="next">➡️ '+esc(c.next)+'</div>'+
       odHtml+
     '</div>';
   }).join('');
-  bindDone($('progGrid'));
-}
-function liHtml(p,m,over){
-  var days=dd(m.d,TODAY);
-  var right = over?'<span class="over-txt">逾 '+days+' 天</span>':'<span class="d">'+md(m.d)+'</span>';
-  return '<div class="li '+(over?'over':'')+(isDone(p,m)?' done':'')+'" data-k="'+esc(doneKey(p,m))+'">'+
-    '<span class="dot"></span><span style="flex:1">'+esc(m.label)+'</span>'+right+'</div>';
-}
-function bindDone(root){
-  root.querySelectorAll('.li[data-k]').forEach(function(el){
+  $('progGrid').querySelectorAll('.od .od-h').forEach(function(h){
+    h.addEventListener('click',function(){h.parentElement.classList.toggle('open');});
+  });
+  $('progGrid').querySelectorAll('.li[data-k]').forEach(function(el){
     el.addEventListener('click',function(){
       var k=el.dataset.k;
       if(store.done[k])delete store.done[k]; else store.done[k]=true;
-      persist();renderProg();renderKPI();
+      persist();render();
     });
   });
-}
 
-/* ── 廠商 / 發包 ── */
-var TRADES=[
-  ['木作','木工'],['木工','木工'],['油漆','油漆'],['系統櫃','系統櫃'],['空調','空調'],
-  ['水電','水電'],['泥作','泥作'],['磁磚','泥作'],['抹','泥作'],['拆除','拆除'],
-  ['玻璃','玻璃鋁框'],['鋁框','玻璃鋁框'],['壁紙','壁紙'],['窗簾','窗簾'],['地板','地板'],['保護','保護']
-];
-function tradesOf(p){
-  var set=[];
-  p.tasks.forEach(function(t){
-    TRADES.forEach(function(pair){
-      if(t.name.indexOf(pair[0])>=0 && set.indexOf(pair[1])<0)set.push(pair[1]);
-    });
-  });
-  return set;
-}
-function renderVend(){
-  $('vendBody').innerHTML=PROJECTS.map(function(p){
-    var tr=tradesOf(p);
-    var v=store.vend[p.name]||{};
-    var chips=tr.length?tr.map(function(t){return '<span class="trade">'+esc(t)+'</span>';}).join(''):'<span class="mut">—</span>';
-    return '<tr>'+
-      '<td>'+esc(p.name)+'</td>'+
-      '<td><div class="trades">'+chips+'</div></td>'+
-      '<td class="hide-sm vend"><input data-n="'+esc(p.name)+'" data-f="wood" placeholder="待填" value="'+esc(v.wood||'')+'"></td>'+
-      '<td class="hide-sm vend"><input data-n="'+esc(p.name)+'" data-f="paint" placeholder="待填" value="'+esc(v.paint||'')+'"></td>'+
-    '</tr>';
-  }).join('');
-  $('vendBody').querySelectorAll('input').forEach(function(inp){
-    inp.addEventListener('change',function(){
-      var n=inp.dataset.n,f=inp.dataset.f;
-      store.vend[n]=store.vend[n]||{};
-      store.vend[n][f]=inp.value.trim();
-      persist();
-    });
-  });
-}
-
-/* ── 下一步待辦 ── */
-function renderNext(){
-  var rows=[];
-  PROJECTS.forEach(function(p){
-    var up=p.ms.filter(function(m){return m.d>=TODAY&&!isDone(p,m);}).sort(function(a,b){return a.d-b.d;});
-    if(up[0])rows.push({p:p,m:up[0]});
-  });
-  rows.sort(function(a,b){return a.m.d-b.m.d;});
-  $('nextBody').innerHTML=rows.length?rows.map(function(r){
-    var days=dd(TODAY,r.m.d);
-    var dtxt=days===0?'今天':(days+' 天後');
-    return '<tr><td class="num">'+ymd(r.m.d)+'</td><td>'+esc(r.p.name)+'</td>'+
-      '<td>'+esc(r.m.label)+'</td><td class="num hide-sm">'+dtxt+'</td></tr>';
-  }).join(''):'<tr><td colspan="4" class="none">目前沒有即將到來的節點</td></tr>';
+  /* 未來14天 */
+  var up=TASKS.filter(function(t){
+    var d=parse(t.d);
+    return t.status!=='已完成'&&!store.done[tKey(t)]&&d>=TODAY&&dd(TODAY,d)<=14;
+  }).sort(function(a,b){return parse(a.d)-parse(b.d);});
+  $('nextBody').innerHTML=up.length?up.map(function(t){
+    var days=dd(TODAY,parse(t.d));
+    return '<tr><td class="num">'+esc(t.d)+'</td><td>'+esc(t.case)+'</td><td>'+esc(t.item)+'</td>'+
+      '<td>'+esc(t.owner)+'</td><td class="num">'+(days===0?'今天':days+' 天後')+'</td></tr>';
+  }).join(''):'<tr><td colspan="5" class="none">未來 14 天沒有排定任務</td></tr>';
 }
 
 /* ── 啟動 ── */
-$('today').textContent='今日 '+ymd(TODAY)+'（'+'日一二三四五六'[TODAY.getDay()]+'）';
+$('today').textContent='今日 '+ymd(TODAY)+'(週'+'日一二三四五六'[TODAY.getDay()]+')';
 $('reset').addEventListener('click',function(){
-  if(confirm('清除本機所有編輯(已收金額、廠商、勾選)？底稿資料不受影響。')){
-    localStorage.removeItem(LS);location.reload();
-  }
+  if(confirm('清除本機所有勾選?')){localStorage.removeItem(LS);location.reload();}
 });
-renderKPI();renderCash();renderProg();renderVend();renderNext();
+loadLive().then(function(live){
+  var el=$('srcLine');
+  if(live){el.className='src live';el.innerHTML='資料:<b>MASTER 試算表(即時)</b>';}
+  else{el.innerHTML='資料:<b>快照 '+SNAP_DATE+'</b>(擷取自 禹合真正營運版_V5_3_MASTER)。要改抓即時資料,把試算表發佈成 CSV 後填入檔案開頭的 LIVE 設定。';}
+  render();
+}).catch(function(e){
+  $('srcLine').innerHTML='資料:<b>快照 '+SNAP_DATE+'</b>(即時讀取失敗:'+esc(e.message)+')';
+  render();
+});
 </script>
