@@ -1561,7 +1561,16 @@ function analyzeAndSaveSitePhoto(data) {
 // Telegram Bot
 // ═══════════════════════════════════════════════════════════════
 function doPost(e) {
-  try { var update=JSON.parse(e.postData.contents); handleTelegramUpdate_(update); } catch(err){ console.warn('doPost 錯誤：'+err.message); }
+  try {
+    var update=JSON.parse(e.postData.contents);
+    // 防重複0808：Telegram 逾時重送會帶相同 update_id,同一則只處理一次
+    if (update.update_id) {
+      var cache=CacheService.getScriptCache(), key='tg_upd_'+update.update_id;
+      if (cache.get(key)) return ContentService.createTextOutput('OK');
+      cache.put(key,'1',3600);
+    }
+    handleTelegramUpdate_(update);
+  } catch(err){ console.warn('doPost 錯誤：'+err.message); }
   return ContentService.createTextOutput('OK');
 }
 
