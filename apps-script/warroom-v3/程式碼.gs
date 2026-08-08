@@ -298,13 +298,26 @@ function writeUnifiedLog(info) {
 }
 
 function getProcessedDriveIds() {
-  const ss    = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
-  const sheet = ss.getSheetByName(CONFIG.SHEET_LOG);
-  if (!sheet || sheet.getLastRow() < 2) return [];
-  const headers = sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
-  const col = headers.indexOf('Drive檔案ID');
-  if (col < 0) return [];
-  return sheet.getRange(2, col+1, sheet.getLastRow()-1, 1).getValues().flat().filter(x => x);
+  // 修正0808：原版依賴欄頭「Drive檔案ID」,但實際表頭是「Google Drive 檔案ID」,
+  // indexOf 對不上 → 永遠回空陣列 → 同一批照片每30分鐘重複分析(去重全失效)。
+  // 改成掃 20_工地日誌 + 11_工地管理 全部儲存格,URL 或裸 ID 都認,不再怕欄頭改名。
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const ids = {};
+  [CONFIG.SHEET_LOG, CONFIG.SHEET_SITE_MGMT].forEach(function(name){
+    const sh = ss.getSheetByName(name);
+    if (!sh || sh.getLastRow() < 2) return;
+    sh.getDataRange().getValues().forEach(function(row, i){
+      if (i === 0) return;
+      row.forEach(function(cell){
+        const v = String(cell || '').trim();
+        if (!v) return;
+        const m = v.match(/\/file\/d\/([A-Za-z0-9_-]{20,})/);
+        if (m) { ids[m[1]] = true; return; }
+        if (/^[A-Za-z0-9_-]{25,60}$/.test(v)) ids[v] = true;
+      });
+    });
+  });
+  return Object.keys(ids);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -373,6 +386,7 @@ function handleTelegramUpdate(update) {
     if (text.startsWith('#缺失')) { handleDefectHashtag(text, chatId, userId, role); return; }
     if (text.startsWith('#')) { handleHashtagLog(text, chatId, userId, role); return; }
     if (/^[\d今明][\d\/\-]*_/.test(text)) { handleQuickCalendar(text, chatId, role); return; }
+    if (/^(完成|done)[\s_]/i.test(text)) { v3_completeErp03(text.replace(/^(完成|done)[\s_]+/i,''), chatId); return; }
     const cmd = text.toLowerCase().split(' ')[0];
     if (['/start','/help','/today','/cases','/log','/photos','/calendar','/finance','/stuck','/report','/checklist',
          '今天','記錄','工地記錄','收款','案件','照片','行事曆','卡住','收尾'].includes(cmd)) {
@@ -1319,6 +1333,7 @@ function sendHelpMenu(chatId, role) {
   let msg = '🤖 禹合小助手 V3.4\n━━━━━━━━━━\n\n';
   msg += '📸 傳照片 → 選類型 → AI 分析\n   → 自動存入 11_工地管理\n\n';
   msg += '📝 工地記錄\n/log 按鈕記錄\n#案件 工種 描述 進度%\n\n';
+  msg += '✅ 完成 關鍵字 → 把戰報上的任務標完成\n（例：完成 系統櫃下單）\n\n';
   msg += '🔴 缺失回報\n#缺失 案件 位置 描述\n例：#缺失 豐邑 書房 地板未填縫\n\n';
   msg += '📋 收尾清單\n/checklist 查看所有待確認\n/checklist 豐邑 查看指定案件\n/checklist defect 缺失待辦\n';
   if (role==='boss') msg += '/checklist init 案件 初始化清單\n/checklist match 立即比對日誌\n';
@@ -1957,4 +1972,66 @@ function fixPL() {
   });
 
   Logger.log('✅ 04_案件獨立損益 公式寫入完成');
+}
+
+// ═══ 完成指令 0808：回「完成 關鍵字」→ ERP_03_工作安排 標已完成 ═══
+// 戰報逾期清單讀的就是 ERP_03,以後戰報叫什麼,回一句「完成 xxx」即可消掉。
+function v3_completeErp03(kw, chatId) {
+  kw = String(kw || '').trim();
+  if (!kw) { v3_sendTelegramTo(chatId, '用法：完成 關鍵字（例：完成 系統櫃下單）'); return; }
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const sh = ss.getSheetByName('ERP_03_工作安排');
+  if (!sh) { v3_sendTelegramTo(chatId, '❌ 找不到 ERP_03_工作安排'); return; }
+  const norm = function(x){ return String(x || '').replace(/[\s　]/g, ''); };
+  const terms = kw.split(/\s+/).map(norm).filter(Boolean);
+  const rows = sh.getDataRange().getValues(), hits = [];
+  for (let i = 1; i < rows.length; i++) {
+    const st = String(rows[i][5] || '');
+    if (/完成|取消/.test(st)) continue;
+    const hay = norm(String(rows[i][1] || '') + String(rows[i][3] || ''));
+    if (terms.every(function(t){ return hay.indexOf(t) >= 0; })) {
+      hits.push({ row: i + 1, cse: String(rows[i][1] || ''), item: String(rows[i][3] || '') });
+    }
+  }
+  if (!hits.length) { v3_sendTelegramTo(chatId, '❌ 找不到含「' + kw + '」的未完成任務（可能已標完成）'); return; }
+  if (hits.length > 4) {
+    v3_sendTelegramTo(chatId, '⚠️ 有 ' + hits.length + ' 筆符合「' + kw + '」，請更精確一點，例：\n完成 ' + hits[0].cse + ' ' + hits[0].item.substring(0, 8));
+    return;
+  }
+  const done = [];
+  hits.forEach(function(h){ sh.getRange(h.row, 6).setValue('已完成'); done.push('・' + h.cse + '｜' + h.item); });
+  v3_sendTelegramTo(chatId, '✅ 已標完成 ' + done.length + ' 筆：\n' + done.join('\n'));
+}
+
+
+// ═══ 清除 Drive 巡邏垃圾列 0808（執行一次）═══
+// 刪除 20_工地日誌 與 11_工地管理 中「Drive自動/drive_scan 且案件=未指定」的重複垃圾列。
+// 先自動備份整份試算表,正常紀錄(有案件名的)完全不動。
+function cleanupDriveScanJunk_0808() {
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const log = [];
+  try { DriveApp.getFileById(CONFIG.SPREADSHEET_ID).makeCopy('BACKUP_清照片垃圾前_0808'); log.push('✅ 已備份'); }
+  catch(e) { log.push('⚠️ 備份失敗：' + e.message); }
+  [CONFIG.SHEET_LOG, CONFIG.SHEET_SITE_MGMT].forEach(function(name){
+    const sh = ss.getSheetByName(name);
+    if (!sh || sh.getLastRow() < 2) return;
+    const values = sh.getDataRange().getValues();
+    const keep = [values[0]];
+    let removed = 0;
+    for (let i = 1; i < values.length; i++) {
+      const rowStr = values[i].join('|');
+      const isJunk = (rowStr.indexOf('Drive自動') >= 0 || rowStr.indexOf('drive_scan') >= 0)
+                     && rowStr.indexOf('未指定') >= 0;
+      if (isJunk) { removed++; } else { keep.push(values[i]); }
+    }
+    if (removed > 0) {
+      sh.clearContents();
+      sh.getRange(1, 1, keep.length, keep[0].length).setValues(keep);
+      log.push('✅ ' + name + '：刪除 ' + removed + ' 列垃圾，保留 ' + (keep.length - 1) + ' 列');
+    } else {
+      log.push('✅ ' + name + '：沒有垃圾列');
+    }
+  });
+  Logger.log(log.join('\n'));
+  try { v3_sendTelegramTo(CONFIG.BOSS_TELEGRAM_ID || CONFIG.TELEGRAM_CHAT_ID, '🧹 照片垃圾清理完成\n' + log.join('\n')); } catch(e) {}
 }
