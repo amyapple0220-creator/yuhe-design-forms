@@ -426,8 +426,22 @@ function getReminders(ss, today) {
     var important=IMPORTANT.test(item);
     reminders.push({month:Utilities.formatDate(date,'GMT+8','MM')+'月',day:Utilities.formatDate(date,'GMT+8','dd'),dateKey:dateKey,caseName:caseName,projectId:identity.id||'',text:item,important:important,priority:important?0:1,source:'ERP_03'});
   });
-  reminders.sort(function(a,b){return a.priority-b.priority||a.dateKey.localeCompare(b.dateKey)||a.text.localeCompare(b.text);});
-  return reminders.slice(0,12);
+  // 修正0808:同案件同事項跨日期去重(只留最早一天),避免 05/ERP_03 兩來源同事重複跳
+  reminders.sort(function(a,b){return a.dateKey.localeCompare(b.dateKey);});
+  var seenG={}, deduped=[];
+  reminders.forEach(function(r){
+    var k=remDedupKey_(r);
+    if(seenG[k])return; seenG[k]=true; deduped.push(r);
+  });
+  deduped.sort(function(a,b){return a.priority-b.priority||a.dateKey.localeCompare(b.dateKey)||a.text.localeCompare(b.text);});
+  return deduped.slice(0,12);
+}
+
+function remDedupKey_(r){
+  var t=String(r.text||'');
+  var m=t.match(/^([^：:]{2,20})[：:]\s*(.+)$/);
+  if(m&&r.projectId){var pid=resolveProjectIdentity_(m[1]).id;if(pid===r.projectId)t=m[2];}
+  return (r.projectId||normalizeProjectText_(r.caseName||''))+'|'+syncNormTitle_(t);
 }
 
 function buildClosedProjectMap_(ss) {
@@ -462,7 +476,7 @@ function getGanttData() {
       if(end>projects[key].end) projects[key].end=end;
       var status=String(row[4]||'').trim();
       if(!status) status=end<today?'已完成':(start<=today&&today<=end?'進行中':'未開始');
-      projects[key].tasks.push({title:String(row[1]||'').trim(),start:Utilities.formatDate(start,'GMT+8','yyyy-MM-dd'),end:Utilities.formatDate(end,'GMT+8','yyyy-MM-dd'),status:status});
+      projects[key].tasks.push({title:String(row[1]||'').trim(),start:Utilities.formatDate(start,'GMT+8','yyyy-MM-dd'),end:Utilities.formatDate(end,'GMT+8','yyyy-MM-dd'),status:status,row:i+1});
     });
     var list=Object.keys(projects).map(function(k){
       var p=projects[k]; p.tasks.sort(function(a,b){return a.start.localeCompare(b.start);});
@@ -2000,4 +2014,54 @@ function tgCompleteErp03_(token, chatId, kw) {
   var done = [];
   hits.forEach(function(h){ sh.getRange(h.row, 6).setValue('已完成'); done.push('・' + h.cse + '｜' + h.item); });
   tgSend_(token, chatId, '✅ 已標完成 ' + done.length + ' 筆：\n' + done.join('\n'));
+}
+
+
+// ═══ 0808 新增:工程頁「任務」清單 = 行事曆 + ERP_03 未完成任務合併 ═══
+function getAllUpcomingTasks(params) {
+  var tasks = getAllCalendarTasks(params) || [];
+  try {
+    var ss = SpreadsheetApp.openById(SS_ID), sh = ss.getSheetByName('ERP_03_工作安排');
+    if (sh) {
+      var s0 = new Date(params.startDate + 'T00:00:00+08:00');
+      var e0 = new Date(params.endDate + 'T23:59:59+08:00');
+      var seen = {};
+      tasks.forEach(function(t){ seen[(t.projectId||'') + '|' + syncNormTitle_(t.title)] = true; });
+      sh.getDataRange().getValues().forEach(function(row, i){
+        if (i === 0 || !row[0] || !row[3]) return;
+        if (/完成|取消/.test(String(row[5]||''))) return;
+        var d = row[0] instanceof Date ? row[0] : new Date(String(row[0]).replace(/-/g,'/'));
+        if (isNaN(d.getTime()) || d < s0 || d > e0) return;
+        var caseName = String(row[1]||'').trim(), item = String(row[3]||'').trim();
+        var identity = resolveProjectIdentity_(caseName + ' ' + item);
+        var key = (identity.id||'') + '|' + syncNormTitle_(item);
+        if (seen[key]) return; seen[key] = true;
+        tasks.push({ taskId:'', calEventId:'', erpRow:i+1, title:item,
+          caseName:identity.name||caseName, projectId:identity.id||'',
+          owner:String(row[4]||''), dateLabel:Utilities.formatDate(d,'GMT+8','MM/dd(E)'),
+          startTime:'', sortKey:d.getTime() });
+      });
+    }
+  } catch(e) { console.warn('合併 ERP_03 任務失敗:' + e.message); }
+  tasks.sort(function(a,b){ return a.sortKey - b.sortKey; });
+  return tasks;
+}
+
+function setErp03Status(data) {
+  try {
+    var ss = SpreadsheetApp.openById(SS_ID), sh = ss.getSheetByName('ERP_03_工作安排');
+    if (!sh) return { success:false, error:'找不到 ERP_03_工作安排' };
+    sh.getRange(Number(data.rowIndex), 6).setValue(data.status || '已完成');
+    return { success:true };
+  } catch(e) { return { success:false, error:e.message }; }
+}
+
+// ═══ 0808 新增:甘特圖打勾 → 回寫 ERP_08_工程進度表 狀態欄 ═══
+function setGanttTaskStatus(data) {
+  try {
+    var ss = SpreadsheetApp.openById(SS_ID), sh = ss.getSheetByName('ERP_08_工程進度表');
+    if (!sh) return { success:false, error:'找不到 ERP_08_工程進度表' };
+    sh.getRange(Number(data.rowIndex), 5).setValue(data.done ? '已完成' : '');
+    return { success:true };
+  } catch(e) { return { success:false, error:e.message }; }
 }

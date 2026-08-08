@@ -1399,18 +1399,42 @@ function loadGanttPage() {
 function renderGanttPage(projects) {
   var holder=document.getElementById('ganttProjects'); if(!holder) return;
   if(!projects.length){holder.innerHTML='<div class="empty">目前沒有進行中的案件甘特資料</div>';return;}
+  var today=new Date(); today.setHours(0,0,0,0);
+  function d_(x){var q=String(x).split('-');return new Date(+q[0],+q[1]-1,+q[2]);}
   holder.innerHTML=projects.map(function(p){
-    var tasks=p.tasks||[], done=tasks.filter(function(t){return /完成/.test(t.status);}).length;
+    var ps=d_(p.start), pe=d_(p.end);
+    var span=Math.max(1,(pe-ps)/86400000+1);
+    var tasks=p.tasks||[], doneN=tasks.filter(function(t){return /完成/.test(t.status);}).length;
+    var todayPct=(today>=ps&&today<=pe)?(((today-ps)/86400000+0.5)/span*100):null;
+    var rows=tasks.map(function(t){
+      var ts=d_(t.start), te=d_(t.end);
+      var left=Math.max(0,((ts-ps)/86400000)/span*100);
+      var w=Math.max(2,(((te-ts)/86400000+1)/span)*100);
+      if(left+w>100)w=Math.max(2,100-left);
+      var done=/完成/.test(t.status), active=!done&&ts<=today&&today<=te, over=!done&&te<today;
+      var color=done?'#6F8B69':over?'#B5524B':active?'#B88942':'#C9BCA8';
+      return '<div style="display:grid;grid-template-columns:20px minmax(105px,145px) 1fr;gap:8px;align-items:center;padding:7px 0;border-top:1px solid rgba(90,70,45,.08)">'
+        +'<input type="checkbox" '+(done?'checked':'')+(t.row?' onchange="ganttToggle(this,'+t.row+')"':' disabled')+' style="accent-color:#6F8B69;width:16px;height:16px;cursor:pointer">'
+        +'<div style="min-width:0"><div style="font-size:12px;font-weight:600;'+(done?'opacity:.5;text-decoration:line-through':'')+'">'+esc(t.title)+'</div>'
+        +'<div style="font-size:9.5px;color:var(--muted)">'+esc((t.start||'').slice(5))+'~'+esc((t.end||'').slice(5))+(over?' ・<b style="color:#B5524B">逾期</b>':'')+'</div></div>'
+        +'<div style="position:relative;height:14px;background:rgba(90,70,45,.07);border-radius:7px;overflow:hidden">'
+        +(todayPct!=null?'<div style="position:absolute;left:'+todayPct+'%;top:0;bottom:0;width:1.5px;background:#B5524B;opacity:.55"></div>':'')
+        +'<div style="position:absolute;left:'+left+'%;width:'+w+'%;top:2px;bottom:2px;border-radius:6px;background:'+color+';opacity:'+(done?'.55':'.9')+'"></div>'
+        +'</div></div>';
+    }).join('');
     return '<div class="card" style="margin-bottom:14px;padding:16px">'
-      +'<div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px"><div><div style="font-size:17px;font-weight:700">'+esc(p.name)+'</div><div style="font-size:11px;color:var(--muted);margin-top:3px">'+esc(p.start)+' ～ '+esc(p.end)+'</div></div><div style="font-size:12px;color:#8B6A3C">'+done+'/'+tasks.length+' 完成</div></div>'
-      +tasks.map(function(t){
-        var done=/完成/.test(t.status), active=/進行/.test(t.status);
-        var color=done?'#6F8B69':(active?'#B88942':'#B7AA98');
-        return '<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:10px 0;border-top:1px solid rgba(90,70,45,.10)">'
-          +'<div><div style="font-size:13px;font-weight:600">'+esc(t.title)+'</div><div style="font-size:10px;color:var(--muted);margin-top:3px">'+esc(t.start)+' ～ '+esc(t.end)+'</div></div>'
-          +'<span style="align-self:center;font-size:10px;color:'+color+';border:1px solid '+color+';border-radius:12px;padding:3px 7px">'+esc(t.status)+'</span></div>';
-      }).join('')+'</div>';
+      +'<div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:8px"><div><div style="font-size:17px;font-weight:700">'+esc(p.name)+'</div><div style="font-size:11px;color:var(--muted);margin-top:3px">'+esc(p.start)+' ～ '+esc(p.end)+'</div></div><div style="font-size:12px;color:#8B6A3C">'+doneN+'/'+tasks.length+' 完成</div></div>'
+      +rows+'</div>';
   }).join('');
+}
+
+function ganttToggle(checkbox,rowIndex){
+  var done=checkbox.checked;
+  gRun('setGanttTaskStatus',{rowIndex:rowIndex,done:done},function(res){
+    if(!res||!res.success){checkbox.checked=!done;showToast((res&&res.error)||'更新失敗',false);return;}
+    showToast(done?'已標完成 ✓':'已取消完成',true);
+    loadGanttPage();
+  });
 }
 
 function renderDashboardDemo() {
@@ -1458,12 +1482,18 @@ function renderProjects(projects) {
   var el = document.getElementById('projectsList');
   if (!projects || projects.length === 0) { el.innerHTML = '<div class="empty">尚無案場資料</div>'; return; }
 
-  // 依「類型」分組：施工中 / 設計中（含純設計）
+  // 0808 改版:洽談中→設計中→施工中→交屋保固→已結案,每案只歸一組
+  function projGroupOf_(p){
+    var ty=p.type||'', st=p.status||'', tx=ty+' '+st;
+    if(/結案/.test(ty)) return '✅ 已結案';
+    if(/保固/.test(tx)||/完工交屋|已交屋/.test(st)) return '🛡 交屋保固';
+    if(/施工|收尾/.test(ty)||/開工保護|施工中|退場|收尾/.test(st)) return '🔨 施工中';
+    if(/洽談|初洽/.test(tx)) return '🤝 洽談中';
+    return '✏️ 設計中';
+  }
   var groups = [
-    { label: '🔨 施工中', match: function(p){ var t=p.type||''; return t.indexOf('施工')>=0 || t.indexOf('收尾')>=0; } },
-    { label: '✏️ 設計中', match: function(p){ var t=p.type||''; return t.indexOf('設計')>=0 || t.indexOf('洽談')>=0 || t.indexOf('簽約')>=0; } },
-    { label: '🛡 完工保固', match: function(p){ var t=p.type||''; return t.indexOf('完工')>=0 || t.indexOf('保固')>=0; } },
-    { label: '✅ 已結案', match: function(p){ var t=p.type||''; return t.indexOf('結案')>=0; } }
+    { label: '🤝 洽談中' }, { label: '✏️ 設計中' },
+    { label: '🔨 施工中' }, { label: '🛡 交屋保固' }, { label: '✅ 已結案' }
   ];
 
   var used = {};
@@ -1472,7 +1502,7 @@ function renderProjects(projects) {
   groups.forEach(function(g) {
     var items = projects
       .map(function(p, idx){ return { p: p, idx: idx }; })
-      .filter(function(o){ return g.match(o.p); });
+      .filter(function(o){ return !used[o.idx] && projGroupOf_(o.p) === g.label; });
 
     if (items.length === 0) return;
     items.forEach(function(o){ used[o.idx] = true; });
@@ -1595,7 +1625,7 @@ function loadAllTasks() {
     startDate: start.toISOString().substring(0,10),
     endDate:   end.toISOString().substring(0,10)
   };
-  var ok = gRun('getAllCalendarTasks', params, function(tasks) {
+  var ok = gRun('getAllUpcomingTasks', params, function(tasks) {
     STATE._allTasks = tasks || [];
     renderAllTasks();
   });
@@ -1624,16 +1654,29 @@ function renderAllTasks() {
     var caseLabel  = t.caseName ? '<span style="background:rgba(255,255,255,0.08);border-radius:4px;padding:1px 6px;margin-right:4px;font-size:11px">'+esc(t.caseName)+'</span>' : '';
     var timeStr    = t.startTime ? ' '+esc(t.startTime) : '';
     var ownerSpan  = ownerLabel ? ' ・ <span style="color:'+ownerColor+'">'+esc(ownerLabel)+'</span>' : '';
-    var safeId     = esc(t.calEventId).replace(/[^a-zA-Z0-9_-]/g,'_');
+    var safeId     = esc(t.calEventId||('erp'+(t.erpRow||''))).replace(/[^a-zA-Z0-9_-]/g,'_');
+    var toggler    = t.calEventId
+      ? 'allTaskToggle(this,\''+esc(t.calEventId)+'\',\''+esc(rawTitle)+'\')'
+      : 'erpTaskToggle(this,'+(t.erpRow||0)+')';
     var html = '<div class="proj-task-row" id="at_'+safeId+'" style="'+(isDone?'opacity:0.45':'')+'">';
     html += '<label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;width:100%">';
-    html += '<input type="checkbox" '+(isDone?'checked':'')+' onchange="allTaskToggle(this,\''+esc(t.calEventId)+'\',\''+esc(rawTitle)+'\')" style="margin-top:4px;accent-color:'+ownerColor+';width:17px;height:17px;flex-shrink:0">';
+    html += '<input type="checkbox" '+(isDone?'checked':'')+' onchange="'+toggler+'" style="margin-top:4px;accent-color:'+ownerColor+';width:17px;height:17px;flex-shrink:0">';
     html += '<div style="flex:1;min-width:0">';
     html += '<div style="font-size:14px;color:var(--cream);word-break:break-word;margin-bottom:4px">'+(isDone?'<s>':'')+esc(rawTitle)+(isDone?'</s>':'')+'</div>';
     html += '<div style="font-size:12px;color:var(--cream-dim)">'+caseLabel+'📅 '+esc(t.dateLabel)+timeStr+ownerSpan+'</div>';
     html += '</div></label></div>';
     return html;
   }).join('');
+}
+
+function erpTaskToggle(checkbox, rowIndex) {
+  if (!rowIndex) return;
+  var done = checkbox.checked;
+  gRun('setErp03Status', { rowIndex: rowIndex, status: done ? '已完成' : '待處理' }, function(res){
+    if (!res || !res.success) { checkbox.checked = !done; showToast((res && res.error) || '更新失敗', false); return; }
+    showToast(done ? '已標完成' : '已改回待處理', true);
+    var row = checkbox.closest('.proj-task-row'); if (row) row.style.opacity = done ? 0.45 : '';
+  });
 }
 
 function allTaskToggle(checkbox, calEventId, rawTitle) {
