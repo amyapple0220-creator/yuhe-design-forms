@@ -1,0 +1,2839 @@
+<script>
+// ═══════════════════════════════════════════════════════════════
+// 全域狀態
+// ═══════════════════════════════════════════════════════════════
+var STATE = {
+  currentPage: 'dashboard',
+  dashboardData: null,
+  projectsData: null,
+  tasksData: null,
+  tasksList: [],
+  paymentsData: null,
+  defectsData: null,
+  logData: null,
+  selectedCase: '',
+  taskFilter: 'today',
+  ownerFilter: 'all',
+  payTab: 'customer',
+  paymentsSelectedCase: 'all',
+  lineOn: false,
+  internalOn: true
+};
+
+// ═══════════════════════════════════════════════════════════════
+// 導航
+// ═══════════════════════════════════════════════════════════════
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('navBtn-' + name).classList.add('active');
+  STATE.currentPage = name;
+  window.scrollTo(0,0);
+
+  if (name === 'projects' && !STATE.projectsData) loadProjects();
+  if (name === 'projects') loadAllTasks();
+  if (name === 'tasks' && !STATE.tasksData) loadTasks();
+  if (name === 'payments' && !STATE.paymentsData) loadPayments();
+  if (name === 'defects' && !STATE.defectsData) loadDefects();
+  if (name === 'log' && !STATE.logData) loadLogPage();
+  if (name === 'advance' && !STATE.advanceLoaded) { STATE.advanceLoaded = true; loadAdvancePage(); }
+  if (name === 'tasks') { loadCalendarPage(); }
+  if (name === 'gantt') { loadGanttPage(); }
+
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 工具
+// ═══════════════════════════════════════════════════════════════
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function twd(n){ return 'NT$ ' + Math.round(Number(n)||0).toLocaleString('zh-TW'); }
+function shortTwd(n){
+  n = Number(n)||0;
+  if (Math.abs(n) >= 10000) return (n/10000).toFixed(1).replace(/\.0$/,'') + ' 萬';
+  return n.toLocaleString('zh-TW');
+}
+function daysDiff(dateStr){
+  if (!dateStr) return 9999;
+  var today = new Date(); today.setHours(0,0,0,0);
+  var d2 = new Date(dateStr + 'T00:00:00');
+  return Math.round((d2-today)/86400000);
+}
+function isOverdue(dateStr, status){
+  return ['未收','未付','待處理','需追蹤'].indexOf(status) >= 0 && daysDiff(dateStr) < 0;
+}
+function statusClass(status){
+  if (['已收','已收款','已付','已付款','已完成','已解決'].indexOf(status) >= 0) return 'st-done';
+  if (['部分收款','部分付款'].indexOf(status) >= 0) return 'st-partial';
+  if (status === '需追蹤') return 'st-track';
+  if (status === '逾期') return 'st-overdue';
+  return 'st-pending';
+}
+function priorityClass(p){
+  if (p === '高') return 'pr-high';
+  if (p === '中') return 'pr-mid';
+  return 'pr-low';
+}
+function showToast(msg, success) {
+  var el = document.getElementById('toast');
+  el.innerHTML = (success ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>' : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>') + '<span>' + esc(msg) + '</span>';
+  el.className = 'toast show' + (success ? ' success' : '');
+  setTimeout(function(){ el.classList.remove('show'); }, 2800);
+}
+function hideLoading(){
+  var el = document.getElementById('loadingScreen');
+  if (!el) { console.warn('找不到 #loadingScreen 元素，略過載入畫面隱藏'); return; }
+  el.classList.add('hide');
+  setTimeout(function(){ el.style.display='none'; }, 400);
+}
+function gRun(fnName, args, cb, errCb) {
+  if (typeof google !== 'undefined' && google.script) {
+    var runner = google.script.run;
+    if (cb) runner = runner.withSuccessHandler(cb);
+    if (errCb) runner = runner.withFailureHandler(errCb);
+    else if (cb) runner = runner.withFailureHandler(function(e){ console.error(e); });
+    if (args !== undefined) runner[fnName](args);
+    else runner[fnName]();
+    return true;
+  }
+  return false;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// 代墊款頁面
+// ═══════════════════════════════════════════════════════════════
+STATE.advanceLoaded = false;
+STATE.advanceData = null;
+STATE.projectCases = [];
+
+function loadAdvancePage() {
+  // 載入案件清單供表單使用
+  var today = new Date().toISOString().slice(0,10);
+  document.getElementById('advDate').value = today;
+
+  if (STATE.projectsData) {
+    populateAdvanceCases_();
+  } else {
+    gRun('getProjectsData', undefined, function(data) {
+      if (data && data.projects) {
+        STATE.projectsData = data.projects;
+        populateAdvanceCases_();
+      }
+    });
+  }
+
+  var ok = gRun('getAdvanceData', undefined, function(data) {
+    if (data.error) { console.error(data.error); renderAdvanceDemo(); return; }
+    STATE.advanceData = data;
+    renderAdvancePage(data);
+  });
+  if (!ok) renderAdvanceDemo();
+}
+
+function populateAdvanceCases_() {
+  var sel = document.getElementById('advCase');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">請選擇案件</option>';
+  (STATE.projectsData || []).forEach(function(p) {
+    var opt = document.createElement('option');
+    opt.value = p.name;
+    opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+}
+
+function onAdvTypeChange() {
+  var type = document.getElementById('advType').value;
+  var caseBlock = document.getElementById('advCaseBlock');
+  caseBlock.style.display = type === '案件代墊' ? 'block' : 'none';
+}
+
+function showAdvanceForm() {
+  document.getElementById('advanceForm').style.display = 'block';
+  onAdvTypeChange();
+}
+
+function hideAdvanceForm() {
+  document.getElementById('advanceForm').style.display = 'none';
+}
+
+STATE.advanceReceiptCard = null;
+
+function submitAdvance() {
+  var type = document.getElementById('advType').value;
+  var caseName = document.getElementById('advCase').value;
+  var amount = Number(document.getElementById('advAmount').value);
+
+  if (!amount) { showToast('請填寫金額', false); return; }
+  if (type === '案件代墊' && !caseName) { showToast('請選擇案件', false); return; }
+
+  var data = {
+    date:     document.getElementById('advDate').value.replace(/-/g,'/'),
+    person:   document.getElementById('advPerson').value,
+    type:     type,
+    caseName: type === '案件代墊' ? caseName : '',
+    item:     document.getElementById('advItem').value,
+    amount:   amount,
+    note:     document.getElementById('advNote').value
+  };
+
+  var ok = gRun('addAdvanceRecord', data, function(res) {
+    if (res.success) {
+      showToast('已新增代墊紀錄', true);
+      // 若有收據照片則上傳
+      if (STATE.advanceReceiptCard && STATE.advanceReceiptCard.base64) {
+        var rc = STATE.advanceReceiptCard;
+        gRun('uploadAdvanceReceipt', { base64: rc.base64, mimeType: rc.mimeType, fileName: rc.fileName, caseName: data.caseName||'代墊收據' }, function(){});
+      }
+      STATE.advanceReceiptCard = null;
+      hideAdvanceForm();
+      document.getElementById('advAmount').value = '';
+      document.getElementById('advItem').value = '';
+      document.getElementById('advNote').value = '';
+      STATE.advanceLoaded = false;
+      loadAdvancePage();
+    } else {
+      showToast('新增失敗：' + (res.error||''), false);
+    }
+  });
+  if (!ok) { showToast('已新增（預覽模式）', true); hideAdvanceForm(); }
+}
+
+// 代墊確認報銷（匯款後5碼驗證）
+function confirmRepaid(rowIndex, amount) {
+  var code = prompt('請輸入匯款金額後5碼以確認報銷：\n（金額：NT$ ' + amount.toLocaleString() + '）');
+  if (!code) return;
+  var ok = gRun('confirmAdvanceRepaid', { rowIndex: rowIndex, code: code }, function(res) {
+    if (res.success) {
+      showToast('✓ 已確認報銷', true);
+      STATE.advanceLoaded = false;
+      loadAdvancePage();
+    } else {
+      showToast(res.error || '驗證失敗', false);
+    }
+  });
+  if (!ok) showToast('（預覽模式）', true);
+}
+
+function renderAdvancePage(data) {
+  // 總覽
+  var summaryEl = document.getElementById('advanceSummary');
+  var summary = data.summary || {};
+  var keys = Object.keys(summary);
+  var totalAll = keys.reduce(function(s,k){ return s + summary[k]; }, 0);
+
+  if (keys.length === 0) {
+    summaryEl.innerHTML = '<div class="empty">目前無待報銷款項 ✅</div>';
+  } else {
+    summaryEl.innerHTML = '<div class="mini-metric-label" style="margin-bottom:10px">待報銷總額</div>'
+      + keys.map(function(p) {
+          return '<div class="advance-summary-row"><span class="advance-person">'+esc(p)+'</span><span class="advance-amount">NT$ '+summary[p].toLocaleString()+'</span></div>';
+        }).join('')
+      + '<div class="advance-summary-row" style="border-top:1px solid var(--gold-dim);margin-top:4px;padding-top:10px"><span class="advance-person" style="color:var(--gold)">合計</span><span class="advance-amount">NT$ '+totalAll.toLocaleString()+'</span></div>';
+  }
+
+  // 待報銷清單
+  var pendingEl = document.getElementById('advancePendingList');
+  var pending = data.pending || [];
+  if (pending.length === 0) {
+    pendingEl.innerHTML = '<div class="empty">無待報銷項目</div>';
+  } else {
+    pendingEl.innerHTML = '<div class="card">' + pending.map(function(r) {
+      return '<div class="advance-item">'
+        + '<div class="advance-item-top">'
+        + '<div><div class="advance-item-title">'+esc(r.item||r.type)+'</div>'
+        + '<div class="advance-item-meta">'+esc(r.date)+' ・ '+esc(r.person)+(r.caseName?' ・ '+esc(r.caseName):'')+'</div></div>'
+        + '<div style="display:flex;align-items:center;gap:8px">'
+        + '<span class="advance-item-amt">NT$ '+r.amount.toLocaleString()+'</span>'
+        + '<button class="advance-repay-btn" onclick="confirmRepaid('+r.rowIndex+','+r.amount+')">報銷</button>'
+        + '</div></div></div>';
+    }).join('') + '</div>';
+  }
+
+  // 已報銷
+  var doneEl = document.getElementById('advanceDoneList');
+  var done = data.done || [];
+  if (done.length === 0) {
+    doneEl.innerHTML = '<div class="empty">無已報銷紀錄</div>';
+  } else {
+    doneEl.innerHTML = '<div class="card">' + done.slice(0,10).map(function(r) {
+      return '<div class="advance-item">'
+        + '<div class="advance-item-top">'
+        + '<div><div class="advance-item-title" style="color:var(--cream-faint)">'+esc(r.item||r.type)+'</div>'
+        + '<div class="advance-item-meta">'+esc(r.date)+' ・ '+esc(r.person)+(r.caseName?' ・ '+esc(r.caseName):'')+'</div></div>'
+        + '<span class="advance-item-amt" style="color:var(--sage)">✓ NT$ '+r.amount.toLocaleString()+'</span>'
+        + '</div></div>';
+    }).join('') + '</div>';
+  }
+}
+
+function markRepaid(rowIndex) {
+  var today = new Date().toISOString().slice(0,10).replace(/-/g,'/');
+  var ok = gRun('markAdvanceRepaid', { rowIndex: rowIndex, repayDate: today }, function(res) {
+    if (res.success) {
+      showToast('已標記報銷完成', true);
+      STATE.advanceLoaded = false;
+      loadAdvancePage();
+    } else {
+      showToast('標記失敗：' + (res.error||''), false);
+    }
+  });
+  if (!ok) showToast('已標記（預覽模式）', true);
+}
+
+function renderAdvanceDemo() {
+  renderAdvancePage({
+    summary: { '阿祥': 5680, '育瑄': 2150 },
+    pending: [
+      { rowIndex:2, date:'2026/06/20', person:'阿祥', type:'案件代墊', caseName:'鉅力高宇', item:'玻璃五金', amount:2350 },
+      { rowIndex:3, date:'2026/06/21', person:'阿祥', type:'油資', caseName:'', item:'油資', amount:3330 },
+      { rowIndex:4, date:'2026/06/22', person:'育瑄', type:'停車', caseName:'', item:'停車費', amount:2150 }
+    ],
+    done: []
+  });
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// 行事曆頁面
+// ═══════════════════════════════════════════════════════════════
+STATE.calYear    = new Date().getFullYear();
+STATE.calMonth   = new Date().getMonth() + 1;
+STATE.calOwner   = 'all';
+STATE.calEvents  = {};
+STATE.calSelDate = '';
+STATE.calLoaded  = false;
+
+function loadCalendarPage() {
+  // 初始化案件清單供新增表單使用
+  if (STATE.projectsData) populateCalCases_();
+  else gRun('getProjectsData', undefined, function(d) {
+    if (d && d.projects) { STATE.projectsData = d.projects; populateCalCases_(); }
+  });
+  loadCalendarMonth();
+}
+
+function populateCalCases_() {
+  var sel = document.getElementById('calEvCase');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">無（公司事務）</option>';
+  (STATE.projectsData||[]).forEach(function(p) {
+    var opt = document.createElement('option');
+    opt.value = p.name; opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+}
+
+function loadCalendarMonth() {
+  document.getElementById('calMonthLabel').textContent =
+    STATE.calYear + ' 年 ' + STATE.calMonth + ' 月';
+
+  var ok = gRun('getCalendarData',
+    { year: STATE.calYear, month: STATE.calMonth, owner: STATE.calOwner },
+    function(data) {
+      if (data.error) { console.error(data.error); renderCalGrid({}); return; }
+      STATE.calEvents = data.events || {};
+      renderCalGrid(STATE.calEvents);
+      if (STATE.calSelDate) renderDayPanel(STATE.calSelDate);
+    }
+  );
+  if (!ok) {
+    // demo
+    var today = new Date().toISOString().slice(0,10);
+    STATE.calEvents = {};
+    STATE.calEvents[today] = [
+      { id:'demo1', type:'task', title:'合新合心 保護開工確認', owner:'育瑄', status:'待處理', caseName:'合新' },
+      { id:'demo2', type:'payment', title:'鉅力高宇 木作30% NT$345,000', caseName:'鉅力' }
+    ];
+    renderCalGrid(STATE.calEvents);
+  }
+}
+
+function renderCalGrid(events) {
+  var el = document.getElementById('calGrid');
+  var today = new Date();
+  var todayStr = today.getFullYear() + '-' +
+    String(today.getMonth()+1).padStart(2,'0') + '-' +
+    String(today.getDate()).padStart(2,'0');
+
+  var firstDay = new Date(STATE.calYear, STATE.calMonth-1, 1).getDay();
+  var daysInMonth = new Date(STATE.calYear, STATE.calMonth, 0).getDate();
+  var daysInPrev  = new Date(STATE.calYear, STATE.calMonth-1, 0).getDate();
+
+  var cells = [];
+
+  // 補前月
+  for (var i = firstDay - 1; i >= 0; i--) {
+    cells.push({ day: daysInPrev - i, cur: false });
+  }
+  // 本月
+  for (var d = 1; d <= daysInMonth; d++) {
+    cells.push({ day: d, cur: true });
+  }
+  // 補後月
+  var remaining = 42 - cells.length;
+  for (var j = 1; j <= remaining; j++) {
+    cells.push({ day: j, cur: false });
+  }
+
+  el.innerHTML = cells.map(function(cell, idx) {
+    var dateStr = '';
+    var isToday = false, isSel = false;
+    var dayOfWeek = idx % 7;
+
+    if (cell.cur) {
+      dateStr = STATE.calYear + '-' +
+        String(STATE.calMonth).padStart(2,'0') + '-' +
+        String(cell.day).padStart(2,'0');
+      isToday = dateStr === todayStr;
+      isSel   = dateStr === STATE.calSelDate;
+    }
+
+    var evs = dateStr && events[dateStr] ? events[dateStr] : [];
+    var dots = '';
+    var types = {};
+    evs.forEach(function(e){ types[e.type] = true; });
+    if (types.task)    dots += '<span class="cal-dot cal-dot-task"></span>';
+    if (types.gcal)    dots += '<span class="cal-dot cal-dot-gcal"></span>';
+    if (types.payment) dots += '<span class="cal-dot cal-dot-payment"></span>';
+    if (types.log)     dots += '<span class="cal-dot cal-dot-log"></span>';
+
+    var cls = 'cal-cell';
+    if (!cell.cur)         cls += ' other-month';
+    if (isToday)           cls += ' today';
+    if (isSel)             cls += ' selected';
+    if (dayOfWeek === 0)   cls += ' sunday';
+    if (dayOfWeek === 6)   cls += ' saturday';
+
+    var click = dateStr ? 'onclick="selectCalDate(\'' + dateStr + '\')"' : '';
+
+    return '<div class="' + cls + '" ' + click + '>'
+      + '<span class="cal-date">' + cell.day + '</span>'
+      + (dots ? '<div class="cal-dots">' + dots + '</div>' : '')
+      + '</div>';
+  }).join('');
+}
+
+function selectCalDate(dateStr) {
+  STATE.calSelDate = dateStr;
+  // 更新選中樣式
+  document.querySelectorAll('.cal-cell').forEach(function(c){ c.classList.remove('selected'); });
+  event.currentTarget.classList.add('selected');
+  renderDayPanel(dateStr);
+}
+
+function renderDayPanel(dateStr) {
+  var panel = document.getElementById('calDayPanel');
+  panel.style.display = 'block';
+
+  var d = new Date(dateStr + 'T00:00:00+08:00');
+  var days = ['日','一','二','三','四','五','六'];
+  document.getElementById('calDayTitle').textContent =
+    (d.getMonth()+1) + '月' + d.getDate() + '日（' + days[d.getDay()] + '）';
+
+  var evs = STATE.calEvents[dateStr] || [];
+  var el  = document.getElementById('calDayEvents');
+
+  if (evs.length === 0) {
+    el.innerHTML = '<div class="empty" style="padding:16px 0">今天無任何事項</div>';
+    return;
+  }
+
+  // 依類型排序：payment > gcal > task > log
+  var order = { payment:0, gcal:1, task:2, log:3 };
+  evs = evs.slice().sort(function(a,b){ return (order[a.type]||9) - (order[b.type]||9); });
+
+  el.innerHTML = '<div class="card" style="padding:8px 14px">'
+    + evs.map(function(ev) {
+      var dotClass = 'cal-dot-' + ev.type;
+      var done = ev.status === '已完成';
+
+      if (ev.type === 'task') {
+        return '<div class="cal-event-item">'
+          + '<button class="cal-event-check' + (done?' done':'') + '" onclick="toggleCalTask(\'' + ev.id + '\',\'' + dateStr + '\',' + ev.rowIndex + ')">'
+          + (done ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>' : '')
+          + '</button>'
+          + '<div class="cal-event-body">'
+          + '<div class="cal-event-title' + (done?' done':'') + '">' + esc(ev.title) + '</div>'
+          + '<div class="cal-event-meta">' + esc(ev.owner) + (ev.caseName?' ・ '+esc(ev.caseName):'') + '</div>'
+          + '</div>'
+          + '<span class="cal-dot ' + dotClass + '" style="margin-top:6px"></span>'
+          + '</div>';
+
+      } else if (ev.type === 'gcal') {
+        return '<div class="cal-event-item">'
+          + '<span class="cal-dot cal-dot-gcal" style="margin-top:6px;flex-shrink:0"></span>'
+          + '<div class="cal-event-body">'
+          + '<div class="cal-event-title">' + esc(ev.title) + '</div>'
+          + '<div class="cal-event-meta">Google 行事曆' + (ev.startTime && ev.startTime!=='00:00'?' ・ '+esc(ev.startTime):'') + '</div>'
+          + '</div></div>';
+
+      } else if (ev.type === 'payment') {
+        return '<div class="cal-event-item">'
+          + '<span class="cal-dot cal-dot-payment" style="margin-top:6px;flex-shrink:0"></span>'
+          + '<div class="cal-event-body">'
+          + '<div class="cal-event-title" style="color:var(--rust)">' + esc(ev.title) + '</div>'
+          + '<div class="cal-event-meta">收款提醒</div>'
+          + '</div></div>';
+
+      } else if (ev.type === 'log') {
+        return '<div class="cal-event-item" onclick="goPage(\'log\')" style="cursor:pointer">'
+          + '<span class="cal-dot cal-dot-log" style="margin-top:6px;flex-shrink:0"></span>'
+          + '<div class="cal-event-body">'
+          + '<div class="cal-event-title">' + esc(ev.title) + '</div>'
+          + '<div class="cal-event-meta">' + esc(ev.area||'') + (ev.desc?' ・ '+esc(ev.desc.substring(0,20)):'') + '　👉 點擊查看詳情</div>'
+          + '</div></div>';
+      }
+      return '';
+    }).join('')
+    + '</div>';
+}
+
+
+function deleteCalEvent(calEventId, dateStr) {
+  if (!confirm('確認刪除此行事曆事件？')) return;
+  var ok = gRun('deleteCalendarEvent', calEventId, function(res) {
+    if (res.success) {
+      showToast('已刪除', true);
+      // 從本地移除
+      var items = STATE.calTaskMap[dateStr] || [];
+      STATE.calTaskMap[dateStr] = items.filter(function(x){ return x.calEventId !== calEventId; });
+      renderCalGrid();
+      renderCalDayEvents(dateStr);
+    } else {
+      showToast('刪除失敗：' + (res.error||''), false);
+    }
+  });
+  if (!ok) showToast('（預覽模式）', true);
+}
+
+function toggleCalTask(id, dateStr, rowIndex) {
+  var evs = STATE.calEvents[dateStr] || [];
+  var ev = evs.find(function(e){ return e.id === id; });
+  if (!ev) return;
+  ev.status = ev.status === '已完成' ? '待處理' : '已完成';
+  renderDayPanel(dateStr);
+  renderCalGrid(STATE.calEvents);
+  if (typeof google !== 'undefined' && google.script && rowIndex) {
+    google.script.run.updateTaskStatus(rowIndex, ev.status);
+  }
+}
+
+function changeCalMonth(delta) {
+  STATE.calMonth += delta;
+  if (STATE.calMonth > 12) { STATE.calMonth = 1;  STATE.calYear++; }
+  if (STATE.calMonth < 1)  { STATE.calMonth = 12; STATE.calYear--; }
+  STATE.calSelDate = '';
+  document.getElementById('calDayPanel').style.display = 'none';
+  loadCalendarMonth();
+}
+
+function setCalOwner(owner) {
+  STATE.calOwner = owner;
+  ['all','育瑄','阿祥'].forEach(function(o) {
+    var btn = document.getElementById('calOwner-' + o);
+    if (btn) btn.classList.toggle('active', o === owner);
+  });
+  loadCalendarMonth();
+}
+
+function toggleCalSearch() {
+  var bar = document.getElementById('calSearchBar');
+  var isHidden = bar.style.display === 'none';
+  bar.style.display = isHidden ? 'block' : 'none';
+  if (isHidden) document.getElementById('calSearchInput').focus();
+}
+
+var calSearchTimer = null;
+function onCalSearch(keyword) {
+  clearTimeout(calSearchTimer);
+  if (!keyword || keyword.length < 1) {
+    document.getElementById('calSearchResults').innerHTML = '';
+    return;
+  }
+  calSearchTimer = setTimeout(function() {
+    var ok = gRun('searchCalendar', keyword, function(data) {
+      renderCalSearchResults(data.results || []);
+    });
+    if (!ok) renderCalSearchResults([]);
+  }, 400);
+}
+
+function renderCalSearchResults(results) {
+  var el = document.getElementById('calSearchResults');
+  if (results.length === 0) {
+    el.innerHTML = '<div class="empty" style="padding:12px 0">無相符結果</div>';
+    return;
+  }
+  el.innerHTML = '<div class="card" style="padding:8px 14px">'
+    + results.map(function(r) {
+      var dot = r.type === 'task' ? 'cal-dot-task' : 'cal-dot-log';
+      return '<div class="cal-search-result">'
+        + '<div class="cal-search-result-date"><span class="cal-dot ' + dot + '" style="display:inline-block;margin-right:5px;vertical-align:middle"></span>' + esc(r.date) + (r.owner?' ・ '+esc(r.owner):'') + (r.caseName?' ・ '+esc(r.caseName):'') + '</div>'
+        + '<div class="cal-search-result-title">' + esc(r.title) + '</div>'
+        + '</div>';
+    }).join('')
+    + '</div>';
+}
+
+function showAddEventForm() {
+  document.getElementById('calAddForm').style.display = 'block';
+  document.getElementById('calEvTitle').focus();
+}
+
+function hideAddEventForm() {
+  document.getElementById('calAddForm').style.display = 'none';
+  ['calEvTitle','calEvStart','calEvEnd','calEvNote'].forEach(function(id){
+    var el=document.getElementById(id); if(el)el.value='';
+  });
+}
+
+function submitCalEvent() {
+  var title = (document.getElementById('calEvTitle').value||'').trim();
+  if (!title || !STATE.calSelDate) { showToast('請填寫任務內容', false); return; }
+  var startEl = document.getElementById('calEvStart');
+  var endEl   = document.getElementById('calEvEnd');
+  var noteEl  = document.getElementById('calEvNote');
+  var data = {
+    date:      STATE.calSelDate.replace(/-/g,'/'),
+    owner:     document.getElementById('calEvOwner').value,
+    project:   document.getElementById('calEvCase').value,
+    title:     title,
+    startTime: startEl ? startEl.value : '',
+    endTime:   endEl   ? endEl.value   : '',
+    note:      noteEl  ? noteEl.value  : ''
+  };
+  var ok = gRun('addCalendarEvent', data, function(res) {
+    if (res.success) {
+      showToast('✅ 已新增並同步行事曆', true);
+      hideAddEventForm();
+      loadCalendarPage();
+    } else {
+      showToast('新增失敗：' + (res.error||''), false);
+    }
+  });
+  if (!ok) {
+    if (!STATE.calTaskMap[STATE.calSelDate]) STATE.calTaskMap[STATE.calSelDate] = [];
+    STATE.calTaskMap[STATE.calSelDate].push({ id:'new_'+Date.now(), type:'task', title:title, owner:data.owner, project:data.project, status:'待處理' });
+    renderCalGrid();
+    renderCalDayEvents(STATE.calSelDate);
+    hideAddEventForm();
+    showToast('已新增（預覽模式）', true);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// Google Calendar 風格行事曆引擎
+// ═══════════════════════════════════════════════════════════════
+
+// Google Calendar 顏色 ID → hex 對照表
+var GCAL_COLORS = {
+  '1':'#7986cb','2':'#33b679','3':'#8e24aa','4':'#e67c73',
+  '5':'#f6bf26','6':'#f4511e','7':'#039be5','8':'#616161',
+  '9':'#3f51b5','10':'#0b8043','11':'#d50000',
+  'default':'#1a73e8'
+};
+
+// 案件自動配色（根據案件名稱 hash）
+var CASE_COLOR_POOL = [
+  '#1a73e8','#0b8043','#d50000','#f4511e','#f6bf26',
+  '#8e24aa','#039be5','#33b679','#3f51b5','#e67c73'
+];
+var _caseColorCache = {};
+function getCaseColor(caseName) {
+  if (!caseName) return GCAL_COLORS.default;
+  if (_caseColorCache[caseName]) return _caseColorCache[caseName];
+  var hash = 0;
+  for (var i = 0; i < caseName.length; i++) hash = ((hash << 5) - hash) + caseName.charCodeAt(i);
+  var color = CASE_COLOR_POOL[Math.abs(hash) % CASE_COLOR_POOL.length];
+  _caseColorCache[caseName] = color;
+  return color;
+}
+
+// 取得事件顏色
+function getEventColor(item) {
+  if (item.colorId) return GCAL_COLORS[item.colorId] || GCAL_COLORS.default;
+  if (item.project) return getCaseColor(item.project);
+  return GCAL_COLORS.default;
+}
+
+// 狀態
+STATE.gcalView   = 'month';   // month | week | day
+STATE.gcalYear   = new Date().getFullYear();
+STATE.gcalMonth  = new Date().getMonth() + 1;
+STATE.gcalWeek   = 0;   // 當前週的週日 (Date)
+STATE.gcalDay    = new Date();
+STATE.gcalEvents = {};  // dateStr → [event,...]
+STATE.gcalLoaded = {};  // 已載入的月份
+STATE.gcalSelEvent = null;
+
+// ── 入口 ──
+function loadTasks() { gcalInit(); }
+function loadCalendarPage() { gcalInit(); }
+
+function gcalInit() {
+  STATE.gcalWeek = getWeekStart_(new Date());
+  STATE.gcalDay  = new Date();
+  gcalRender();
+  gcalLoadRange();
+  if (STATE.projectsData) gcalFillCaseSelects_();
+  else gRun('getProjectsData', undefined, function(d) {
+    if (d && d.projects) { STATE.projectsData = d.projects; gcalFillCaseSelects_(); }
+  });
+}
+
+function gcalFillCaseSelects_() {
+  ['gcalNewCase','calEvCase'].forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">無（公司事務）</option>';
+    (STATE.projectsData||[]).forEach(function(p) {
+      var o = document.createElement('option');
+      o.value = p.name; o.textContent = p.name;
+      sel.appendChild(o);
+    });
+  });
+}
+
+// 載入當前視圖需要的資料
+function gcalLoadRange() {
+  var months = gcalGetNeededMonths_();
+  var toLoad = months.filter(function(m){ return !STATE.gcalLoaded[m]; });
+  if (!toLoad.length) { gcalRender(); return; }
+  toLoad.forEach(function(m) {
+    var parts = m.split('-');
+    STATE.gcalLoaded[m] = 'loading';
+    gRun('getCalendarMonthData', { year:+parts[0], month:+parts[1], owner:'all' }, function(data) {
+      STATE.gcalLoaded[m] = 'done';
+      if (data && data.taskMap) {
+        Object.keys(data.taskMap).forEach(function(ds) {
+          if (!STATE.gcalEvents[ds]) STATE.gcalEvents[ds] = [];
+          data.taskMap[ds].forEach(function(ev) {
+            var dup = STATE.gcalEvents[ds].some(function(x){ return x.id===ev.id; });
+            if (!dup) STATE.gcalEvents[ds].push(ev);
+          });
+        });
+      }
+      gcalRender();
+    });
+  });
+}
+
+function gcalGetNeededMonths_() {
+  var v = STATE.gcalView;
+  var months = [];
+  if (v === 'month') {
+    months.push(STATE.gcalYear+'-'+pad2_(STATE.gcalMonth));
+    // 前後月（月視圖可能顯示前後月日期）
+    var prev = new Date(STATE.gcalYear, STATE.gcalMonth-2, 1);
+    var next = new Date(STATE.gcalYear, STATE.gcalMonth, 1);
+    months.push(prev.getFullYear()+'-'+pad2_(prev.getMonth()+1));
+    months.push(next.getFullYear()+'-'+pad2_(next.getMonth()+1));
+  } else if (v === 'week') {
+    var d = new Date(STATE.gcalWeek);
+    for (var i=0;i<7;i++) {
+      var m2 = (d.getFullYear()+'-'+pad2_(d.getMonth()+1));
+      if (months.indexOf(m2)<0) months.push(m2);
+      d.setDate(d.getDate()+1);
+    }
+  } else {
+    var day = STATE.gcalDay;
+    months.push(day.getFullYear()+'-'+pad2_(day.getMonth()+1));
+  }
+  return months;
+}
+
+function getWeekStart_(d) {
+  var r = new Date(d);
+  r.setDate(r.getDate() - r.getDay());
+  r.setHours(0,0,0,0);
+  return r;
+}
+
+// ── 導覽 ──
+function gcalNav(dir) {
+  if (STATE.gcalView === 'month') {
+    STATE.gcalMonth += dir;
+    if (STATE.gcalMonth>12){STATE.gcalMonth=1;STATE.gcalYear++;}
+    if (STATE.gcalMonth<1){STATE.gcalMonth=12;STATE.gcalYear--;}
+  } else if (STATE.gcalView === 'week') {
+    STATE.gcalWeek = new Date(STATE.gcalWeek.getTime() + dir*7*86400000);
+  } else {
+    STATE.gcalDay = new Date(STATE.gcalDay.getTime() + dir*86400000);
+  }
+  gcalRender();
+  gcalLoadRange();
+}
+
+function gcalGoToday() {
+  var now = new Date();
+  STATE.gcalYear  = now.getFullYear();
+  STATE.gcalMonth = now.getMonth()+1;
+  STATE.gcalWeek  = getWeekStart_(now);
+  STATE.gcalDay   = now;
+  gcalRender();
+  gcalLoadRange();
+}
+
+function gcalSetView(v) {
+  STATE.gcalView = v;
+  ['month','week','day'].forEach(function(n){
+    var b=document.getElementById('gcalBtn-'+n);
+    if(b) b.classList.toggle('active', n===v);
+  });
+  gcalRender();
+  gcalLoadRange();
+}
+
+// ── 主渲染 ──
+function gcalRender() {
+  gcalUpdateTitle();
+  gcalUpdateWeekHeader();
+  if (STATE.gcalView === 'month') gcalRenderMonth();
+  else if (STATE.gcalView === 'week') gcalRenderWeek();
+  else gcalRenderDay();
+}
+
+function gcalUpdateTitle() {
+  var el = document.getElementById('gcalTitle');
+  if (!el) return;
+  var v = STATE.gcalView;
+  if (v==='month') {
+    el.textContent = STATE.gcalYear+'年'+STATE.gcalMonth+'月';
+  } else if (v==='week') {
+    var ws = STATE.gcalWeek;
+    var we = new Date(ws.getTime()+6*86400000);
+    if (ws.getMonth()===we.getMonth())
+      el.textContent = ws.getFullYear()+'年'+( ws.getMonth()+1)+'月'+ws.getDate()+'–'+we.getDate()+'日';
+    else
+      el.textContent = (ws.getMonth()+1)+'月'+ws.getDate()+'日 – '+(we.getMonth()+1)+'月'+we.getDate()+'日';
+  } else {
+    var d = STATE.gcalDay;
+    el.textContent = d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日';
+  }
+}
+
+function gcalUpdateWeekHeader() {
+  var wh = document.getElementById('gcalWeekHeader');
+  var wd = document.getElementById('gcalWeekDays');
+  if (!wh || !wd) return;
+  var v = STATE.gcalView;
+  if (v==='month') {
+    wh.style.display = 'flex';
+    wd.style.gridTemplateColumns = 'repeat(7,1fr)';
+    var days=['日','一','二','三','四','五','六'];
+    wd.innerHTML = days.map(function(d,i){
+      return '<div class="gcal-wday" style="'+(i===0?'color:var(--rust)':i===6?'color:var(--gold)':'')+'">'+d+'</div>';
+    }).join('');
+  } else if (v==='week') {
+    wh.style.display = 'flex';
+    wd.style.gridTemplateColumns = 'repeat(7,1fr)';
+    var today = todayStr_();
+    var days2=['日','一','二','三','四','五','六'];
+    wd.innerHTML = Array.from({length:7}, function(_,i) {
+      var d = new Date(STATE.gcalWeek.getTime()+i*86400000);
+      var ds = calDateStr_(d.getFullYear(),d.getMonth()+1,d.getDate());
+      var isToday = ds===today;
+      var cls = 'gcal-wday'+(isToday?' today':'');
+      return '<div class="'+cls+'" style="'+(i===0?'color:var(--rust)':i===6?'color:var(--gold)':'')+'">'+days2[i]
+        +'<div class="gcal-wday-num">'+d.getDate()+'</div></div>';
+    }).join('');
+  } else {
+    wh.style.display = 'flex';
+    wd.style.gridTemplateColumns = '1fr';
+    var d = STATE.gcalDay;
+    var ds = calDateStr_(d.getFullYear(),d.getMonth()+1,d.getDate());
+    var isToday = ds===todayStr_();
+    var days3=['日','一','二','三','四','五','六'];
+    wd.innerHTML = '<div class="gcal-wday'+(isToday?' today':'')+'">'+days3[d.getDay()]
+      +'<div class="gcal-wday-num">'+d.getDate()+'</div></div>';
+  }
+}
+
+// ── 月視圖 ──
+function gcalRenderMonth() {
+  var body = document.getElementById('gcalBody');
+  if (!body) return;
+  var today = todayStr_();
+  var first = new Date(STATE.gcalYear, STATE.gcalMonth-1, 1);
+  var last  = new Date(STATE.gcalYear, STATE.gcalMonth, 0);
+  var startDow = first.getDay();
+
+  var html = '<div class="gcal-month-grid">';
+
+  // 計算每週
+  var cur = new Date(STATE.gcalYear, STATE.gcalMonth-1, 1-startDow);
+  var totalRows = Math.ceil((startDow + last.getDate()) / 7);
+
+  for (var row=0; row<totalRows; row++) {
+    html += '<div class="gcal-month-row">';
+    for (var col=0; col<7; col++) {
+      var ds = calDateStr_(cur.getFullYear(), cur.getMonth()+1, cur.getDate());
+      var isOther = cur.getMonth() !== STATE.gcalMonth-1;
+      var isToday = ds===today;
+      var cls = 'gcal-month-cell'+(isOther?' other-month':'')+(isToday?' today':'');
+
+      var evHtml = '';
+      var evs = getEventsForDate_(ds, true);
+      var maxShow = 3;
+      var more = evs.length - maxShow;
+
+      evs.slice(0, maxShow).forEach(function(ev) {
+        var color = getEventColor(ev);
+        var isAllDay = ev.isAllDay || ev.type==='task' || !ev.startTime;
+        var label = ev.title || '';
+        var evStyle = isAllDay
+          ? 'background:'+color+';'
+          : '--ev-color:'+color+';';
+        evHtml += '<div class="gcal-month-event'+(isAllDay?'':' timed')+'" style="'+evStyle
+          +'" onclick="gcalOpenEvent(event,\''+ds+'\',\''+ev.id+'\')" title="'+esc(label)+'">'+esc(label)+'</div>';
+      });
+      if (more > 0) evHtml += '<div class="gcal-month-more" onclick="gcalClickMoreDay(\''+ds+'\')">+'+more+' 筆</div>';
+
+      html += '<div class="'+cls+'" onclick="gcalClickDay(\''+ds+'\')">'
+        +'<div class="gcal-mday">'+cur.getDate()+'</div>'
+        +evHtml+'</div>';
+      cur.setDate(cur.getDate()+1);
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  body.innerHTML = html;
+  body.style.overflowY = 'auto';
+  body.style.height = 'calc(100vh - 160px)';
+}
+
+function getEventsForDate_(ds, forMonth) {
+  var evs = STATE.gcalEvents[ds] || [];
+  var seen = {};
+  return evs.filter(function(ev) {
+    // 月視圖不顯示施工日誌（避免塞爆）
+    if (forMonth && ev.type === 'log') return false;
+    var key = (ev.calEventId || ev.id || ev.title || '');
+    if (seen[key]) return false;
+    seen[key] = true;
+    return true;
+  });
+}
+
+function gcalClickDay(ds) {
+  gcalOpenAdd(ds);
+}
+function gcalClickMoreDay(ds) {
+  gcalSetView('day');
+  var parts = ds.split('-');
+  STATE.gcalDay = new Date(+parts[0], +parts[1]-1, +parts[2]);
+  gcalRender();
+}
+
+// ── 週視圖 ──
+function gcalRenderWeek() {
+  var body = document.getElementById('gcalBody');
+  if (!body) return;
+  var today = todayStr_();
+  var now = new Date();
+  var nowMin = now.getHours()*60 + now.getMinutes();
+
+  var html = '';
+
+  // 全天事件列
+  html += '<div style="display:flex;border-bottom:1px solid var(--glass-border)">';
+  html += '<div style="width:40px;flex-shrink:0;padding:4px 4px 4px 0;font-size:10px;color:var(--cream-faint);text-align:right">整天</div>';
+  for (var i=0;i<7;i++) {
+    var d = new Date(STATE.gcalWeek.getTime()+i*86400000);
+    var ds = calDateStr_(d.getFullYear(),d.getMonth()+1,d.getDate());
+    var allEvs = (STATE.gcalEvents[ds]||[]).filter(function(ev){ return ev.isAllDay||ev.type==='task'||!ev.startTime; });
+    html += '<div style="flex:1;border-left:1px solid var(--glass-border);min-height:28px;padding:2px">';
+    allEvs.forEach(function(ev) {
+      var color = getEventColor(ev);
+      html += '<div class="gcal-month-event" style="background:'+color+'" onclick="gcalOpenEvent(event,\''+ds+'\',\''+ev.id+'\')" title="'+esc(ev.title)+'">'+esc(ev.title)+'</div>';
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // 時間軸
+  html += '<div class="gcal-week-body">';
+  // 時間列
+  html += '<div class="gcal-week-time-col">';
+  for (var h=0;h<24;h++) {
+    var label = h===0?'':( h<12?(h+'時'):(h===12?'中午':( h+'時')));
+    html += '<div class="gcal-week-hour"><div class="gcal-week-time-label">'+label+'</div></div>';
+  }
+  html += '</div>';
+
+  // 7天列
+  html += '<div class="gcal-week-cols">';
+  for (var ci=0;ci<7;ci++) {
+    var dd = new Date(STATE.gcalWeek.getTime()+ci*86400000);
+    var dds = calDateStr_(dd.getFullYear(),dd.getMonth()+1,dd.getDate());
+    var isToday2 = dds===today;
+    html += '<div class="gcal-week-col">';
+    for (var hh=0;hh<24;hh++) {
+      html += '<div class="gcal-week-hour" onclick="gcalOpenAdd(\''+dds+'\',\''+pad2_(hh)+':00\')"></div>';
+    }
+    // 有時間的事件
+    var timedEvs = (STATE.gcalEvents[dds]||[]).filter(function(ev){ return ev.startTime && !ev.isAllDay && ev.type!=='task'; });
+    timedEvs.forEach(function(ev) {
+      var color = getEventColor(ev);
+      var sp = ev.startTime.split(':');
+      var ep = (ev.endTime||ev.startTime).split(':');
+      var startMin = (+sp[0])*60+(+sp[1]);
+      var endMin   = (+ep[0])*60+(+ep[1]);
+      if (endMin <= startMin) endMin = startMin+60;
+      var top  = startMin*48/60;
+      var height = Math.max((endMin-startMin)*48/60, 20);
+      html += '<div class="gcal-week-event" style="top:'+top+'px;height:'+height+'px;background:'+color+'" onclick="gcalOpenEvent(event,\''+dds+'\',\''+ev.id+'\')">'
+        +'<div>'+esc(ev.startTime)+' '+esc(ev.title)+'</div></div>';
+    });
+    // 當前時間線
+    if (isToday2) {
+      html += '<div class="gcal-week-now-line" style="top:'+(nowMin*48/60)+'px"><div class="gcal-week-now-dot"></div></div>';
+    }
+    html += '</div>';
+  }
+  html += '</div></div>';
+  body.innerHTML = html;
+}
+
+// ── 日視圖 ──
+function gcalRenderDay() {
+  var body = document.getElementById('gcalBody');
+  if (!body) return;
+  var d   = STATE.gcalDay;
+  var ds  = calDateStr_(d.getFullYear(),d.getMonth()+1,d.getDate());
+  var now = new Date();
+  var nowMin = now.getHours()*60+now.getMinutes();
+  var isToday = ds===todayStr_();
+
+  var allEvs   = (STATE.gcalEvents[ds]||[]).filter(function(ev){ return ev.isAllDay||ev.type==='task'||!ev.startTime; });
+  var timedEvs = (STATE.gcalEvents[ds]||[]).filter(function(ev){ return ev.startTime&&!ev.isAllDay&&ev.type!=='task'; });
+
+  var html = '';
+  // 全天
+  if (allEvs.length) {
+    html += '<div style="padding:4px 8px;border-bottom:1px solid var(--glass-border)">';
+    allEvs.forEach(function(ev){
+      var color=getEventColor(ev);
+      html+='<div class="gcal-month-event" style="background:'+color+';margin-bottom:3px" onclick="gcalOpenEvent(event,\''+ds+'\',\''+ev.id+'\')">'+esc(ev.title)+'</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div class="gcal-day-body"><div class="gcal-day-time-col">';
+  for (var h=0;h<24;h++) {
+    var label = h===0?'':h+'時';
+    html += '<div class="gcal-day-hour"><div class="gcal-week-time-label">'+label+'</div></div>';
+  }
+  html += '</div><div class="gcal-day-events-col">';
+  for (var hh=0;hh<24;hh++) {
+    html += '<div class="gcal-day-hour" onclick="gcalOpenAdd(\''+ds+'\',\''+pad2_(hh)+':00\')"></div>';
+  }
+  timedEvs.forEach(function(ev){
+    var color=getEventColor(ev);
+    var sp=ev.startTime.split(':');
+    var ep=(ev.endTime||ev.startTime).split(':');
+    var startMin=(+sp[0])*60+(+sp[1]);
+    var endMin=(+ep[0])*60+(+ep[1]);
+    if(endMin<=startMin)endMin=startMin+60;
+    var top=startMin*48/60;
+    var ht=Math.max((endMin-startMin)*48/60,20);
+    html+='<div class="gcal-day-event" style="top:'+top+'px;height:'+ht+'px;background:'+color+'" onclick="gcalOpenEvent(event,\''+ds+'\',\''+ev.id+'\')">'
+      +'<div>'+esc(ev.startTime)+' '+esc(ev.title)+'</div></div>';
+  });
+  if(isToday){
+    html+='<div class="gcal-week-now-line" style="top:'+(nowMin*48/60)+'px"><div class="gcal-week-now-dot"></div></div>';
+  }
+  html += '</div></div>';
+  body.innerHTML = html;
+}
+
+// ── 事件詳情 ──
+STATE._currentEventMeta = null;
+function gcalOpenEvent(e, ds, evId) {
+  e.stopPropagation();
+  var evs = STATE.gcalEvents[ds] || [];
+  var ev = evs.find(function(x){ return x.id===evId; });
+  if (!ev) return;
+  STATE._currentEventMeta = { ev:ev, ds:ds };
+
+  document.getElementById('gcalEventTitle').textContent = ev.title||'';
+  var body = document.getElementById('gcalEventBody');
+  var color = getEventColor(ev);
+  var meta = '';
+  if (ev.startTime) meta += '<div style="font-size:13px;color:var(--cream-dim);margin-bottom:6px">🕐 '+esc(ev.startTime)+(ev.endTime?' – '+esc(ev.endTime):'')+'</div>';
+  if (ev.project)   meta += '<div style="font-size:13px;color:var(--cream-dim);margin-bottom:6px">📋 '+esc(ev.project)+'</div>';
+  if (ev.owner && ev.owner!=='all') meta += '<div style="font-size:13px;color:var(--cream-dim);margin-bottom:6px">👤 '+esc(ev.owner)+'</div>';
+  if (ev.description) meta += '<div style="font-size:13px;color:var(--cream-dim);margin-bottom:6px">📝 '+esc(ev.description)+'</div>';
+  meta += '<div style="width:100%;height:4px;border-radius:2px;background:'+color+';margin-top:8px"></div>';
+  body.innerHTML = meta;
+
+  // 只有 Google Calendar 事件才能刪除
+  var delBtn = document.getElementById('gcalEventDelBtn');
+  if (delBtn) delBtn.style.display = ev.calEventId ? '' : 'none';
+
+  document.getElementById('gcalEventModal').style.display = 'flex';
+}
+
+function gcalCompleteEvent() {
+  var meta = STATE._currentEventMeta;
+  if (!meta || !meta.ev.calEventId) { showToast('只有 Google 行事曆事件可標記完成', false); return; }
+  var title = meta.ev.title || '';
+  if (title.startsWith('✅')) { showToast('已經是完成狀態', false); return; }
+  if (!confirm('標記「'+title+'」為完成？\n將推播到 Telegram 群組')) return;
+  var ok = gRun('completeCalendarEvent', { calEventId: meta.ev.calEventId, title: title }, function(res) {
+    if (res.success) {
+      showToast('✅ 已完成並推播', true);
+      // 本地更新標題
+      meta.ev.title = '✅ ' + title;
+      document.getElementById('gcalEventTitle').textContent = meta.ev.title;
+      gcalRender();
+    } else {
+      showToast('失敗：'+(res.error||''), false);
+    }
+  });
+  if (!ok) showToast('（預覽模式）', true);
+}
+
+function gcalEditEvent() {
+  var meta = STATE._currentEventMeta;
+  if (!meta || !meta.ev.calEventId) { showToast('只有 Google 行事曆事件可編輯', false); return; }
+  var ev = meta.ev;
+  document.getElementById('gcalEditTitle').value = ev.title || '';
+  document.getElementById('gcalEditDate').value  = meta.ds || '';
+  document.getElementById('gcalEditStart').value = ev.startTime ? ev.startTime.substring(0,5) : '';
+  document.getElementById('gcalEditEnd').value   = ev.endTime   ? ev.endTime.substring(0,5)   : '';
+  document.getElementById('gcalEditArea').style.display = 'block';
+}
+
+function gcalSubmitEdit() {
+  var meta = STATE._currentEventMeta;
+  if (!meta || !meta.ev.calEventId) return;
+  var title = (document.getElementById('gcalEditTitle').value||'').trim();
+  var date  = document.getElementById('gcalEditDate').value;
+  var start = document.getElementById('gcalEditStart').value;
+  var end   = document.getElementById('gcalEditEnd').value;
+  if (!title) { showToast('請輸入標題', false); return; }
+  var ok = gRun('updateCalendarEvent', {
+    calEventId: meta.ev.calEventId,
+    title: title,
+    date:  date,
+    startTime: start,
+    endTime:   end
+  }, function(res) {
+    if (res.success) {
+      showToast('✅ 已更新', true);
+      meta.ev.title     = title;
+      meta.ev.startTime = start;
+      meta.ev.endTime   = end;
+      document.getElementById('gcalEventTitle').textContent = title;
+      document.getElementById('gcalEditArea').style.display = 'none';
+      // 重新載入
+      STATE.gcalLoaded = {}; STATE.gcalEvents = {};
+      gcalRender();
+    } else {
+      showToast('更新失敗：'+(res.error||''), false);
+    }
+  });
+  if (!ok) showToast('（預覽模式）', true);
+}
+
+
+
+function gcalCloseEvent() {
+  document.getElementById('gcalEventModal').style.display = 'none';
+  document.getElementById('gcalEditArea').style.display = 'none';
+  STATE._currentEventMeta = null;
+}
+
+function gcalDeleteEvent() {
+  var meta = STATE._currentEventMeta;
+  if (!meta || !meta.ev.calEventId) return;
+  if (!confirm('確認刪除「'+meta.ev.title+'」？')) return;
+  var ok = gRun('deleteCalendarEvent', meta.ev.calEventId, function(res) {
+    if (res.success) {
+      showToast('已刪除', true);
+      gcalCloseEvent();
+      // 從本地移除
+      var evs = STATE.gcalEvents[meta.ds] || [];
+      STATE.gcalEvents[meta.ds] = evs.filter(function(x){ return x.id!==meta.ev.id; });
+      gcalRender();
+    } else {
+      showToast('刪除失敗：'+(res.error||''), false);
+    }
+  });
+  if (!ok) { showToast('（預覽模式）', true); gcalCloseEvent(); }
+}
+
+// ── 新增事件 ──
+function gcalOpenAdd(ds, timeStr) {
+  var dateEl = document.getElementById('gcalNewDate');
+  if (dateEl && ds) dateEl.value = ds;
+  else if (dateEl) dateEl.value = calDateStr_(STATE.gcalYear,STATE.gcalMonth,new Date().getDate());
+  var startEl = document.getElementById('gcalNewStart');
+  if (startEl && timeStr) startEl.value = timeStr;
+  var endEl = document.getElementById('gcalNewEnd');
+  if (endEl && timeStr) {
+    var h = parseInt(timeStr)+1;
+    endEl.value = pad2_(h)+':00';
+  }
+  document.getElementById('gcalNewTitle').value = '';
+  document.getElementById('gcalAddModal').style.display = 'flex';
+  setTimeout(function(){ document.getElementById('gcalNewTitle').focus(); }, 100);
+}
+
+function gcalCloseAdd() {
+  document.getElementById('gcalAddModal').style.display = 'none';
+}
+
+function gcalSubmitAdd() {
+  var title = (document.getElementById('gcalNewTitle').value||'').trim();
+  if (!title) { showToast('請輸入標題', false); return; }
+  var dateStr = document.getElementById('gcalNewDate').value;
+  if (!dateStr) { showToast('請選擇日期', false); return; }
+  var data = {
+    date:      dateStr.replace(/-/g,'/'),
+    title:     title,
+    project:   document.getElementById('gcalNewCase').value,
+    owner:     document.getElementById('gcalNewOwner').value,
+    startTime: document.getElementById('gcalNewStart').value,
+    endTime:   document.getElementById('gcalNewEnd').value,
+    note:      document.getElementById('gcalNewNote').value
+  };
+  var ok = gRun('addCalendarEvent', data, function(res) {
+    if (res.success) {
+      showToast('✅ 已新增並同步', true);
+      gcalCloseAdd();
+      STATE.gcalLoaded = {}; STATE.gcalEvents = {};
+      gcalLoadRange();
+    } else {
+      showToast('新增失敗：'+(res.error||''), false);
+    }
+  });
+  if (!ok) {
+    // 預覽模式本地新增
+    if (!STATE.gcalEvents[dateStr]) STATE.gcalEvents[dateStr] = [];
+    STATE.gcalEvents[dateStr].push({ id:'new_'+Date.now(), title:title, type:'task', project:data.project, owner:data.owner, startTime:data.startTime, endTime:data.endTime, status:'待處理' });
+    showToast('已新增（預覽模式）', true);
+    gcalCloseAdd();
+    gcalRender();
+  }
+}
+
+function gcalToggleSearch() {
+  var bar = document.getElementById('gcalSearchBar');
+  if (!bar) return;
+  bar.style.display = bar.style.display==='none' ? 'block' : 'none';
+  if (bar.style.display==='block') { var i=document.getElementById('gcalSearchInput'); if(i)i.focus(); }
+}
+
+// 搜尋結果掛到 gcalSearchResults
+function onCalSearch(val) {
+  clearTimeout(STATE.calSearchTimer);
+  var el=document.getElementById('gcalSearchResults')||document.getElementById('calSearchResults');
+  if(!el)return;
+  if(!val||val.trim().length<1){el.innerHTML='';return;}
+  STATE.calSearchTimer=setTimeout(function(){
+    el.innerHTML='<div style="font-size:12px;color:var(--cream-faint)">搜尋中...</div>';
+    var ok=gRun('searchCalendar',val.trim(),function(data){
+      if(!data.results||data.results.length===0){el.innerHTML='<div style="font-size:12px;color:var(--cream-faint)">沒有找到相關資料</div>';return;}
+      el.innerHTML=data.results.map(function(r){
+        var cls=r.type==='task'?'csr-task':r.type==='log'?'csr-log':'csr-photo';
+        var label=r.type==='task'?'任務':r.type==='log'?'日誌':'照片';
+        return '<div class="cal-search-result"><span class="cal-search-type '+cls+'">'+label+'</span>'
+          +'<div><div style="font-size:13px;color:var(--cream)">'+esc(r.title)+'</div>'
+          +'<div style="font-size:11px;color:var(--cream-faint)">'+esc(r.date)+(r.project?' · '+esc(r.project):'')+'</div></div></div>';
+      }).join('');
+    });
+    if(!ok)el.innerHTML='<div style="font-size:12px;color:var(--cream-faint)">搜尋需連線</div>';
+  },500);
+}
+
+// 舊介面相容
+function setCalOwner(o){ STATE.calOwner=o; }
+function changeCalMonth(d){ gcalNav(d); }
+function showAddEventForm(){}
+function hideAddEventForm(){}
+function submitCalEvent(){}
+function toggleCalSearch(){ gcalToggleSearch(); }
+function selectCalDay(ds){ gcalSetView('day'); var p=ds.split('-'); STATE.gcalDay=new Date(+p[0],+p[1]-1,+p[2]); gcalRender(); }
+function renderCalGrid(){}
+function renderCalDayEvents(){}
+
+
+// ═══════════════════════════════════════════════════════════════
+// AI 助理
+// ═══════════════════════════════════════════════════════════════
+STATE.aiOpen = false;
+
+function toggleAIPanel() {
+  STATE.aiOpen = !STATE.aiOpen;
+  var panel = document.getElementById('aiPanel');
+  if (panel) panel.style.display = STATE.aiOpen ? 'flex' : 'none';
+}
+
+function sendAIQuick(msg) {
+  document.getElementById('aiInput').value = msg;
+  sendAIMessage();
+}
+
+function sendAIMessage() {
+  var input = document.getElementById('aiInput');
+  var msg = (input.value || '').trim();
+  if (!msg) return;
+  input.value = '';
+
+  var msgs = document.getElementById('aiMessages');
+  msgs.innerHTML += '<div class="ai-msg user">'+esc(msg)+'</div>';
+  msgs.innerHTML += '<div class="ai-msg assistant" id="aiTyping">...</div>';
+  msgs.scrollTop = msgs.scrollHeight;
+
+  var ok = gRun('askAIAssistant', msg, function(data) {
+    var typing = document.getElementById('aiTyping');
+    if (typing) {
+      typing.removeAttribute('id');
+      var _r=(data.reply||'抱歉，我沒有理解您的問題。').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/\*([^*]+)\*/g,'$1').replace(/#+\s/g,'').replace(/`([^`]+)`/g,'$1');typing.textContent=_r;
+    }
+    msgs.scrollTop = msgs.scrollHeight;
+  });
+
+  if (!ok) {
+    var typing = document.getElementById('aiTyping');
+    if (typing) {
+      typing.removeAttribute('id');
+      typing.textContent = '（預覽模式，連線後可使用 AI 功能）';
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 頁面 1：總覽
+// ═══════════════════════════════════════════════════════════════
+function loadDashboard() {
+  var ok = gRun('getDashboardData', undefined, function(data) {
+    hideLoading();
+    if (data.error) { console.error(data.error); renderDashboardError(data.error); return; }
+    STATE.dashboardData = data;
+    renderDashboard(data);
+  }, function(err) { hideLoading(); console.error(err); renderDashboardError(err&&err.message||err); });
+  if (!ok) { hideLoading(); renderDashboardError('無法連接 Apps Script 後端'); }
+}
+
+function renderDashboard(d) {
+  var tde=document.getElementById('todayDateEyebrow');if(tde)tde.textContent=(d.todayDate||'').replace(/（.+）/,'')+' ・ 營運總覽';
+  var warn=document.getElementById('dashboardWarning');
+  if(warn){var warnings=d.warnings||[];warn.style.display=warnings.length?'block':'none';warn.textContent=warnings.length?'部分資料讀取失敗：'+warnings.join('｜'):'';}
+
+  var cf = d.cashflow || {};
+    var _cfn=document.getElementById('dashCashflowNet');if(_cfn)_cfn.textContent=cf.net||'—';
+    var _inc=document.getElementById('dashIncome');if(_inc)_inc.textContent=twd(cf.income||0);
+    var _exp=document.getElementById('dashExpense');if(_exp)_exp.textContent=twd(cf.expense||0);
+
+  var tasks = d.tasks || [];
+  var dtc=document.getElementById('dashTodayCount');if(dtc)dtc.textContent=tasks.length;
+  var dts=document.getElementById('dashTodaySub');if(dts)dts.textContent='今日共 '+tasks.length+' 項';
+
+  var stuck = d.stuck || [];
+  var dsc=document.getElementById('dashStuckCount');if(dsc)dsc.textContent=stuck.length;
+
+  var sites = d.sites || [];
+  var dsite=document.getElementById('dashSiteCount');if(dsite)dsite.textContent=sites.length;
+  var dsitesub=document.getElementById('dashSiteSub');if(dsitesub)dsitesub.textContent='共 '+sites.length+' 案施工中';
+
+  var pay = d.payment;
+  if (pay) {
+    document.getElementById('dashPayDays').textContent = pay.daysLeft;
+    document.getElementById('dashPayCase').textContent = pay.case;
+  } else {
+    document.getElementById('dashPayDays').textContent = '—';
+    document.getElementById('dashPayCase').textContent = '無待收款';
+  }
+
+  var remEl = document.getElementById('dashReminders');
+  var reminders = d.reminders || [];
+  if (reminders.length === 0) {
+    remEl.innerHTML = '<div class="empty">近 7 天無特別提醒</div>';
+  } else {
+    remEl.innerHTML = reminders.map(function(r) {
+      return '<div class="reminder-row"'+(r.important?' style="border-left:3px solid #B88942;padding-left:10px"':'')+'><div class="reminder-date">' + esc(r.month) + esc(r.day) + '</div><div class="reminder-text">' + (r.important?'<span style="font-size:10px;color:#B88942;font-weight:700">重要</span> ':'') + (r.caseName ? '<b style="color:#C9A876">'+esc(r.caseName)+'</b> ' : '') + esc(r.text) + '</div></div>';
+    }).join('');
+  }
+
+  var projEl = document.getElementById('dashProjects');
+  if (sites.length === 0) {
+    projEl.innerHTML = '<div class="empty">目前無施工中案場</div>';
+  } else {
+    projEl.innerHTML = sites.map(function(s) {
+      return '<div class="card proj-row" onclick="goPage(\'projects\')">'
+        + '<div class="seal" style="width:40px;height:40px;font-size:16px">' + esc((s.name||'').charAt(0)) + '</div>'
+        + '<div class="proj-info"><div class="proj-name">' + esc(s.name) + '</div><div class="proj-meta">' + esc(s.phase) + ' ・ ' + esc(s.dayBadge) + '</div></div>'
+        + '<div class="proj-arrow"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg></div>'
+        + '</div>';
+    }).join('');
+  }
+}
+
+function renderDashboardError(message) {
+  var warn=document.getElementById('dashboardWarning');
+  if(warn){warn.style.display='block';warn.textContent='首頁資料連線失敗：'+String(message||'未知錯誤')+'。畫面不再顯示示範假資料。';}
+  var tde=document.getElementById('todayDateEyebrow');
+  if(tde)tde.textContent=new Date().toLocaleDateString('zh-TW')+' ・ 資料異常';
+  ['dashSiteCount','dashTodayCount','dashStuckCount'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='—';});
+  var pay=document.getElementById('dashPayDays');if(pay)pay.textContent='—';
+  var rem=document.getElementById('dashReminders');if(rem)rem.innerHTML='<div class="empty">暫時無法取得近期提醒</div>';
+  var proj=document.getElementById('dashProjects');if(proj)proj.innerHTML='<div class="empty">暫時無法取得案場資料</div>';
+}
+
+function loadGanttPage() {
+  var holder=document.getElementById('ganttProjects'), asOf=document.getElementById('ganttAsOf');
+  if(holder) holder.innerHTML='<div class="empty">正在讀取最新工程進度…</div>';
+  gRun('getGanttData',undefined,function(data){
+    if(!data||data.error){if(holder) holder.innerHTML='<div class="empty">甘特圖讀取失敗：'+esc(data&&data.error||'未知錯誤')+'</div>';return;}
+    if(asOf) asOf.textContent='即時資料｜更新 '+data.asOf+'（結案案件已自動排除）';
+    renderGanttPage(data.projects||[]);
+  },function(err){if(holder) holder.innerHTML='<div class="empty">甘特圖讀取失敗：'+esc(err&&err.message||err)+'</div>';});
+}
+
+function renderGanttPage(projects) {
+  var holder=document.getElementById('ganttProjects'); if(!holder) return;
+  if(!projects.length){holder.innerHTML='<div class="empty">目前沒有進行中的案件甘特資料</div>';return;}
+  holder.innerHTML=projects.map(function(p){
+    var tasks=p.tasks||[], done=tasks.filter(function(t){return /完成/.test(t.status);}).length;
+    return '<div class="card" style="margin-bottom:14px;padding:16px">'
+      +'<div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px"><div><div style="font-size:17px;font-weight:700">'+esc(p.name)+'</div><div style="font-size:11px;color:var(--muted);margin-top:3px">'+esc(p.start)+' ～ '+esc(p.end)+'</div></div><div style="font-size:12px;color:#8B6A3C">'+done+'/'+tasks.length+' 完成</div></div>'
+      +tasks.map(function(t){
+        var done=/完成/.test(t.status), active=/進行/.test(t.status);
+        var color=done?'#6F8B69':(active?'#B88942':'#B7AA98');
+        return '<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:10px 0;border-top:1px solid rgba(90,70,45,.10)">'
+          +'<div><div style="font-size:13px;font-weight:600">'+esc(t.title)+'</div><div style="font-size:10px;color:var(--muted);margin-top:3px">'+esc(t.start)+' ～ '+esc(t.end)+'</div></div>'
+          +'<span style="align-self:center;font-size:10px;color:'+color+';border:1px solid '+color+';border-radius:12px;padding:3px 7px">'+esc(t.status)+'</span></div>';
+      }).join('')+'</div>';
+  }).join('');
+}
+
+function renderDashboardDemo() {
+  renderDashboard({
+    todayDate: '2026.06.18',
+    cashflow: { net:'-NT$42,930', income:375000, expense:417930 },
+    tasks: [1,2,3,4],
+    stuck: [1,2,3],
+    sites: [
+      {name:'豐邑氧森A1', phase:'施工中・收尾期', dayBadge:'2026.07.11'},
+      {name:'鉅力高宇', phase:'施工準備', dayBadge:'2026.09.25'},
+      {name:'合新合心', phase:'施工準備', dayBadge:'2026.09.30'}
+    ],
+    payment: { case:'鉅力高宇｜木作進場30%', daysLeft:'4 天' },
+    reminders: [
+      {month:'06',day:'/15',caseName:'合新合心',text:'保護開工，現場保護拍照需留存'},
+      {month:'06',day:'/22',caseName:'鉅力高宇',text:'保護開工，收木作進場款 345,000'}
+    ]
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 頁面 2：工程管理
+// ═══════════════════════════════════════════════════════════════
+function loadProjects() {
+  var ok = gRun('getProjectsData', undefined, function(data) {
+    if (data.error) { console.error(data.error); renderProjectsDemo(); return; }
+    STATE.projectsData = data.projects;
+    renderProjects(data.projects);
+  });
+  if (!ok) renderProjectsDemo();
+}
+
+// 子 tab 狀態（各卡片獨立）
+STATE.projSubTab = {};
+STATE.projFiles = {};
+
+// ═══════════════════════════════════════════════════════════════
+// ✅ V2c 修改：renderProjects 依「類型」分組（施工中 / 設計中）
+//    資料來源：getProjectsData() 回傳的 p.type（來自 01_案件總控 B欄）
+//    idx 仍對應 STATE.projectsData 原始陣列位置，不影響
+//    toggleProjCard / setProjSubTab / loadProjFiles 等既有邏輯
+// ═══════════════════════════════════════════════════════════════
+function renderProjects(projects) {
+  var el = document.getElementById('projectsList');
+  if (!projects || projects.length === 0) { el.innerHTML = '<div class="empty">尚無案場資料</div>'; return; }
+
+  // 依「類型」分組：施工中 / 設計中（含純設計）
+  var groups = [
+    { label: '🔨 施工中', match: function(p){ var t=p.type||''; return t.indexOf('施工')>=0 || t.indexOf('收尾')>=0; } },
+    { label: '✏️ 設計中', match: function(p){ var t=p.type||''; return t.indexOf('設計')>=0 || t.indexOf('洽談')>=0 || t.indexOf('簽約')>=0; } },
+    { label: '🛡 完工保固', match: function(p){ var t=p.type||''; return t.indexOf('完工')>=0 || t.indexOf('保固')>=0; } },
+    { label: '✅ 已結案', match: function(p){ var t=p.type||''; return t.indexOf('結案')>=0; } }
+  ];
+
+  var used = {};
+  var html = '';
+
+  groups.forEach(function(g) {
+    var items = projects
+      .map(function(p, idx){ return { p: p, idx: idx }; })
+      .filter(function(o){ return g.match(o.p); });
+
+    if (items.length === 0) return;
+    items.forEach(function(o){ used[o.idx] = true; });
+
+    html += '<div class="section-title" style="margin-top:22px">' + g.label + '（' + items.length + '）</div>';
+    html += items.map(function(o){ return renderProjectCard(o.p, o.idx); }).join('');
+  });
+
+  // 保底：狀態欄位為空或未匹配到分組的案件，仍然顯示，避免資料漏掉
+  var rest = projects
+    .map(function(p, idx){ return { p: p, idx: idx }; })
+    .filter(function(o){ return !used[o.idx]; });
+
+  if (rest.length) {
+    html += '<div class="section-title" style="margin-top:22px">其他</div>';
+    html += rest.map(function(o){ return renderProjectCard(o.p, o.idx); }).join('');
+  }
+
+  el.innerHTML = html;
+}
+
+function renderProjectCard(p, idx) {
+  var totalContract = p.design.total + p.construction.total;
+  var totalReceived = p.design.received + p.construction.received;
+  var progressPct = totalContract ? Math.round((totalReceived/totalContract)*100) : 0;
+  var remainCost = p.vendorCost - p.vendorPaid;
+  if (!STATE.projSubTab[idx]) STATE.projSubTab[idx] = 'renders';
+
+  return '<div class="card" id="projCard'+idx+'">'
+    + '<button class="proj-card-header" onclick="toggleProjCard('+idx+')">'
+    + '<div class="seal" style="width:44px;height:44px;font-size:17px">' + esc(p.seal) + '</div>'
+    + '<div class="proj-info"><div class="proj-name">' + esc(p.name) + '</div>'
+    + '<div class="proj-meta">' + esc(p.status) + '</div></div>'
+    + '<div class="proj-chevron" id="projChevron'+idx+'"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>'
+    + '</button>'
+    + '<div class="proj-card-body" id="projBody'+idx+'" style="display:none">'
+    + '<div><div class="progress-row"><span>合約收款進度</span><span>'+progressPct+'%</span></div>'
+    + '<div class="progress-bg"><div class="progress-fg" style="width:'+progressPct+'%"></div></div></div>'
+    + '<div class="amount-grid">'
+    + '<div class="amount-box"><div class="amount-box-label">設計費</div><div class="amount-box-val">'+twd(p.design.total)+'</div>'
+    + '<div class="amount-box-sub">已收 '+twd(p.design.received)+' ／ 待收 '+twd(p.design.pending)+'</div></div>'
+    + '<div class="amount-box"><div class="amount-box-label">工程款</div><div class="amount-box-val">'+twd(p.construction.total)+'</div>'
+    + '<div class="amount-box-sub">已收 '+twd(p.construction.received)+' ／ 待收 '+twd(p.construction.pending)+'</div></div>'
+    + '</div>'
+    + '<div class="amount-box"><div class="amount-box-label">廠商成本</div><div class="amount-box-val">'+twd(p.vendorCost)+'</div>'
+    + '<div class="amount-box-sub">已付 '+twd(p.vendorPaid)+' ／ 剩餘待付 '+twd(remainCost)+'</div></div>'
+    + (p.nextStep ? '<div class="next-step-block"><div class="next-step-label">下一步</div><div class="next-step-text">'+esc(p.nextStep)+'</div></div>' : '')
+    + (p.nextMeeting ? '<div class="next-step-block" style="border-left-color:rgba(168,120,63,0.8);margin-top:10px"><div class="next-step-label" style="color:rgba(168,120,63,0.9)">📅 下次會議／提案</div><div class="next-step-text"><b style="color:var(--gold)">'+esc(p.nextMeeting.date)+'</b>　'+esc(p.nextMeeting.title)+'</div></div>' : '')
+    + '<div class="proj-sub-tabs">'
+    + '<button class="proj-sub-tab active" id="pst'+idx+'_renders" onclick="setProjSubTab('+idx+',\'renders\')">圖面</button>'
+    + '<button class="proj-sub-tab" id="pst'+idx+'_photos" onclick="setProjSubTab('+idx+',\'photos\')">照片</button>'
+    + '<button class="proj-sub-tab" id="pst'+idx+'_docs" onclick="setProjSubTab('+idx+',\'docs\')">文件</button>'
+    + '<button class="proj-sub-tab" id="pst'+idx+'_receipts" onclick="setProjSubTab('+idx+',\'receipts\')">代墊款</button>'
+    + '<button class="proj-sub-tab" id="pst'+idx+'_others" onclick="setProjSubTab('+idx+',\'others\')">其他</button>'
+    + '</div>'
+    + (p.advance && p.advance.total > 0 ? '<div class="amount-box" style="margin-top:0"><div class="amount-box-label">💳 案件代墊款</div><div class="amount-box-val">'+twd(p.advance.total)+'</div><div class="amount-box-sub">待報銷 '+twd(p.advance.pending)+' ／ 已報銷 '+twd(p.advance.repaid)+'</div></div>' : '')
+    + '<div id="projFiles'+idx+'"><div class="empty" style="padding:20px 0">載入中...</div></div>'
+    + '</div></div>';
+}
+
+function toggleProjCard(idx) {
+  var body = document.getElementById('projBody'+idx);
+  var chev = document.getElementById('projChevron'+idx);
+  var isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'flex';
+  chev.classList.toggle('open', !isOpen);
+  // 展開時才載入檔案
+  if (!isOpen && !STATE.projFiles[idx]) {
+    loadProjFiles(idx);
+  }
+}
+
+function loadProjFiles(idx) {
+  var projects = STATE.projectsData;
+  if (!projects || !projects[idx]) return;
+  var caseName = projects[idx].name;
+  var ok = gRun('getProjectFiles', caseName, function(data) {
+    STATE.projFiles[idx] = data;
+    renderProjFiles(idx);
+  });
+  if (!ok) {
+    // 預覽模式 demo
+    STATE.projFiles[idx] = { renders:[], drawings:[], photos:[], docs:[], receipts:[], others:[], error:null };
+    renderProjFiles(idx);
+  }
+}
+
+function setProjSubTab(idx, tab) {
+  STATE.projSubTab[idx] = tab;
+  ['renders','photos','docs','receipts','others'].forEach(function(t) {
+    var btn = document.getElementById('pst'+idx+'_'+t);
+    if (btn) btn.classList.toggle('active', t===tab);
+  });
+  renderProjFiles(idx);
+}
+
+// ── 獨立任務區塊 ──
+STATE._taskFilter = 'all';
+STATE._allTasks   = [];
+
+function setTaskFilter(filter) {
+  STATE._taskFilter = filter;
+  ['All','Boss','Site'].forEach(function(k) {
+    var btn = document.getElementById('tf'+k);
+    if (btn) btn.classList.remove('active');
+  });
+  var map = { all:'All', '育瑄':'Boss', '阿祥':'Site' };
+  var btn = document.getElementById('tf'+(map[filter]||'All'));
+  if (btn) btn.classList.add('active');
+  renderAllTasks();
+}
+
+function loadAllTasks() {
+  var el = document.getElementById('allTasksList');
+  if (el) el.innerHTML = '<div class="empty" style="padding:20px 0">載入中...</div>';
+  var today = new Date();
+  var start = new Date(today); start.setDate(today.getDate()-3);
+  var end   = new Date(today); end.setDate(today.getDate()+30);
+  var params = {
+    startDate: start.toISOString().substring(0,10),
+    endDate:   end.toISOString().substring(0,10)
+  };
+  var ok = gRun('getAllCalendarTasks', params, function(tasks) {
+    STATE._allTasks = tasks || [];
+    renderAllTasks();
+  });
+  if (!ok) {
+    STATE._allTasks = [];
+    renderAllTasks();
+  }
+}
+
+function renderAllTasks() {
+  var el = document.getElementById('allTasksList');
+  if (!el) return;
+  var tasks = STATE._allTasks || [];
+  var filter = STATE._taskFilter || 'all';
+  var filtered = filter === 'all' ? tasks : tasks.filter(function(t) {
+    return t.owner === filter;
+  });
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty" style="padding:20px 0">近期無任務</div>'; return;
+  }
+  el.innerHTML = filtered.map(function(t) {
+    var isDone     = t.title && t.title.startsWith('✅');
+    var rawTitle   = t.title ? t.title.replace(/^✅\s*/,'') : '';
+    var ownerColor = t.owner==='育瑄' ? '#C9956B' : t.owner==='阿祥' ? '#4A90D9' : '#888';
+    var ownerLabel = t.owner || '';
+    var caseLabel  = t.caseName ? '<span style="background:rgba(255,255,255,0.08);border-radius:4px;padding:1px 6px;margin-right:4px;font-size:11px">'+esc(t.caseName)+'</span>' : '';
+    var timeStr    = t.startTime ? ' '+esc(t.startTime) : '';
+    var ownerSpan  = ownerLabel ? ' ・ <span style="color:'+ownerColor+'">'+esc(ownerLabel)+'</span>' : '';
+    var safeId     = esc(t.calEventId).replace(/[^a-zA-Z0-9_-]/g,'_');
+    var html = '<div class="proj-task-row" id="at_'+safeId+'" style="'+(isDone?'opacity:0.45':'')+'">';
+    html += '<label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;width:100%">';
+    html += '<input type="checkbox" '+(isDone?'checked':'')+' onchange="allTaskToggle(this,\''+esc(t.calEventId)+'\',\''+esc(rawTitle)+'\')" style="margin-top:4px;accent-color:'+ownerColor+';width:17px;height:17px;flex-shrink:0">';
+    html += '<div style="flex:1;min-width:0">';
+    html += '<div style="font-size:14px;color:var(--cream);word-break:break-word;margin-bottom:4px">'+(isDone?'<s>':'')+esc(rawTitle)+(isDone?'</s>':'')+'</div>';
+    html += '<div style="font-size:12px;color:var(--cream-dim)">'+caseLabel+'📅 '+esc(t.dateLabel)+timeStr+ownerSpan+'</div>';
+    html += '</div></label></div>';
+    return html;
+  }).join('');
+}
+
+function allTaskToggle(checkbox, calEventId, rawTitle) {
+  var isDone = checkbox.checked;
+  var safeId = calEventId.replace(/[^a-zA-Z0-9_-]/g,'_');
+  var row    = document.getElementById('at_'+safeId);
+  checkbox.disabled = true;
+  if (isDone) {
+    var ok = gRun('completeCalendarEvent', { calEventId: calEventId, title: rawTitle }, function(res) {
+      checkbox.disabled = false;
+      if (res.success) {
+        showToast('✅ 完成！已推播群組', true);
+        if (row) {
+          row.style.opacity = '0.45';
+          var textEl = row.querySelector('div[style*="font-size:14px"]');
+          if (textEl) textEl.innerHTML = '<s>'+esc(rawTitle)+'</s>';
+        }
+        // 更新 state
+        STATE._allTasks.forEach(function(t) {
+          if (t.calEventId === calEventId) t.title = '✅ ' + rawTitle;
+        });
+      } else {
+        showToast('失敗：'+(res.error||''), false);
+        checkbox.checked = false;
+      }
+    });
+    if (!ok) { showToast('（預覽模式）', true); checkbox.disabled = false; }
+  } else {
+    var ok2 = gRun('uncompleteCalendarEvent', { calEventId: calEventId, title: rawTitle }, function(res) {
+      checkbox.disabled = false;
+      if (res.success) {
+        showToast('↩️ 已取消完成', true);
+        if (row) {
+          row.style.opacity = '1';
+          var textEl = row.querySelector('div[style*="font-size:14px"]');
+          if (textEl) textEl.innerHTML = esc(rawTitle);
+        }
+        STATE._allTasks.forEach(function(t) {
+          if (t.calEventId === calEventId) t.title = rawTitle;
+        });
+      } else {
+        showToast('取消失敗', false);
+        checkbox.checked = true;
+      }
+    });
+    if (!ok2) { showToast('（預覽模式）', true); checkbox.disabled = false; }
+  }
+}
+
+// 進入工程管理頁時自動載入任務
+var _origRenderProjects = null;
+
+// ── 任務 tab：舊的案件內任務（保留供參考，不再使用）──
+function renderProjTasks(idx) {
+  var el = document.getElementById('projFiles'+idx);
+  if (el) el.innerHTML = '<div class="empty" style="padding:20px 0">請使用下方「📅 任務」區塊查看所有任務</div>';
+}
+
+function projTaskToggle() {} // 空函式保留相容性
+
+// ── 任務 tab：載入並渲染 Google Calendar 事件 ──
+function renderProjTasks(idx) {
+  var el = document.getElementById('projFiles'+idx);
+  if (!el) return;
+  var projects = STATE.projectsData;
+  if (!projects || !projects[idx]) return;
+  var caseName = projects[idx].name;
+  el.innerHTML = '<div class="empty" style="padding:20px 0">載入任務中...</div>';
+
+  // 取最近60天的行程
+  var today = new Date();
+  var start = new Date(today); start.setDate(today.getDate()-7);
+  var end   = new Date(today); end.setDate(today.getDate()+60);
+  var params = {
+    caseName: caseName,
+    startDate: start.toISOString().substring(0,10),
+    endDate:   end.toISOString().substring(0,10)
+  };
+  var ok = gRun('getProjCalendarTasks', params, function(tasks) {
+    if (!tasks || tasks.length === 0) {
+      el.innerHTML = '<div class="empty" style="padding:20px 0">近期無相關行程</div>'; return;
+    }
+    el.innerHTML = '<div style="padding:4px 0">' + tasks.map(function(t) {
+      var isDone = t.title && t.title.startsWith('✅');
+      var ownerColor = t.owner==='育瑄' ? '#C9956B' : t.owner==='阿祥' ? '#4A90D9' : '#7BAE7F';
+      var ownerLabel = t.owner || '';
+      var doneOpen  = isDone ? '<s>' : '';
+      var doneClose = isDone ? '</s>' : '';
+      var cleanTitle = esc(t.title.replace(/✅\s*/,''));
+      var timeStr = t.startTime ? ' ' + esc(t.startTime) : '';
+      var ownerSpan = ownerLabel ? ' ・ <span style="color:'+ownerColor+'">'+esc(ownerLabel)+'</span>' : '';
+      var html = '<div class="proj-task-row" id="ptask_'+esc(t.calEventId)+'" style="'+(isDone?'opacity:0.45':'')+'">';
+      html += '<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;width:100%">';
+      html += '<input type="checkbox" '+(isDone?'checked':'')+' onchange="projTaskToggle(this,\''+esc(t.calEventId)+'\',\''+cleanTitle+'\','+idx+')" style="margin-top:3px;accent-color:'+ownerColor+';width:16px;height:16px;flex-shrink:0">';
+      html += '<div style="flex:1;min-width:0">';
+      html += '<div style="font-size:14px;color:var(--cream);word-break:break-word">'+doneOpen+cleanTitle+doneClose+'</div>';
+      html += '<div style="font-size:12px;color:var(--cream-dim);margin-top:2px">📅 '+esc(t.dateLabel)+timeStr+ownerSpan+'</div>';
+      html += '</div></label></div>';
+      return html;
+    }).join('') + '</div>';
+  });
+  if (!ok) {
+    el.innerHTML = '<div class="empty" style="padding:20px 0">（預覽模式，無法載入行程）</div>';
+  }
+}
+
+function projTaskToggle(checkbox, calEventId, rawTitle, idx) {
+  var isDone = checkbox.checked;
+  var row = document.getElementById('ptask_'+calEventId);
+  if (isDone) {
+    // 打勾 → 完成
+    checkbox.disabled = true;
+    var ok = gRun('completeCalendarEvent', { calEventId: calEventId, title: rawTitle }, function(res) {
+      checkbox.disabled = false;
+      if (res.success) {
+        showToast('✅ 完成！已推播群組', true);
+        if (row) row.style.opacity = '0.45';
+        // 更新文字加刪除線
+        var textEl = row ? row.querySelector('div[style*="font-size:14px"]') : null;
+        if (textEl) textEl.innerHTML = '<s>'+esc(rawTitle)+'</s>';
+      } else {
+        showToast('標記失敗：'+(res.error||''), false);
+        checkbox.checked = false;
+      }
+    });
+    if (!ok) { showToast('（預覽模式）', true); checkbox.disabled = false; }
+  } else {
+    // 取消打勾 → 取消完成（移除 ✅）
+    var ok2 = gRun('uncompleteCalendarEvent', { calEventId: calEventId, title: rawTitle }, function(res) {
+      if (res.success) {
+        showToast('↩️ 已取消完成', true);
+        if (row) row.style.opacity = '1';
+        var textEl = row ? row.querySelector('div[style*="font-size:14px"]') : null;
+        if (textEl) textEl.innerHTML = esc(rawTitle);
+      } else {
+        showToast('取消失敗', false);
+        checkbox.checked = true;
+      }
+    });
+    if (!ok2) showToast('（預覽模式）', true);
+  }
+}
+
+function renderProjFiles(idx) {
+  var el = document.getElementById('projFiles'+idx);
+  if (!el) return;
+  var data = STATE.projFiles[idx];
+  if (!data) { el.innerHTML = '<div class="empty" style="padding:20px 0">載入中...</div>'; return; }
+  if (data.error) { el.innerHTML = '<div class="empty" style="padding:20px 0;color:var(--rust)">'+esc(data.error)+'</div>'; return; }
+
+  var tab = STATE.projSubTab[idx] || 'renders';
+
+  if (tab === 'renders') {
+    // 圖面：3D效果圖 + 施工圖，縮圖格
+    var all = (data.renders||[]).map(function(f){return {f:f,cat:'3D'};})
+            .concat((data.drawings||[]).map(function(f){return {f:f,cat:'施工圖'};}));
+    if (all.length === 0) { el.innerHTML = '<div class="empty" style="padding:20px 0">尚無圖面</div>'; return; }
+    el.innerHTML = '<div class="proj-file-grid">' + all.map(function(item) {
+      var f = item.f;
+      return '<div class="proj-file-thumb" onclick="openFileViewer(\'+f.id+\',\'+esc(f.name)+\')">'
+        + (f.isImage ? '<img src="'+f.thumb+'" loading="lazy">' : '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:6px"><svg width="28" height="28" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span style="font-size:10px;color:var(--cream-faint)">PDF</span></div>')
+        + '<div class="proj-file-thumb-label">'+esc(item.cat)+' ・ '+esc(f.name)+'</div>'
+        + '</div>';
+    }).join('') + '</div>';
+
+  } else if (tab === 'photos') {
+    // 照片：按日期資料夾分組
+    var groups = data.photos || [];
+    if (groups.length === 0) { el.innerHTML = '<div class="empty" style="padding:20px 0">尚無工地照片</div>'; return; }
+    el.innerHTML = groups.map(function(g) {
+      return '<div class="proj-photo-group">'
+        + '<div class="proj-photo-group-label">'+esc(g.dateLabel)+' ・ '+esc(g.typeLabel)+'（'+g.files.length+'張）</div>'
+        + '<div class="proj-file-grid">' + g.files.map(function(f) {
+            return '<div class="proj-file-thumb" onclick="openFileViewer(\'+f.id+\',\'+esc(f.name)+\')">'
+              + '<img src="'+f.thumb+'" loading="lazy">'
+              + '<div class="proj-file-thumb-label">'+esc(f.name)+'</div>'
+              + '</div>';
+          }).join('') + '</div>'
+        + '</div>';
+    }).join('');
+
+  } else if (tab === 'docs') {
+    var list = data.docs || [];
+    if (list.length === 0) { el.innerHTML = '<div class="empty" style="padding:20px 0">尚無文件</div>'; return; }
+    el.innerHTML = '<div class="proj-file-list">' + list.map(function(f) {
+      return renderFileRow(f);
+    }).join('') + '</div>';
+
+  } else if (tab === 'receipts') {
+    var list = data.receipts || [];
+    if (list.length === 0) { el.innerHTML = '<div class="empty" style="padding:20px 0">尚無代墊款收據</div>'; return; }
+    el.innerHTML = '<div class="proj-file-grid">' + list.map(function(f) {
+      return '<div class="proj-file-thumb" onclick="openFileViewer(\'+f.id+\',\'+esc(f.name)+\')">'
+        + (f.isImage ? '<img src="'+f.thumb+'" loading="lazy">' : '<div style="display:flex;align-items:center;justify-content:center;height:100%"><svg width="28" height="28" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>')
+        + '<div class="proj-file-thumb-label">'+esc(f.name)+'</div>'
+        + '</div>';
+    }).join('') + '</div>';
+
+  } else {
+    var list = data.others || [];
+    if (list.length === 0) { el.innerHTML = '<div class="empty" style="padding:20px 0">尚無其他檔案</div>'; return; }
+    el.innerHTML = '<div class="proj-file-list">' + list.map(function(f) {
+      return renderFileRow(f);
+    }).join('') + '</div>';
+  }
+}
+
+function renderFileRow(f) {
+  var icon = f.isPdf
+    ? '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
+    : f.isImage
+    ? '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
+    : '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/></svg>';
+  return '<div class="proj-file-row" onclick="openFileViewer(\'+f.id+\',\'+esc(f.name)+\')">'
+    + '<div class="proj-file-icon">'+icon+'</div>'
+    + '<div class="proj-file-info"><div class="proj-file-name">'+esc(f.name)+'</div>'
+    + '<div class="proj-file-meta">'+(f.label?esc(f.label)+' ・ ':'')+esc(f.updated)+'</div></div>'
+    + '<div class="proj-arrow"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg></div>'
+    + '</div>';
+}
+
+// 統一用 drawingViewerModal 開檔案
+function openFileViewer(fileId, fileName) {
+  var modal = document.getElementById('drawingViewerModal');
+  document.getElementById('drawingViewerTitle').textContent = fileName;
+  var oldFrame = document.getElementById('drawingViewerFrame');
+  var isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(fileName);
+  if (isImage) {
+    var img = document.createElement('img');
+    img.id = 'drawingViewerFrame';
+    img.src = 'https://drive.google.com/thumbnail?id=' + fileId + '&sz=w1600';
+    img.style.cssText = 'flex:1;width:100%;object-fit:contain;background:#000;display:block;min-height:0;';
+    oldFrame.parentNode.replaceChild(img, oldFrame);
+  } else {
+    var iframe = document.createElement('iframe');
+    iframe.id = 'drawingViewerFrame';
+    iframe.src = 'https://drive.google.com/file/d/' + fileId + '/preview';
+    iframe.style.cssText = 'flex:1;width:100%;border:none;background:#fff;display:block;min-height:0;';
+    oldFrame.parentNode.replaceChild(iframe, oldFrame);
+  }
+  modal.style.display = 'flex';
+}
+
+function renderProjectsDemo() {
+  renderProjects([
+    {name:'豐邑氧森A1', seal:'氧', type:'施工中', status:'施工中・收尾期 ・ 主責 育瑄／協助 阿祥',
+     design:{total:35000,received:15000,pending:20000}, construction:{total:1880000,received:1699200,pending:180800},
+     vendorCost:1037105, vendorPaid:893000, nextStep:'7/6 家具進場、7/8 DECO+ 攝影、7/11 交屋', nextMeeting:null},
+    {name:'鉅力高宇', seal:'高', type:'施工中', status:'施工準備 ・ 主責 育瑄／協助 阿祥',
+     design:{total:70000,received:70000,pending:0}, construction:{total:1150000,received:345000,pending:805000},
+     vendorCost:811750, vendorPaid:0, nextStep:'6/22 保護開工，收木作進場款 345,000', nextMeeting:null},
+    {name:'合新合心', seal:'合', type:'施工中', status:'施工準備 ・ 主責 育瑄／協助 阿祥',
+     design:{total:62500,received:62500,pending:0}, construction:{total:1220000,received:366000,pending:854000},
+     vendorCost:860040, vendorPaid:0, nextStep:'6/15 保護開工；FINAL 成本已更新 860,040', nextMeeting:{date:'6/29',title:'第三次3D提案＋材料挑選'}},
+    {name:'遠雄仰森', seal:'遠', type:'設計中', status:'設計中 ・ 6/17第二次3D會議OK ・ 7/20下午1:45驗屋',
+     design:{total:63000,received:33000,pending:30000}, construction:{total:1800000,received:0,pending:1800000},
+     vendorCost:0, vendorPaid:0, nextStep:'6/17修改後3D', nextMeeting:null},
+    {name:'台北華府', seal:'台', type:'純設計', status:'已簽設計／設計作業中 ・ 6/11已提供水電圖',
+     design:{total:98000,received:98000,pending:0}, construction:{total:0,received:0,pending:0},
+     vendorCost:0, vendorPaid:0, nextStep:'6/8已收設計全額98,000；進入設計作業', nextMeeting:null}
+  ]);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 行事曆頁面
+// ═══════════════════════════════════════════════════════════════
+STATE.calYear    = new Date().getFullYear();
+STATE.calMonth   = new Date().getMonth() + 1;
+STATE.calOwner   = 'all';
+STATE.calTaskMap = {};
+STATE.calSelDate = '';
+STATE.calSearchTimer = null;
+
+function loadTasks() { loadCalendarPage(); }
+
+function loadCalendarPage() {
+  renderCalHeader();
+  // Always render the calendar shell immediately. Calendar/Sheet reads can be
+  // slow; previously the page stayed completely blank until the RPC returned.
+  renderCalGrid();
+  var ok = gRun('getCalendarMonthData',
+    { year: STATE.calYear, month: STATE.calMonth, owner: STATE.calOwner },
+    function(data) {
+      if (!data || data.error) {
+        console.error(data && data.error ? data.error : 'Calendar returned no data');
+        renderCalDemo();
+        return;
+      }
+      STATE.calTaskMap = data.taskMap || {};
+      renderCalGrid();
+    },
+    function(error) {
+      console.error(error);
+      renderCalDemo();
+    }
+  );
+  if (!ok) renderCalDemo();
+  if (STATE.projectsData) fillCalCaseSelect_();
+  else gRun('getProjectsData', undefined, function(d) {
+    if (d && d.projects) { STATE.projectsData = d.projects; fillCalCaseSelect_(); }
+  });
+}
+
+function fillCalCaseSelect_() {
+  var sel = document.getElementById('calEvCase');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">無（公司事務）</option>';
+  (STATE.projectsData||[]).forEach(function(p) {
+    var o = document.createElement('option');
+    o.value = p.name; o.textContent = p.name;
+    sel.appendChild(o);
+  });
+}
+
+function setCalOwner(owner) {
+  STATE.calOwner = owner;
+  ['all','育瑄','阿祥'].forEach(function(o) {
+    var b = document.getElementById('calOwner-'+o);
+    if (b) b.classList.toggle('active', o===owner);
+  });
+  loadCalendarPage();
+}
+
+function changeCalMonth(delta) {
+  STATE.calMonth += delta;
+  if (STATE.calMonth>12){STATE.calMonth=1;STATE.calYear++;}
+  if (STATE.calMonth<1) {STATE.calMonth=12;STATE.calYear--;}
+  STATE.calSelDate='';
+  var p=document.getElementById('calDayPanel');
+  if(p)p.style.display='none';
+  loadCalendarPage();
+}
+
+function renderCalHeader() {
+  var el=document.getElementById('calMonthLabel');
+  if(el)el.textContent=STATE.calYear+' 年 '+STATE.calMonth+' 月';
+}
+
+function pad2_(n){return String(n).padStart(2,'0');}
+function calDateStr_(y,m,d){return y+'-'+pad2_(m)+'-'+pad2_(d);}
+function todayStr_(){var t=new Date();return calDateStr_(t.getFullYear(),t.getMonth()+1,t.getDate());}
+
+function renderCalGrid() {
+  renderCalHeader();
+  var grid=document.getElementById('calGrid');
+  if(!grid)return;
+  var today=todayStr_();
+  var first=new Date(STATE.calYear,STATE.calMonth-1,1);
+  var last=new Date(STATE.calYear,STATE.calMonth,0);
+  var dow=first.getDay();
+  var html='';
+
+  // 前月補位
+  for(var i=0;i<dow;i++){
+    var pd=new Date(STATE.calYear,STATE.calMonth-1,-dow+i+1);
+    html+='<div class="cal-day other-month"><div class="cal-day-num">'+pd.getDate()+'</div></div>';
+  }
+
+  for(var d=1;d<=last.getDate();d++){
+    var ds=calDateStr_(STATE.calYear,STATE.calMonth,d);
+    var items=STATE.calTaskMap[ds]||[];
+    var cls='cal-day'+(ds===today?' today':'')+(ds===STATE.calSelDate?' selected':'');
+    var hasTask=items.some(function(x){return x.type==='task'&&x.status!=='已完成';});
+    var hasDone=items.some(function(x){return x.type==='task'&&x.status==='已完成';});
+    var hasCal =items.some(function(x){return x.type==='calendar';});
+    var hasLog =items.some(function(x){return x.type==='log';});
+    var dots='';
+    if(hasTask)dots+='<div class="cal-dot task"></div>';
+    if(hasDone)dots+='<div class="cal-dot done"></div>';
+    if(hasCal) dots+='<div class="cal-dot calendar"></div>';
+    if(hasLog) dots+='<div class="cal-dot log"></div>';
+    html+='<div class="'+cls+'" onclick="selectCalDay(\''+ds+'\')"><div class="cal-day-num">'+d+'</div>'+(dots?'<div class="cal-dots">'+dots+'</div>':'')+'</div>';
+  }
+  grid.innerHTML=html;
+}
+
+function selectCalDay(dateStr) {
+  STATE.calSelDate=dateStr;
+  renderCalGrid();
+  var panel=document.getElementById('calDayPanel');
+  var title=document.getElementById('calDayTitle');
+  var parts=dateStr.split('-');
+  if(title)title.textContent=parseInt(parts[1])+'月'+parseInt(parts[2])+'日';
+  if(panel)panel.style.display='block';
+  hideAddEventForm();
+  renderCalDayEvents(dateStr);
+  setTimeout(function(){if(panel)panel.scrollIntoView({behavior:'smooth',block:'start'});},150);
+}
+
+function renderCalDayEvents(dateStr) {
+  var items=STATE.calTaskMap[dateStr]||[];
+  var el=document.getElementById('calDayEvents');
+  if(!el)return;
+  // 去重：只移除「App 寫入 Calendar 後又讀回來」的重複
+  // 條件：calendar 事件去掉【xxx】前綴後，與同日 task 標題完全一致
+  var taskTitleSet = {};
+  items.forEach(function(x) {
+    if (x.type === 'task') taskTitleSet[x.title.trim()] = true;
+  });
+  var calIdSeen = {};
+  items = items.filter(function(x) {
+    if (x.type !== 'calendar') return true;
+    // 防重複 calEventId
+    if (x.calEventId) {
+      if (calIdSeen[x.calEventId]) return false;
+      calIdSeen[x.calEventId] = true;
+    }
+    // 只過濾 App 自動寫入的（去掉【xxx】後等於某個 task 標題）
+    var cleanTitle = x.title.replace(/^【[^】]+】/, '').trim();
+    return !taskTitleSet[cleanTitle];
+  });
+  if(items.length===0){el.innerHTML='<div class="empty" style="padding:20px 0">這天沒有安排</div>';return;}
+  el.innerHTML=items.map(function(item){
+    var dotCls=item.type==='task'?'task':item.type==='log'?'log':'calendar';
+    var isDone=item.status==='已完成'||item.status==='已記錄';
+    var checkBtn='';
+    if(item.type==='task'){
+      checkBtn='<button class="cal-event-check'+(isDone?' done':'')+'" onclick="toggleCalTask(\''+item.id+'\',\''+dateStr+'\','+item.rowIndex+')">'
+        +(isDone?'<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>':'')+'</button>';
+    } else if(item.type==='calendar'&&item.calEventId){
+      checkBtn='<button class="cal-del-btn" onclick="deleteCalEvent(\''+item.calEventId+'\',\''+dateStr+'\')" title="刪除"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></svg></button>';
+    }
+    var meta=item.project||'';
+    if(item.startTime)meta=item.startTime+(item.endTime?' ~ '+item.endTime:'')+(meta?' ・ '+meta:'');
+    if(item.owner&&item.owner!=='all')meta+=(meta?' ・ ':'')+item.owner;
+    return '<div class="cal-event"><div class="cal-event-dot '+dotCls+'"></div>'
+      +'<div class="cal-event-body"><div class="cal-event-title'+(isDone?' done':'')+'">'+esc(item.title)+'</div>'
+      +(meta?'<div class="cal-event-meta">'+esc(meta)+'</div>':'')
+      +'</div>'+checkBtn+'</div>';
+  }).join('');
+}
+
+
+function deleteCalEvent(calEventId, dateStr) {
+  if (!confirm('確認刪除此行事曆事件？')) return;
+  var ok = gRun('deleteCalendarEvent', calEventId, function(res) {
+    if (res.success) {
+      showToast('已刪除', true);
+      // 從本地移除
+      var items = STATE.calTaskMap[dateStr] || [];
+      STATE.calTaskMap[dateStr] = items.filter(function(x){ return x.calEventId !== calEventId; });
+      renderCalGrid();
+      renderCalDayEvents(dateStr);
+    } else {
+      showToast('刪除失敗：' + (res.error||''), false);
+    }
+  });
+  if (!ok) showToast('（預覽模式）', true);
+}
+
+function toggleCalTask(id,dateStr,rowIndex){
+  var items=STATE.calTaskMap[dateStr]||[];
+  var item=items.find(function(x){return x.id===id;});
+  if(!item)return;
+  item.status=item.status==='已完成'?'待處理':'已完成';
+  renderCalGrid();renderCalDayEvents(dateStr);
+  showToast(item.status==='已完成'?'✓ 已完成':'已重新開啟',true);
+  if(typeof google!=='undefined'&&google.script){
+    google.script.run.withFailureHandler(function(){showToast('同步失敗',false);})
+      .updateTaskStatus(rowIndex,item.status);
+  }
+}
+
+function showAddEventForm(){
+  var f=document.getElementById('calAddForm');
+  if(f)f.style.display='block';
+  var t=document.getElementById('calEvTitle');
+  if(t)t.focus();
+}
+function hideAddEventForm(){
+  var f=document.getElementById('calAddForm');
+  if(f)f.style.display='none';
+  var t=document.getElementById('calEvTitle');
+  if(t)t.value='';
+}
+
+function submitCalEvent(){
+  var title=(document.getElementById('calEvTitle').value||'').trim();
+  if(!title){showToast('請輸入任務內容',false);return;}
+  var data={
+    date:STATE.calSelDate.replace(/-/g,'/'),
+    project:document.getElementById('calEvCase').value,
+    title:title,
+    owner:document.getElementById('calEvOwner').value
+  };
+  var ok=gRun('addCalendarEvent',data,function(res){
+    if(res.success){showToast('已新增，同步中...',true);hideAddEventForm();loadCalendarPage();}
+    else showToast('新增失敗：'+(res.error||''),false);
+  });
+  if(!ok){showToast('已新增（預覽模式）',true);hideAddEventForm();}
+}
+
+function onCalSearch(val){
+  clearTimeout(STATE.calSearchTimer);
+  var el=document.getElementById('calSearchResults');
+  if(!el)return;
+  if(!val||val.trim().length<1){el.innerHTML='';return;}
+  STATE.calSearchTimer=setTimeout(function(){
+    el.innerHTML='<div class="empty" style="padding:8px 0">搜尋中...</div>';
+    var ok=gRun('searchCalendar',val.trim(),function(data){
+      if(!data.results||data.results.length===0){
+        el.innerHTML='<div class="empty" style="padding:8px 0">沒有找到相關資料</div>';return;
+      }
+      el.innerHTML='<div class="card" style="margin-top:8px">'+data.results.map(function(r){
+        var cls=r.type==='task'?'csr-task':r.type==='log'?'csr-log':'csr-photo';
+        var label=r.type==='task'?'任務':r.type==='log'?'日誌':'照片';
+        return '<div class="cal-search-result"><span class="cal-search-type '+cls+'">'+label+'</span>'
+          +'<div><div style="font-size:13px;color:var(--cream)">'+esc(r.title)+'</div>'
+          +'<div style="font-size:11px;color:var(--cream-faint)">'+esc(r.date)+(r.project?' ・ '+esc(r.project):'')+'</div></div></div>';
+      }).join('')+'</div>';
+    });
+    if(!ok)el.innerHTML='<div class="empty" style="padding:8px 0">搜尋需連線</div>';
+  },500);
+}
+
+function toggleCalSearch(){
+  var bar=document.getElementById('calSearchBar');
+  if(!bar)return;
+  bar.style.display=bar.style.display==='none'?'block':'none';
+  if(bar.style.display==='block'){var i=document.getElementById('calSearchInput');if(i)i.focus();}
+}
+
+function renderCalDemo(){
+  var t=new Date();
+  var y=t.getFullYear(),m=t.getMonth()+1,d=t.getDate();
+  var ds=calDateStr_(y,m,d);
+  var ns=calDateStr_(y,m,Math.min(d+2,28));
+  STATE.calTaskMap={};
+  STATE.calTaskMap[ds]=[
+    {id:'T1',rowIndex:2,title:'合新合心保護開工確認',project:'合新合心',owner:'育瑄',status:'待處理',type:'task'},
+    {id:'T2',rowIndex:3,title:'鉅力高宇木作進場款請款',project:'鉅力高宇',owner:'育瑄',status:'待處理',type:'task'}
+  ];
+  STATE.calTaskMap[ns]=[
+    {id:'T3',rowIndex:4,title:'第三次3D提案',project:'遠雄仰森',owner:'育瑄',status:'待處理',type:'calendar',startTime:'14:00'}
+  ];
+  renderCalGrid();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 頁面 4：收付款
+// ═══════════════════════════════════════════════════════════════
+function loadPayments() {
+  var ok = gRun('getPaymentsData', undefined, function(data) {
+    if (data.error) { console.error(data.error); renderPaymentsDemo(); return; }
+    STATE.paymentsData = data;
+    renderPaymentsCaseChips();
+    renderPayContent();
+  });
+  if (!ok) { renderPaymentsDemo(); }
+}
+
+function renderPaymentsCaseChips() {
+  var d = STATE.paymentsData;
+  if (!d) return;
+  var names = {};
+  (d.customer||[]).forEach(function(p){ if (p.project) names[p.project] = true; });
+  (d.vendor||[]).forEach(function(v){ if (v.project) names[v.project] = true; });
+  (d.pnl||[]).forEach(function(p){ if (p.name) names[p.name] = true; });
+  var caseList = Object.keys(names);
+
+  var el = document.getElementById('paymentsCaseChips');
+  if (!el) return;
+  if (caseList.length === 0) { el.innerHTML = ''; return; }
+
+  var html = '<button class="case-chip active" onclick="selectPaymentsCase(this,\'all\')">全部案件</button>';
+  html += caseList.map(function(c) {
+    return '<button class="case-chip" onclick="selectPaymentsCase(this,\''+esc(c)+'\')">'+esc(c)+'</button>';
+  }).join('');
+  el.innerHTML = html;
+}
+
+function selectPaymentsCase(el, caseName) {
+  document.querySelectorAll('#paymentsCaseChips .case-chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  STATE.paymentsSelectedCase = caseName;
+  renderPayContent();
+}
+
+function v3App_matchCase_(itemCaseName, selected) {
+  if (selected === 'all') return true;
+  if (!itemCaseName) return false;
+  return itemCaseName === selected || itemCaseName.includes(selected.substring(0,2)) || selected.includes(itemCaseName.substring(0,2));
+}
+
+function setPayTab(el, tab) {
+  document.querySelectorAll('.tab-row .tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+  STATE.payTab = tab;
+  renderPayContent();
+}
+
+function renderPayContent() {
+  var d = STATE.paymentsData;
+  if (!d) return;
+  var el = document.getElementById('payContent');
+
+  if (STATE.payTab === 'customer') {
+    var list = (d.customer||[]).filter(function(p){ return v3App_matchCase_(p.project, STATE.paymentsSelectedCase); }).slice().sort(function(a,b){ return a.due < b.due ? -1 : 1; });
+    // rowIndex 從原始 customer 陣列取得
+    list = list.map(function(p, i) { return Object.assign({}, p, { rowIndex: p.rowIndex || (i+2) }); });
+    var totalContract = list.reduce(function(s,p){ return s+p.amount; }, 0);
+    var totalReceived = list.filter(function(p){ return p.status.indexOf('已收')>=0; }).reduce(function(s,p){ return s+p.amount; }, 0);
+    var totalPending = totalContract - totalReceived;
+
+    el.innerHTML = '<div class="grid2" style="margin-bottom:14px">'
+      + '<div class="card mini-metric"><div class="mini-metric-label">已收合計</div><div class="mini-metric-value serif" style="color:#8AAE9C">'+shortTwd(totalReceived)+'</div></div>'
+      + '<div class="card mini-metric"><div class="mini-metric-label">未收合計</div><div class="mini-metric-value serif">'+shortTwd(totalPending)+'</div></div>'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:8px">'
+      + list.map(function(p) {
+          var status = isOverdue(p.due, p.status) ? '逾期' : p.status;
+          var isDone = p.status.indexOf('已收') >= 0;
+          return '<div class="card pay-item"><div class="pay-item-top">'
+            + '<div><div class="pay-item-proj">'+esc(p.project)+'</div><div class="pay-item-stage">'+esc(p.category)+'・'+esc(p.stage)+'</div></div>'
+            + '<div style="display:flex;align-items:center;gap:8px">'
+            + '<span class="status-tag '+statusClass(status)+'">'+esc(status)+'</span>'
+            + '<button class="pay-check-btn'+(isDone?' done':'')+'" onclick="toggleCustomerPay('+p.rowIndex+',\''+esc(p.status)+'\')" title="標記收款">'
+            + (isDone?'<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>':'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>')
+            + '</button></div></div>'
+            + '<div class="pay-item-bottom"><div class="pay-item-amount">'+twd(p.amount)+'</div>'
+            + '<div class="pay-item-date">'+(isDone?'已收日期':'預計收款')+'<br>'+esc(p.due)+'</div></div>'
+            + (p.note?'<div class="pay-item-note">'+esc(p.note)+'</div>':'')
+            + '</div>';
+        }).join('')
+      + '</div>';
+
+  } else if (STATE.payTab === 'vendor') {
+    var vlist = (d.vendor||[]).filter(function(v){ return v3App_matchCase_(v.project, STATE.paymentsSelectedCase); }).slice().sort(function(a,b){ return a.due < b.due ? -1 : 1; });
+    vlist = vlist.map(function(v, i) { return Object.assign({}, v, { rowIndex: v.rowIndex || (i+2) }); });
+    var totalCost = vlist.reduce(function(s,v){ return s+v.amount; }, 0);
+    var totalPaid = vlist.reduce(function(s,v){ return s+v.paid; }, 0);
+    var totalRemain = totalCost - totalPaid;
+
+    el.innerHTML = '<div class="grid2" style="margin-bottom:14px">'
+      + '<div class="card mini-metric"><div class="mini-metric-label">已付合計</div><div class="mini-metric-value serif" style="color:#8AAE9C">'+shortTwd(totalPaid)+'</div></div>'
+      + '<div class="card mini-metric"><div class="mini-metric-label">剩餘待付</div><div class="mini-metric-value serif">'+shortTwd(totalRemain)+'</div></div>'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:8px">'
+      + vlist.map(function(v) {
+          var remain = v.amount - v.paid;
+          var status = remain<=0 ? '已付' : v.paid>0 ? '部分付款' : (daysDiff(v.due)<0 ? '逾期' : '未付');
+          var isFullPaid = remain <= 0;
+          return '<div class="card pay-item"><div class="pay-item-top">'
+            + '<div><div class="pay-item-proj">'+esc(v.project)+'</div><div class="pay-item-stage">'+esc(v.vendor)+'・'+esc(v.trade)+'</div></div>'
+            + '<span class="status-tag '+statusClass(status)+'">'+esc(status)+'</span></div>'
+            + '<div class="pay-item-bottom"><div><div class="pay-item-amount">'+twd(v.amount)+'</div>'
+            + '<div class="pay-item-note" style="margin-top:3px">已付 '+twd(v.paid)+' ／ 未付 '+twd(remain)+'</div></div>'
+            + (v.due ? '<div class="pay-item-date">預計付款<br>'+esc(v.due)+'</div>' : '') + '</div>'
+            + (v.note?'<div class="pay-item-note">'+esc(v.note)+'</div>':'')
+            + (!isFullPaid?'<button class="defect-btn" style="margin-top:10px" onclick="showVendorPayModal('+v.rowIndex+','+v.amount+','+v.paid+',\''+esc(v.project)+'\',\''+esc(v.vendor)+'\')">＋ 登記付款</button>':'')
+            + '</div>';
+        }).join('')
+      + '</div>';
+
+  } else if (STATE.payTab === 'pnl') {
+    var pnl = (d.pnl || []).filter(function(p){ return v3App_matchCase_(p.name, STATE.paymentsSelectedCase); });
+    var signed = pnl.filter(function(p){ var t=(p.type||'')+(p.status||''); if(/設計中|純設計/.test(t)) return false; return /施工|保護|收尾|結案|完工/.test(t); });
+    var sumRevenue = signed.reduce(function(s,p){ return s+(Number(p.contractTotal)||0); }, 0);
+    var sumProfit  = signed.reduce(function(s,p){ return s+(Number(p.profit)||0); }, 0);
+    var blendMargin = sumRevenue>0 ? Math.round(sumProfit/sumRevenue*1000)/10 : 0;
+    // 已簽設計約、工程約尚未簽的案：預估工程金額（毛利暫抓 32%）
+    var pipeline = pnl.filter(function(p){ var t=(p.type||'')+(p.status||''); if(/施工|保護|收尾|結案|完工/.test(t)) return false; return (Number(p.constEstimate)||0)>0; });
+    var pipeRevenue = pipeline.reduce(function(s,p){ return s+(Number(p.constEstimate)||0); }, 0);
+    var pipeProfit = Math.round(pipeRevenue*0.32);
+    var pnlSummary = '<div class="grid2" style="margin-bottom:10px">'
+      + '<div class="card mini-metric"><div class="mini-metric-label">目前營業額（已簽約）</div><div class="mini-metric-value serif">'+shortTwd(sumRevenue)+'</div></div>'
+      + '<div class="card mini-metric"><div class="mini-metric-label">毛利估算 ・ '+blendMargin+'%</div><div class="mini-metric-value serif" style="color:#8AAE9C">'+shortTwd(sumProfit)+'</div></div>'
+      + '</div>'
+      + '<div class="grid2" style="margin-bottom:14px">'
+      + '<div class="card mini-metric" style="opacity:0.85"><div class="mini-metric-label">已簽設計約·未簽工程約<br>預估工程金額</div><div class="mini-metric-value serif">'+shortTwd(pipeRevenue)+'</div></div>'
+      + '<div class="card mini-metric" style="opacity:0.85"><div class="mini-metric-label">預估毛利（暫抓32%）</div><div class="mini-metric-value serif" style="color:#C9956B">'+shortTwd(pipeProfit)+'</div></div>'
+      + '</div>';
+    el.innerHTML = pnlSummary + pnl.map(function(p) {
+      return '<div class="card pnl-card" style="margin-bottom:10px">'
+        + '<div class="pnl-header"><div class="seal" style="width:32px;height:32px;font-size:13px">'+esc(p.seal)+'</div><div class="pnl-name">'+esc(p.name)+'</div></div>'
+        + '<div class="pnl-grid">'
+        + '<div><div class="pnl-row-label">合約總收入</div><div class="pnl-row-val">'+twd(p.contractTotal)+'</div></div>'
+        + '<div><div class="pnl-row-label">已收款</div><div class="pnl-row-val green">'+twd(p.received)+'</div></div>'
+        + '<div><div class="pnl-row-label">未收款</div><div class="pnl-row-val">'+twd(p.pending)+'</div></div>'
+        + '<div><div class="pnl-row-label">已知成本</div><div class="pnl-row-val">'+twd(p.cost)+'</div></div>'
+        + '<div><div class="pnl-row-label">已付廠商</div><div class="pnl-row-val green">'+twd(p.paidCost)+'</div></div>'
+        + '<div><div class="pnl-row-label">剩餘待付</div><div class="pnl-row-val '+(p.remainCost>0?'red':'')+'">'+twd(p.remainCost)+'</div></div>'
+        + '</div>'
+        + '<div class="pnl-footer">'
+        + '<div><div class="pnl-footer-label">預估毛利 ・ 毛利率</div><div class="pnl-footer-val">'+twd(p.profit)+' ・ '+p.margin+'%</div></div>'
+        + '<div style="text-align:right"><div class="pnl-footer-label">帳面暫餘</div><div class="pnl-footer-val '+(p.bookBalance<0?'neg':'pos')+'">'+twd(p.bookBalance)+'</div></div>'
+        + '</div></div>';
+    }).join('');
+
+  } else if (STATE.payTab === 'cashflow') {
+    el.innerHTML = '<div class="empty">現金流載入中...</div>';
+    var ok = gRun('getCashflowData', undefined, function(cfData) {
+      if (cfData.error) { el.innerHTML = '<div class="empty">載入失敗</div>'; return; }
+      var cf = cfData.current || {};
+      var months = cfData.months || [];
+      var isNeg = cf.isNeg;
+      el.innerHTML =
+        '<div class="card" style="margin-bottom:12px">'
+        + '<div class="mini-metric-label">本月淨額</div>'
+        + '<div class="mini-metric-value serif" style="color:'+(isNeg?'var(--rust)':'var(--sage)')+'">'+esc(cf.net||'—')+'</div>'
+        + '<div style="display:flex;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--glass-border)">'
+        + '<div><div class="mini-metric-label">已收</div><div style="font-size:14px;color:var(--cream-dim)">'+esc(cf.income||'—')+'</div></div>'
+        + '<div style="text-align:right"><div class="mini-metric-label">已付廠商</div><div style="font-size:14px;color:var(--cream-dim)">'+esc(cf.expense||'—')+'</div></div>'
+        + '</div></div>'
+        + '<div class="section-title" style="margin-top:4px">近6個月</div>'
+        + '<div class="card">' + months.map(function(m) {
+            var isN = m.net < 0;
+            return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--glass-border)">'
+              + '<span style="font-size:13px;color:var(--cream-faint)">'+esc(m.label)+'</span>'
+              + '<div style="text-align:right">'
+              + '<div style="font-size:13px;color:'+(isN?'var(--rust)':'var(--sage)')+'">'+shortTwd(m.net)+'</div>'
+              + '<div style="font-size:10.5px;color:var(--cream-faint)">收 '+shortTwd(m.income)+' ／ 付 '+shortTwd(m.expense)+'</div>'
+              + '</div></div>';
+          }).join('') + '</div>';
+    });
+    if (!ok) el.innerHTML = '<div class="empty">現金流功能需連線</div>';
+  }
+}
+
+
+// 客戶收款打勾
+function toggleCustomerPay(rowIndex, currentStatus) {
+  var isDone = currentStatus.indexOf('已收') >= 0;
+  var newStatus = isDone ? '待收' : '已收';
+  if (!isDone && !confirm('確認標記此款項為「已收」？')) return;
+  var ok = gRun('markCustomerReceived', { rowIndex: rowIndex, status: newStatus }, function(res) {
+    if (res.success) {
+      showToast(newStatus === '已收' ? '✓ 已標記收款' : '已取消', true);
+      STATE.paymentsData = null;
+      loadPayments();
+    } else {
+      showToast('更新失敗：' + (res.error||''), false);
+    }
+  });
+  if (!ok) showToast('（預覽模式）', true);
+}
+
+// 廠商付款 Modal
+STATE.vendorPayModal = null;
+function showVendorPayModal(rowIndex, total, paid, project, vendor) {
+  var remain = total - paid;
+  var html = '<div id="vpModal" style="position:fixed;inset:0;z-index:900;background:rgba(15,14,12,0.85);display:flex;align-items:center;justify-content:center;padding:20px">'
+    + '<div class="card" style="width:100%;max-width:380px">'
+    + '<div style="font-size:14px;color:var(--gold);margin-bottom:14px">登記付款</div>'
+    + '<div style="font-size:13px;color:var(--cream-dim);margin-bottom:4px">'+esc(project)+' ・ '+esc(vendor)+'</div>'
+    + '<div style="font-size:12px;color:var(--cream-faint);margin-bottom:16px">總額 '+twd(total)+' ／ 已付 '+twd(paid)+' ／ 未付 '+twd(remain)+'</div>'
+    + '<div class="field-block"><div class="field-label">本次付款金額</div>'
+    + '<input class="field-input" id="vpAmount" type="number" placeholder="例：100000" max="'+remain+'">'
+    + '</div>'
+    + '<div class="action-row">'
+    + '<button class="btn-secondary" onclick="document.getElementById(\'vpModal\').remove()">取消</button>'
+    + '<button class="btn-primary" onclick="submitVendorPay('+rowIndex+','+total+')">確認付款</button>'
+    + '</div></div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+  document.getElementById('vpAmount').focus();
+}
+
+function submitVendorPay(rowIndex, total) {
+  var amt = Number(document.getElementById('vpAmount').value);
+  if (!amt || amt <= 0) { showToast('請輸入金額', false); return; }
+  var ok = gRun('updateVendorPayment', { rowIndex: rowIndex, addAmount: amt, total: total }, function(res) {
+    if (res.success) {
+      showToast('✓ 已登記付款 ' + twd(amt), true);
+      var modal = document.getElementById('vpModal');
+      if (modal) modal.remove();
+      STATE.paymentsData = null;
+      loadPayments();
+    } else {
+      showToast('更新失敗：' + (res.error||''), false);
+    }
+  });
+  if (!ok) { showToast('（預覽模式）', true); document.getElementById('vpModal').remove(); }
+}
+
+function renderPaymentsDemo() {
+  STATE.paymentsData = {
+    customer: [
+      {project:'鉅力高宇',category:'工程',stage:'木作進場30%',amount:345000,due:'2026-06-22',status:'待收'},
+      {project:'合新合心',category:'工程',stage:'木作進場30%',amount:366000,due:'2026-06-08',status:'已收'}
+    ],
+    vendor: [
+      {project:'豐邑氧森A1',vendor:'木工班',trade:'木作',amount:623000,paid:550000,due:'2026-06-20'}
+    ],
+    pnl: [
+      {name:'豐邑氧森A1',seal:'氧',contractTotal:1915000,received:1714200,pending:200800,cost:1037105,paidCost:893000,remainCost:144105,profit:877895,margin:45.8,bookBalance:821200}
+    ]
+  };
+  renderPayContent();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 頁面 5：缺失追蹤
+// ═══════════════════════════════════════════════════════════════
+function loadDefects() {
+  var ok = gRun('getDefectsData', undefined, function(data) {
+    if (data.error) { console.error(data.error); renderDefectsDemo(); return; }
+    STATE.defectsData = data.defects;
+    renderDefects();
+  });
+  if (!ok) renderDefectsDemo();
+  if (STATE.projectsData) populateDefectCases_();
+  else gRun('getProjectsData', undefined, function(data){
+    if (data && data.projects){ STATE.projectsData = data.projects; populateDefectCases_(); }
+  });
+}
+
+// ── 新增缺失表單 ──
+function populateDefectCases_() {
+  var sel = document.getElementById('defCase');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">請選擇案件</option>';
+  (STATE.projectsData || []).forEach(function(p) {
+    var o = document.createElement('option');
+    o.value = p.name; o.textContent = p.name;
+    sel.appendChild(o);
+  });
+}
+function showDefectForm() {
+  var d = document.getElementById('defDue');
+  if (d && !d.value) d.value = new Date().toISOString().slice(0,10);
+  if (STATE.projectsData) populateDefectCases_();
+  else gRun('getProjectsData', undefined, function(data){
+    if (data && data.projects){ STATE.projectsData = data.projects; populateDefectCases_(); }
+  });
+  document.getElementById('defectForm').style.display = 'block';
+}
+function hideDefectForm() {
+  document.getElementById('defectForm').style.display = 'none';
+}
+function submitDefect() {
+  var caseName = document.getElementById('defCase').value;
+  var desc = (document.getElementById('defDesc').value||'').trim();
+  if (!caseName) { showToast('請選擇案件', false); return; }
+  if (!desc) { showToast('請填寫缺失描述', false); return; }
+  var data = {
+    caseName: caseName,
+    location: document.getElementById('defLocation').value,
+    desc: desc,
+    owner: document.getElementById('defOwner').value,
+    due: document.getElementById('defDue').value
+  };
+  var ok = gRun('addDefectRecord', data, function(res) {
+    if (res && res.success) {
+      showToast('已新增缺失並建立行事曆提醒', true);
+      hideDefectForm();
+      document.getElementById('defLocation').value = '';
+      document.getElementById('defDesc').value = '';
+      STATE.defectsData = null;
+      loadDefects();
+    } else {
+      showToast('新增失敗：' + ((res&&res.error)||''), false);
+    }
+  });
+  if (!ok) { showToast('已新增（預覽模式）', true); hideDefectForm(); }
+}
+
+function renderDefects() {
+  var items = STATE.defectsData || [];
+  var el = document.getElementById('defectsList');
+  if (items.length === 0) { el.innerHTML = '<div class="empty">目前無缺失記錄 ✅</div>'; return; }
+
+  el.innerHTML = items.map(function(d) {
+    var overdue = isOverdue(d.due, d.status);
+    var status = overdue ? '逾期' : d.status;
+    var done = d.status === '已完成' || d.status === '已解決';
+    return '<div class="card defect-card">'
+      + '<div class="defect-top"><div><div class="defect-proj">'+esc(d.project)+'</div><div class="defect-loc">'+esc(d.location)+'</div></div>'
+      + '<span class="status-tag '+statusClass(status)+'">'+esc(status)+'</span></div>'
+      + '<div class="defect-desc">'+esc(d.desc)+'</div>'
+      + '<div class="defect-footer"><span>責任人：'+esc(d.owner)+'</span><span class="'+(overdue?'overdue':'')+'">期限 '+esc((d.due||'').slice(5))+'</span></div>'
+      + '<button class="defect-btn'+(done?' done':'')+'" onclick="toggleDefect(\''+d.id+'\','+d.rowIndex+',\''+(done?'處理中':'已解決')+'\')">'+(done?'已標記完成 ✓':'標記為已完成')+'</button>'
+      + '</div>';
+  }).join('');
+}
+
+function toggleDefect(id, rowIndex, newStatus) {
+  var d = STATE.defectsData.find(function(x){ return x.id === id; });
+  if (!d) return;
+  d.status = newStatus;
+  renderDefects();
+  if (typeof google !== 'undefined' && google.script) {
+    google.script.run.toggleDefectStatus(rowIndex, newStatus);
+  }
+  showToast(newStatus === '已解決' ? '已標記完成' : '已重新開啟', true);
+}
+
+function renderDefectsDemo() {
+  STATE.defectsData = [
+    {id:'R-1', project:'豐邑氧森A1', location:'全室／油漆面', desc:'油漆收邊與燈槽轉角完工前複查', owner:'育瑄', due:'2026-07-08', status:'待處理', rowIndex:2},
+    {id:'R-2', project:'鉅力高宇', location:'公區／室內', desc:'拆保護前確認地坪及門框是否刮傷', owner:'阿祥', due:'2026-09-20', status:'待處理', rowIndex:3}
+  ];
+  renderDefects();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 頁面 6：施工日誌
+// ═══════════════════════════════════════════════════════════════
+function loadLogPage() {
+  document.getElementById('logDateDisplay').textContent = new Date().toISOString().slice(0,10);
+  var ok = gRun('getLogPageData', undefined, function(data) {
+    if (data.error) { console.error(data.error); renderLogCasesDemo(); return; }
+    STATE.logData = data.cases;
+    renderLogCases(data.cases);
+  });
+  if (!ok) renderLogCasesDemo();
+
+  ['logArea','logToday','logIssues','logCrew','logTomorrow'].forEach(function(id) {
+    document.getElementById(id).addEventListener('input', updateLogPreview);
+  });
+}
+
+function renderLogCases(cases) {
+  var el = document.getElementById('logCaseChips');
+  if (!cases || cases.length === 0) { el.innerHTML = '<div class="empty">尚無施工中案場</div>'; return; }
+  STATE.selectedCase = cases[0];
+  el.innerHTML = cases.map(function(c, i) {
+    return '<button class="case-chip'+(i===0?' active':'')+'" onclick="selectLogCase(this,\''+esc(c)+'\')">'+esc(c)+'</button>';
+  }).join('');
+  updateLogPreview();
+}
+
+function renderLogCasesDemo() {
+  renderLogCases(['合新合心','鉅力高宇','豐邑氧森A1']);
+}
+
+function selectLogCase(el, caseName) {
+  document.querySelectorAll('.case-chip').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  STATE.selectedCase = caseName;
+  updateLogPreview();
+}
+
+function toggleTarget(el) {
+  el.classList.toggle('on');
+  if (el.id === 'toggleLine') STATE.lineOn = el.classList.contains('on');
+  if (el.id === 'toggleInternal') STATE.internalOn = el.classList.contains('on');
+}
+
+function buildLogMessage() {
+  var area = document.getElementById('logArea').value || '（未填）';
+  var today = document.getElementById('logToday').value || '（未填）';
+  var issues = document.getElementById('logIssues').value || '無';
+  var crew = document.getElementById('logCrew').value || '0';
+  var tomorrow = document.getElementById('logTomorrow').value || '（未填）';
+  var dateStr = new Date().toISOString().slice(0,10);
+
+  return '【'+STATE.selectedCase+'｜施工紀錄】\n日期：'+dateStr+'\n\n'
+    + '施工區域：\n'+area+'\n\n'
+    + '今日施作：\n'+today+'\n\n'
+    + '缺失／待確認：\n'+issues+'\n\n'
+    + '工班人數：'+crew+'人\n\n'
+    + '明日預計：\n'+tomorrow+'\n\n'
+    + '現場照片：（自動附圖）\n'
+    + '--------------------\n禹合制所工程管理系統';
+}
+
+function updateLogPreview() {
+  document.getElementById('logPreview').textContent = buildLogMessage();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 照片上傳
+// ═══════════════════════════════════════════════════════════════
+STATE.photoCards = [];
+var photoIdCounter = 0;
+
+function handlePhotoSelect(event) {
+  var files = event.target.files;
+  if (!files || files.length === 0) return;
+
+  for (var i = 0; i < files.length; i++) {
+    (function(file) {
+      var localId = 'photo_' + (photoIdCounter++);
+      var card = { localId: localId, file: file, fileId: null, url: '', item: '', location: '', note: '', status: 'reading' };
+      STATE.photoCards.push(card);
+      renderPhotoCards();
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var dataUrl = e.target.result;
+        card.previewUrl = dataUrl;
+        card.status = 'uploading';
+        renderPhotoCards();
+
+        compressImage(dataUrl, function(compressedBase64, mimeType) {
+          card.base64 = compressedBase64;
+          card.mimeType = mimeType;
+
+          if (typeof google !== 'undefined' && google.script) {
+            google.script.run
+              .withSuccessHandler(function(res) {
+                if (res.success) {
+                  var r = res.result || {};
+                  card.fileId      = r.fileId      || '';
+                  card.url         = r.url         || '';
+                  card.aiSummary   = r.aiSummary   || '';
+                  card.aiRisk      = r.aiRisk      || '';
+                  card.aiNextStep  = r.aiNextStep  || '';
+                  card.status = 'done';
+                } else {
+                  card.status = 'error';
+                  card.errorMsg = res.error;
+                }
+                renderPhotoCards();
+              })
+              .withFailureHandler(function(err) {
+                card.status = 'error';
+                card.errorMsg = (err && err.message) ? err.message : '連線失敗，請檢查網路';
+                renderPhotoCards();
+              })
+              .analyzeAndSaveSitePhoto({
+                base64: compressedBase64,
+                mimeType: mimeType,
+                fileName: file.name,
+                caseName: STATE.selectedCase || '未分類',
+                operator: '育瑄'
+              });
+          } else {
+            setTimeout(function() {
+              card.status = 'done';
+              card.url = dataUrl;
+              renderPhotoCards();
+            }, 800);
+          }
+        });
+      };
+      reader.readAsDataURL(file);
+    })(files[i]);
+  }
+
+  event.target.value = '';
+}
+
+function compressImage(dataUrl, callback) {
+  var img = new Image();
+  img.onload = function() {
+    var maxSize = 1280;
+    var w = img.width, h = img.height;
+    if (w > h && w > maxSize) { h = h * maxSize / w; w = maxSize; }
+    else if (h > maxSize) { w = w * maxSize / h; h = maxSize; }
+
+    var canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+
+    var compressedDataUrl = canvas.toDataURL('image/jpeg', 0.75);
+    var base64 = compressedDataUrl.split(',')[1];
+    callback(base64, 'image/jpeg');
+  };
+  img.onerror = function() {
+    var base64 = dataUrl.split(',')[1];
+    callback(base64, 'image/jpeg');
+  };
+  img.src = dataUrl;
+}
+
+function renderPhotoCards() {
+  var el = document.getElementById('photoCardsList');
+  if (STATE.photoCards.length === 0) { el.innerHTML = ''; return; }
+
+  el.innerHTML = STATE.photoCards.map(function(c, idx) {
+    var thumb = c.previewUrl
+      ? '<img class="photo-card-thumb" src="'+c.previewUrl+'">'
+      : '<div class="photo-card-thumb loading">載入中</div>';
+
+    var statusBadge = '';
+    if (c.status === 'uploading') statusBadge = '<span class="photo-card-status ps-uploading">AI 分析中...</span>';
+    else if (c.status === 'done') {
+      statusBadge = '<span class="photo-card-status ps-done">已上傳 + AI 分析 ✓</span>';
+      if (c.aiSummary) statusBadge += '<div style="font-size:11px;color:var(--cream-faint);margin-top:4px">📝 '+esc(c.aiSummary)+'</div>';
+      if (c.aiRisk && c.aiRisk !== '無') statusBadge += '<div style="font-size:11px;color:var(--rust);margin-top:2px">⚠️ '+esc(c.aiRisk)+'</div>';
+    }
+    else if (c.status === 'error') statusBadge = '<span class="photo-card-status ps-error">上傳失敗' + (c.errorMsg ? '：' + esc(c.errorMsg) : '') + '</span>';
+
+    return '<div class="photo-card">'
+      + thumb
+      + '<div class="photo-card-fields">'
+      + '<div class="photo-card-top"><span class="photo-card-label">第 '+(idx+1)+' 張</span>'
+      + '<div class="photo-card-remove" onclick="removePhotoCard(\''+c.localId+'\')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>'
+      + '<input class="photo-card-input" placeholder="項目（例：撒水管持壓）" value="'+esc(c.item)+'" onblur="updatePhotoField(\''+c.localId+'\',\'item\',this.value)">'
+      + '<div class="photo-card-row2">'
+      + '<input class="photo-card-input" placeholder="位置（例：C棟-16F）" value="'+esc(c.location)+'" onblur="updatePhotoField(\''+c.localId+'\',\'location\',this.value)">'
+      + '</div>'
+      + '<input class="photo-card-input" placeholder="說明（例：施工中/施工完成）" value="'+esc(c.note)+'" onblur="updatePhotoField(\''+c.localId+'\',\'note\',this.value)">'
+      + statusBadge
+      + '</div></div>';
+  }).join('');
+}
+
+function updatePhotoField(localId, field, value) {
+  var card = STATE.photoCards.find(function(c){ return c.localId === localId; });
+  if (card) card[field] = value;
+}
+
+function removePhotoCard(localId) {
+  STATE.photoCards = STATE.photoCards.filter(function(c){ return c.localId !== localId; });
+  renderPhotoCards();
+}
+
+function submitLog(push) {
+  var pendingUploads = STATE.photoCards.filter(function(c){ return c.status === 'uploading' || c.status === 'reading'; });
+  if (pendingUploads.length > 0) {
+    showToast('還有 ' + pendingUploads.length + ' 張照片上傳中，請稍候', false);
+    return;
+  }
+
+  var photosData = STATE.photoCards
+    .filter(function(c){ return c.status === 'done'; })
+    .map(function(c){ return { fileId: c.fileId, url: c.url, item: c.item, location: c.location, note: c.note }; });
+
+  var data = {
+    project: STATE.selectedCase,
+    area: document.getElementById('logArea').value,
+    today: document.getElementById('logToday').value,
+    issues: document.getElementById('logIssues').value,
+    crew: document.getElementById('logCrew').value,
+    tomorrow: document.getElementById('logTomorrow').value,
+    photos: photosData
+  };
+
+  if (typeof google !== 'undefined' && google.script) {
+    google.script.run
+      .withSuccessHandler(function(res) {
+        if (res.success) {
+          showToast('已儲存施工回報' + (res.count > 0 ? '（含'+res.count+'張照片）' : ''), true);
+          STATE.photoCards = [];
+          renderPhotoCards();
+          if (push) afterSaveSendPush();
+        } else {
+          showToast('儲存失敗：' + (res.error||''), false);
+        }
+      })
+      .withFailureHandler(function(e) { showToast('儲存失敗', false); })
+      .submitSiteLogWithPhotos(data);
+  } else {
+    showToast('已儲存施工回報（預覽模式，含'+photosData.length+'張照片）', true);
+    STATE.photoCards = [];
+    renderPhotoCards();
+    if (push) afterSaveSendPush();
+  }
+}
+
+function afterSaveSendPush() {
+  var msg = buildLogMessage();
+  if (STATE.internalOn) {
+    if (typeof google !== 'undefined' && google.script) {
+      google.script.run.sendTelegramGroupMessage(msg);
+    }
+    showToast('已推播至 Telegram 內部群組', true);
+  }
+  if (STATE.lineOn) {
+    setTimeout(function() {
+      window.open('https://line.me/R/share?text=' + encodeURIComponent(msg), '_blank');
+      showToast('已開啟 LINE，請選擇業主群組', true);
+    }, 800);
+  }
+}
+
+function previewWeekly() {
+  var today = document.getElementById('logToday').value || '（依本週施工日誌彙整）';
+  var tomorrow = document.getElementById('logTomorrow').value || '（依排程表自動帶入）';
+  var issues = document.getElementById('logIssues').value || '無';
+
+  var text = '【'+STATE.selectedCase+'｜本週工程進度】\n\n'
+    + '✓ 已完成事項\n－ '+today+'\n\n'
+    + '✓ 本週施工照片\n－ 共 0 張（自動附圖）\n\n'
+    + '✓ 下週預計事項\n－ '+tomorrow+'\n\n'
+    + '✓ 待確認問題\n－ '+issues+'\n\n'
+    + '--------------------\n禹合制所工程管理系統 ・ 每週五 18:00 自動發送';
+
+  var el = document.getElementById('weeklyPreviewText');
+  el.textContent = text;
+  el.style.display = 'block';
+
+  var existingBtn = document.getElementById('weeklyLineBtn');
+  if (!existingBtn) {
+    var btn = document.createElement('button');
+    btn.id = 'weeklyLineBtn';
+    btn.className = 'weekly-btn';
+    btn.style.marginTop = '10px';
+    btn.style.color = '#06C755';
+    btn.style.borderColor = 'rgba(6,199,85,.4)';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="#06C755" stroke="none"><path d="M12 2C6.48 2 2 5.92 2 10.72c0 3.1 1.86 5.84 4.68 7.47-.1.36-.65 2.3-.74 2.65 0 0-.02.1.05.14s.15.02.22-.02c.3-.16 3.82-2.52 4.37-2.88.47.07.95.1 1.42.1 5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/></svg> 一鍵傳 LINE 給業主';
+    btn.onclick = function() {
+      window.open('https://line.me/R/share?text=' + encodeURIComponent(document.getElementById('weeklyPreviewText').textContent), '_blank');
+    };
+    document.querySelector('.weekly-card').appendChild(btn);
+  }
+}
+
+// closeDrawingViewer（統一檔案瀏覽器關閉）
+function closeDrawingViewer() {
+  document.getElementById('drawingViewerModal').style.display = 'none';
+  var frame = document.getElementById('drawingViewerFrame');
+  if (frame) { if (frame.tagName==='IFRAME') frame.src=''; else frame.src=''; }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 初始化
+// ═══════════════════════════════════════════════════════════════
+loadDashboard();
+</script>

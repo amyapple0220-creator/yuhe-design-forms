@@ -219,7 +219,7 @@ function caseTasks(name){
 }
 function overdueOf(name){
   return caseTasks(name).filter(function(t){
-    return t.status!=='已完成'&&!store.done[tKey(t)]&&parse(t.d)<TODAY;
+    return !/完成|取消/.test(t.status)&&!store.done[tKey(t)]&&parse(t.d)<TODAY;
   }).sort(function(a,b){return parse(a.d)-parse(b.d);});
 }
 
@@ -231,7 +231,7 @@ function render(){
     eRecv+=c.eRecv; eDue+=Math.max(0,c.eTotal-c.eRecv);
   });
   var totalRecv=dRecv+eRecv,totalDue=dDue+eDue;
-  var odAll=TASKS.filter(function(t){return t.status!=='已完成'&&!store.done[tKey(t)]&&parse(t.d)<TODAY;});
+  var odAll=TASKS.filter(function(t){return !/完成|取消/.test(t.status)&&!store.done[tKey(t)]&&parse(t.d)<TODAY;});
   var k=[
     {k:'案件數',v:CASES.length,cls:''},
     {k:'已收合計',v:fmt(totalRecv),cls:'green'},
@@ -298,7 +298,7 @@ function render(){
   /* 未來14天 */
   var up=TASKS.filter(function(t){
     var d=parse(t.d);
-    return t.status!=='已完成'&&!store.done[tKey(t)]&&d>=TODAY&&dd(TODAY,d)<=14;
+    return !/完成|取消/.test(t.status)&&!store.done[tKey(t)]&&d>=TODAY&&dd(TODAY,d)<=14;
   }).sort(function(a,b){return parse(a.d)-parse(b.d);});
   $('nextBody').innerHTML=up.length?up.map(function(t){
     var days=dd(TODAY,parse(t.d));
