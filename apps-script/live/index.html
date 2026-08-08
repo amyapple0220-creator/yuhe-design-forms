@@ -137,13 +137,14 @@ input, textarea, select{ font-family:inherit; }
 }
 .toast{
   position:fixed; left:50%; bottom:100px; transform:translateX(-50%) translateY(20px);
-  background:rgba(33,30,27,0.95); border:1px solid var(--glass-border);
+  background:#FFFDF7; border:1px solid rgba(95,122,92,.45);
   backdrop-filter:blur(16px);
-  color:var(--cream); padding:13px 20px; border-radius:999px;
-  font-size:13.5px; display:flex; align-items:center; gap:9px;
+  color:#2A2620; font-weight:600; padding:13px 22px; border-radius:999px;
+  font-size:14px; display:flex; align-items:center; gap:9px;
   opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s ease;
-  z-index:1000; box-shadow:0 12px 32px rgba(0,0,0,0.4);
+  z-index:1000; box-shadow:0 10px 28px rgba(60,45,25,0.22);
 }
+.toast:not(.success){ border-color:rgba(168,91,60,.5); }
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 .toast svg{ width:16px; height:16px; stroke:var(--sage); fill:none; stroke-width:2; flex-shrink:0; }
 .toast.success svg{ stroke:var(--sage); }
