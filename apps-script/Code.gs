@@ -1582,7 +1582,9 @@ function tgIsAuthorizedChat_(chatId) {
 function handleTelegramCommand_(message, token) {
   var text=String(message.text||'').trim(), chatId=message.chat.id;
   if(/^(行程|近期行程|\/tasks(?:@\w+)?|\/schedule(?:@\w+)?)$/i.test(text)){tgSendUpcomingTasks_(token,chatId);return;}
-  if(/^(幫助|說明|\/help(?:@\w+)?)$/i.test(text)){tgSend_(token,chatId,'📌 行程指令\n\n新增：今天_鉅力高宇_丈量\n查詢：行程\n完成：完成_task_id\n修改：修改_task_id_2026/07/30_新標題\n刪除：刪除_task_id\n\n「行程」清單也可以直接按完成或刪除按鈕。');return;}
+  if(/^(幫助|說明|\/help(?:@\w+)?)$/i.test(text)){tgSend_(token,chatId,'📌 行程指令\n\n新增：今天_鉅力高宇_丈量\n查詢：行程\n完成：完成_task_id\n修改：修改_task_id_2026/07/30_新標題\n刪除：刪除_task_id\n\n✅ 完成 關鍵字 → 把戰報上的任務標完成\n（例：完成 系統櫃下單）\n\n「行程」清單也可以直接按完成或刪除按鈕。');return;}
+  var mKw=text.match(/^完成[\s　]+(.+)$/);
+  if(mKw){tgCompleteErp03_(token,chatId,mKw[1].trim());return;}
   var parts=text.split('_'), action=parts[0];
   if((action==='完成'||action==='刪除'||action==='修改')&&parts[1]){handleTelegramTaskAction_(token,chatId,action,parts);return;}
   if(/^[\d今明][\d\/\-]*_/.test(text)){handleTelegramText_(message,token);return;}
@@ -1599,7 +1601,10 @@ function tgFindEventByTaskId_(taskId) {
 
 function handleTelegramTaskAction_(token, chatId, action, parts) {
   var taskId=parts[1], bound=tgFindEventByTaskId_(taskId);
-  if(!bound){tgSend_(token,chatId,'❌ 找不到這筆行程，請重新輸入「行程」取得最新清單');return;}
+  if(!bound){
+    if(action==='完成'){tgCompleteErp03_(token,chatId,parts.slice(1).join(' ').trim());return;}
+    tgSend_(token,chatId,'❌ 找不到這筆行程，請重新輸入「行程」取得最新清單');return;
+  }
   var event=bound.event, originalTitle=event.getTitle(), result;
   if(action==='完成') result=completeCalendarEvent({calEventId:event.getId(),title:event.getTitle().replace(/^✅\s*/,'')});
   else if(action==='刪除') result=deleteCalendarEvent(event.getId());
@@ -1956,4 +1961,34 @@ function finishDoneTasks_0808() {
   }
   Logger.log('已標完成 ' + n + ' 筆：\n' + log.join('\n'));
   try { sendTelegramSelfReminder('🧹 補標已完成 ' + n + ' 筆\n' + log.join('\n')); } catch(e) {}
+}
+
+
+// ═══ 完成指令 0808：「完成 關鍵字」→ ERP_03_工作安排 標已完成 ═══
+// 每日戰報的逾期清單讀 ERP_03;以後戰報叫什麼,回一句「完成 xxx」即可消掉。
+function tgCompleteErp03_(token, chatId, kw) {
+  kw = String(kw || '').trim();
+  if (!kw) { tgSend_(token, chatId, '用法：完成 關鍵字（例：完成 系統櫃下單）'); return; }
+  var ss = SpreadsheetApp.openById(SS_ID);
+  var sh = ss.getSheetByName('ERP_03_工作安排');
+  if (!sh) { tgSend_(token, chatId, '❌ 找不到 ERP_03_工作安排'); return; }
+  var norm = function(x){ return String(x || '').replace(/[\s　]/g, ''); };
+  var terms = kw.split(/[\s　]+/).map(norm).filter(function(t){ return t; });
+  var rows = sh.getDataRange().getValues(), hits = [];
+  for (var i = 1; i < rows.length; i++) {
+    var st = String(rows[i][5] || '');
+    if (/完成|取消/.test(st)) continue;
+    var hay = norm(String(rows[i][1] || '') + String(rows[i][3] || ''));
+    var ok = true;
+    for (var t = 0; t < terms.length; t++) { if (hay.indexOf(terms[t]) < 0) { ok = false; break; } }
+    if (ok) hits.push({ row: i + 1, cse: String(rows[i][1] || ''), item: String(rows[i][3] || '') });
+  }
+  if (!hits.length) { tgSend_(token, chatId, '❌ 找不到含「' + kw + '」的未完成任務（可能已標完成）'); return; }
+  if (hits.length > 4) {
+    tgSend_(token, chatId, '⚠️ 有 ' + hits.length + ' 筆符合「' + kw + '」，請更精確一點，例：\n完成 ' + hits[0].cse + ' ' + hits[0].item.substring(0, 8));
+    return;
+  }
+  var done = [];
+  hits.forEach(function(h){ sh.getRange(h.row, 6).setValue('已完成'); done.push('・' + h.cse + '｜' + h.item); });
+  tgSend_(token, chatId, '✅ 已標完成 ' + done.length + ' 筆：\n' + done.join('\n'));
 }
