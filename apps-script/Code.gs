@@ -1921,3 +1921,38 @@ function runMaintenance_0808() {
   try { sendTelegramSelfReminder('🛠 維護0808完成\n' + log.join('\n')); } catch(e) {}
   return log;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// 🧹 補標已完成 0808：把「有證據確定做完」的逾期任務標成已完成
+// 證據來源＝01_案件總控(忠泰湛8/5已簽約、8/6已提平配;高宇C-2F 8/4已提3D;
+// 台北華府木工8/3已進場)。不確定的一律不動。只改狀態欄,可隨時改回。
+// ═══════════════════════════════════════════════════════════════
+function finishDoneTasks_0808() {
+  var DONE = [
+    ['忠泰', '平面配置＋風格簡報提案'],
+    ['忠泰', '設計簽約會議'],
+    ['忠泰', '業主平配'],
+    ['高宇C', '第一次3D提案'],
+    ['台北華府', '業主木工進場']
+  ];
+  var ss = SpreadsheetApp.openById(SS_ID);
+  var sh = ss.getSheetByName('ERP_03_工作安排');
+  if (!sh) { Logger.log('找不到 ERP_03_工作安排'); return; }
+  var rows = sh.getDataRange().getValues(), today = new Date(), n = 0, log = [];
+  today.setHours(0,0,0,0);
+  for (var i = 1; i < rows.length; i++) {
+    var d = rows[i][0], cse = String(rows[i][1]||''), item = String(rows[i][3]||''), st = String(rows[i][5]||'');
+    if (!d || /完成|取消/.test(st)) continue;
+    var dd = d instanceof Date ? d : new Date(String(d).replace(/-/g,'/'));
+    if (isNaN(dd.getTime()) || dd >= today) continue;
+    for (var k = 0; k < DONE.length; k++) {
+      if (cse.indexOf(DONE[k][0]) >= 0 && item.indexOf(DONE[k][1]) >= 0) {
+        sh.getRange(i+1, 6).setValue('已完成');
+        log.push(cse + '｜' + item);
+        n++; break;
+      }
+    }
+  }
+  Logger.log('已標完成 ' + n + ' 筆：\n' + log.join('\n'));
+  try { sendTelegramSelfReminder('🧹 補標已完成 ' + n + ' 筆\n' + log.join('\n')); } catch(e) {}
+}
