@@ -40,6 +40,11 @@ var SYNC_FILES = [
     "path": "V6_Adapter.gs"
   },
   {
+    "name": "ProjectAutomation",
+    "type": "SERVER_JS",
+    "path": "ProjectAutomation.gs"
+  },
+  {
     "name": "index",
     "type": "HTML",
     "path": "index.html"
