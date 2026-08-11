@@ -1836,7 +1836,7 @@ function renderProjFiles(idx) {
     if (all.length === 0) { el.innerHTML = '<div class="empty" style="padding:20px 0">尚無圖面</div>'; return; }
     el.innerHTML = '<div class="proj-file-grid">' + all.map(function(item) {
       var f = item.f;
-      return '<div class="proj-file-thumb" onclick="openFileViewer(\'+f.id+\',\'+esc(f.name)+\')">'
+      return '<div class="proj-file-thumb" onclick="openFileViewer(&quot;'+esc(f.id)+'&quot;,&quot;'+esc(f.name)+'&quot;)">'
         + (f.isImage ? '<img src="'+f.thumb+'" loading="lazy">' : '<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:6px"><svg width="28" height="28" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span style="font-size:10px;color:var(--cream-faint)">PDF</span></div>')
         + '<div class="proj-file-thumb-label">'+esc(item.cat)+' ・ '+esc(f.name)+'</div>'
         + '</div>';
@@ -1850,7 +1850,7 @@ function renderProjFiles(idx) {
       return '<div class="proj-photo-group">'
         + '<div class="proj-photo-group-label">'+esc(g.dateLabel)+' ・ '+esc(g.typeLabel)+'（'+g.files.length+'張）</div>'
         + '<div class="proj-file-grid">' + g.files.map(function(f) {
-            return '<div class="proj-file-thumb" onclick="openFileViewer(\'+f.id+\',\'+esc(f.name)+\')">'
+            return '<div class="proj-file-thumb" onclick="openFileViewer(&quot;'+esc(f.id)+'&quot;,&quot;'+esc(f.name)+'&quot;)">'
               + '<img src="'+f.thumb+'" loading="lazy">'
               + '<div class="proj-file-thumb-label">'+esc(f.name)+'</div>'
               + '</div>';
@@ -1869,7 +1869,7 @@ function renderProjFiles(idx) {
     var list = data.receipts || [];
     if (list.length === 0) { el.innerHTML = '<div class="empty" style="padding:20px 0">尚無代墊款收據</div>'; return; }
     el.innerHTML = '<div class="proj-file-grid">' + list.map(function(f) {
-      return '<div class="proj-file-thumb" onclick="openFileViewer(\'+f.id+\',\'+esc(f.name)+\')">'
+      return '<div class="proj-file-thumb" onclick="openFileViewer(&quot;'+esc(f.id)+'&quot;,&quot;'+esc(f.name)+'&quot;)">'
         + (f.isImage ? '<img src="'+f.thumb+'" loading="lazy">' : '<div style="display:flex;align-items:center;justify-content:center;height:100%"><svg width="28" height="28" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>')
         + '<div class="proj-file-thumb-label">'+esc(f.name)+'</div>'
         + '</div>';
@@ -1890,7 +1890,7 @@ function renderFileRow(f) {
     : f.isImage
     ? '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
     : '<svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/></svg>';
-  return '<div class="proj-file-row" onclick="openFileViewer(\'+f.id+\',\'+esc(f.name)+\')">'
+  return '<div class="proj-file-row" onclick="openFileViewer(&quot;'+esc(f.id)+'&quot;,&quot;'+esc(f.name)+'&quot;)">'
     + '<div class="proj-file-icon">'+icon+'</div>'
     + '<div class="proj-file-info"><div class="proj-file-name">'+esc(f.name)+'</div>'
     + '<div class="proj-file-meta">'+(f.label?esc(f.label)+' ・ ':'')+esc(f.updated)+'</div></div>'
