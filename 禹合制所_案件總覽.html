@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜案件總覽儀表板</title>
+<style>
+  :root{
+    --paper:#faf8f4; --card:#ffffff; --ink:#2b2b28; --line:#ddd6c9;
+    --accent:#8a6d4b; --accent-deep:#6f563a; --accent-light:#f1ebe0;
+    --muted:#8b8578; --on-accent:#fff; --shadow:0 1px 3px rgba(60,50,30,.06);
+    --build:#b9762e; --build-bg:#f6ead9; --build-b:#e0b483;
+    --design:#3f6ea3; --design-bg:#e6eef6; --design-b:#a9c2de;
+    --talk:#5c7a52; --talk-bg:#e9f0e5; --talk-b:#a9c79c;
+    --done:#7a7a72; --done-bg:#eeece6; --done-b:#cfc9bc;
+    --hot:#c0563c; --hot-bg:#f7e7e1;
+  }
+  html[data-theme="dark"]{
+    --paper:#1c1a17; --card:#26231e; --ink:#ece7dd; --line:#423b2f;
+    --accent:#c9a15f; --accent-deep:#d9b476; --accent-light:#332d24;
+    --muted:#9a917f; --on-accent:#241d12; --shadow:0 1px 3px rgba(0,0,0,.3);
+    --build:#d9a869; --build-bg:#352a1c; --build-b:#6a5230;
+    --design:#8fb3d6; --design-bg:#1f2a34; --design-b:#3d566d;
+    --talk:#9ab98c; --talk-bg:#222c1e; --talk-b:#42592f;
+    --done:#a49f92; --done-bg:#2a2822; --done-b:#4a4638;
+    --hot:#e08a6f; --hot-bg:#3a2620;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper); color:var(--ink); line-height:1.65;}
+  .wrap{max-width:760px; margin:0 auto; padding:22px 16px 72px;}
+  header{text-align:center; padding:28px 16px 6px; position:relative;}
+  header h1{font-size:23px; letter-spacing:2px; margin:0 0 4px;}
+  header .sub{color:var(--muted); font-size:12.5px; letter-spacing:1px;}
+  .theme-btn{position:absolute; top:14px; right:6px; width:40px; height:40px;
+    border-radius:50%; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); font-size:17px; cursor:pointer; box-shadow:var(--shadow);}
+
+  .counts{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:14px 0 4px;}
+  .count{border:1px solid var(--line); border-radius:12px; padding:8px 14px; text-align:center;
+    background:var(--card); box-shadow:var(--shadow); min-width:78px;}
+  .count b{display:block; font-size:22px; letter-spacing:1px;}
+  .count span{font-size:11.5px; color:var(--muted);}
+  .count.build b{color:var(--build);} .count.design b{color:var(--design);}
+  .count.talk b{color:var(--talk);} .count.done b{color:var(--done);}
+
+  .grp{margin:20px 0 6px; font-size:14px; font-weight:700; letter-spacing:1px;
+    display:flex; align-items:center; gap:8px; color:var(--accent-deep);}
+  .grp .em{font-size:17px;}
+
+  .case{background:var(--card); border:1px solid var(--line); border-left:5px solid var(--line);
+    border-radius:12px; padding:13px 15px; margin:10px 0; box-shadow:var(--shadow);}
+  .case.build{border-left-color:var(--build);}
+  .case.design{border-left-color:var(--design);}
+  .case.talk{border-left-color:var(--talk);}
+  .case.done{border-left-color:var(--done);}
+  .case .top{display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
+  .case .nm{font-size:16px; font-weight:700; letter-spacing:.5px;}
+  .case .nm small{font-weight:400; color:var(--muted); font-size:12px; margin-left:6px;}
+  .tag{font-size:11px; padding:2px 10px; border-radius:20px; white-space:nowrap;}
+  .tag.build{background:var(--build-bg); border:1px solid var(--build-b); color:var(--build);}
+  .tag.design{background:var(--design-bg); border:1px solid var(--design-b); color:var(--design);}
+  .tag.talk{background:var(--talk-bg); border:1px solid var(--talk-b); color:var(--talk);}
+  .tag.done{background:var(--done-bg); border:1px solid var(--done-b); color:var(--done);}
+  .case .next{margin-top:7px; font-size:13.5px; display:flex; gap:8px; align-items:flex-start;}
+  .case .next .lbl{flex:none; font-size:11px; color:var(--muted); background:var(--accent-light);
+    border:1px solid var(--line); border-radius:6px; padding:1px 7px; margin-top:1px;}
+  .case .next b{color:var(--accent-deep);}
+  .case .goal{margin-top:4px; font-size:12px; color:var(--muted);}
+
+  .timeline{background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:16px 18px 8px; margin:16px 0; box-shadow:var(--shadow);}
+  .timeline h2{font-size:15.5px; margin:0 0 10px; border-left:4px solid var(--accent);
+    padding-left:11px; letter-spacing:.5px;}
+  .tl{display:grid; grid-template-columns:66px 1fr; gap:0 12px;}
+  .tl .d{font-size:12.5px; color:var(--accent-deep); font-weight:700; padding:8px 0;
+    border-top:1px dashed var(--line);}
+  .tl .e{font-size:13.5px; padding:8px 0; border-top:1px dashed var(--line);}
+  .tl .d:first-of-type,.tl .e:first-of-type{border-top:0;}
+  .tl .e .hot{color:var(--hot); font-weight:700;}
+  .tl .wk{color:var(--muted); font-size:11px; margin-left:3px;}
+
+  .foot{text-align:center; font-size:12px; color:var(--muted); margin-top:20px; line-height:1.9;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<button class="theme-btn" id="themeBtn" type="button" title="切換深淺色">🌙</button>
+<header>
+  <h1>禹合制所 · 案件總覽</h1>
+  <div class="sub">全案件狀態儀表板 · 資料快照 2026/08/10</div>
+</header>
+
+<div class="counts">
+  <div class="count build"><b>3</b><span>施工中</span></div>
+  <div class="count design"><b>3</b><span>設計中</span></div>
+  <div class="count talk"><b>2</b><span>洽談中</span></div>
+  <div class="count done"><b>1</b><span>已交屋</span></div>
+</div>
+
+<!-- 施工中 -->
+<div class="grp"><span class="em">🔨</span>施工中</div>
+
+<div class="case build">
+  <div class="top"><div class="nm">鉅力高宇 D-2F</div><span class="tag build">系統櫃／油漆</span></div>
+  <div class="next"><span class="lbl">下一步</span><div>8/17 系統櫃進料 → 8/18–26 安裝 → 玻璃/壁紙/收尾</div></div>
+  <div class="goal">🎯 9/24 正式交屋</div>
+</div>
+<div class="case build">
+  <div class="top"><div class="nm">合新合心</div><span class="tag build">油漆階段</span></div>
+  <div class="next"><span class="lbl">下一步</span><div><b>8/11 油漆進場 30% 收款 36.6 萬</b> → 玻璃/壁紙 → 地板 → 收尾</div></div>
+  <div class="goal">🎯 10/01 正式交屋</div>
+</div>
+<div class="case build">
+  <div class="top"><div class="nm">台北華府 <small>舊屋翻新／純設計</small></div><span class="tag build">泥作／木工</span></div>
+  <div class="next"><span class="lbl">下一步</span><div>貼磁磚中、木工已進場；立面施工圖持續繪製</div></div>
+</div>
+
+<!-- 設計中 -->
+<div class="grp"><span class="em">✏️</span>設計中</div>
+
+<div class="case design">
+  <div class="top"><div class="nm">鉅力高宇 C-2F</div><span class="tag design">圖面＋報價</span></div>
+  <div class="next"><span class="lbl">下一步</span><div>8/31 工程報價＋簽約 → 9/7 社區開工申請</div></div>
+  <div class="goal">🎯 9/15 吉日開工</div>
+</div>
+<div class="case design">
+  <div class="top"><div class="nm">遠雄仰森 A3-22F</div><span class="tag design">報價準備</span></div>
+  <div class="next"><span class="lbl">下一步</span><div><b>8/26 13:00 複驗</b>（業主＋驗屋公司）→ 工程報價談定</div></div>
+  <div class="goal">🎯 9/22 開工（暫）</div>
+</div>
+<div class="case design">
+  <div class="top"><div class="nm">忠泰湛 B2-22F</div><span class="tag design">3D 設計</span></div>
+  <div class="next"><span class="lbl">下一步</span><div><b>8/29（六）10:00 兩版 3D 提案</b>（社區 2 樓會議室）</div></div>
+  <div class="goal">🎯 9/29 進場（暫）· 2027/04 完工（130 工作天）</div>
+</div>
+
+<!-- 洽談中 -->
+<div class="grp"><span class="em">💬</span>洽談中</div>
+
+<div class="case talk">
+  <div class="top"><div class="nm">合雄鳳璽 <small>B1／7F · 40 坪全室翻新</small></div><span class="tag talk">需求表已回填</span></div>
+  <div class="next"><span class="lbl">下一步</span><div><b>8/15（六）14:00 現場丈量</b>＋需求訪談＋現況勘查</div></div>
+  <div class="goal">🎯 完工暫估 2027/03（農曆年後）</div>
+</div>
+<div class="case talk">
+  <div class="top"><div class="nm">長堤天昀 A2-5F <small>預售屋客變案 · 15 坪</small></div><span class="tag talk">新案洽談 0810</span></div>
+  <div class="next"><span class="lbl">下一步</span><div><b>8/30（日）10:00 接待中心初談</b>（看樣品屋）</div></div>
+  <div class="goal">🎯 建商 9 月寄客變通知書 · 交屋約 2029 Q4</div>
+</div>
+
+<!-- 已交屋 -->
+<div class="grp"><span class="em">✅</span>已交屋</div>
+
+<div class="case done">
+  <div class="top"><div class="nm">豐邑氧森 A1</div><span class="tag done">已結案</span></div>
+  <div class="next"><span class="lbl">狀態</span><div>7/18 正式交屋，收尾期已結束</div></div>
+</div>
+
+<!-- 近期關鍵日 -->
+<div class="timeline">
+  <h2>📅 近期關鍵日</h2>
+  <div class="tl">
+    <div class="d">8/11</div><div class="e">合新合心 · 油漆進場 30% 收款 36.6 萬</div>
+    <div class="d">8/15<span class="wk">六</span></div><div class="e"><span class="hot">合雄鳳璽 · 14:00 現場丈量</span></div>
+    <div class="d">8/17</div><div class="e">鉅力高宇 · 系統櫃進料</div>
+    <div class="d">8/26</div><div class="e">遠雄仰森 · 13:00 複驗　｜　鉅力高宇 · 系統櫃安裝完成</div>
+    <div class="d">8/29<span class="wk">六</span></div><div class="e"><span class="hot">忠泰湛 B2-22F · 10:00 兩版 3D 提案</span></div>
+    <div class="d">8/30<span class="wk">日</span></div><div class="e"><span class="hot">長堤天昀 A2-5F · 10:00 接待中心初談</span></div>
+    <div class="d">8/31</div><div class="e">鉅力高宇 C-2F · 工程報價＋簽約</div>
+    <div class="d">9/15</div><div class="e">鉅力高宇 C-2F · 吉日開工</div>
+    <div class="d">9/22</div><div class="e">遠雄仰森 · 開工（暫）</div>
+    <div class="d">9/24</div><div class="e">鉅力高宇 · 正式交屋</div>
+    <div class="d">9/29</div><div class="e">忠泰湛 B2-22F · 進場（暫）</div>
+    <div class="d">10/01</div><div class="e">合新合心 · 正式交屋</div>
+  </div>
+</div>
+
+<div class="foot">
+  禹合制所 YUHE DESIGN｜案件總覽儀表板<br>
+  共 9 案（施工 3・設計 3・洽談 2・已交屋 1）· 詳細時程見全案件甘特圖
+</div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, tb=document.getElementById('themeBtn');
+  function setTheme(t){root.setAttribute('data-theme',t);tb.textContent=t==='dark'?'☀️':'🌙';
+    try{localStorage.setItem('yuhe_overview_theme',t);}catch(e){}}
+  var s=null; try{s=localStorage.getItem('yuhe_overview_theme');}catch(e){}
+  setTheme(s==='dark'?'dark':'light');
+  tb.onclick=function(){setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');};
+})();
+</script>
+</body>
+</html>

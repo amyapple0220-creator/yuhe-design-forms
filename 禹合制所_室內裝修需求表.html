@@ -588,6 +588,9 @@
 <script>
 (function(){
   /* ── 深淺色切換 ── */
+  /* ── 自動建案 Webhook：部署 Apps Script 網頁應用程式後，把網址貼進下面引號內即生效 ── */
+  var WEBAPP_URL='';
+
   var themeBtn=document.getElementById('themeBtn');
   function setTheme(t){
     document.documentElement.setAttribute('data-theme',t);
@@ -724,6 +727,13 @@
         }
       }
     }
+    try{
+      if(WEBAPP_URL){
+        var _fd=new FormData(this);
+        if(navigator.sendBeacon){navigator.sendBeacon(WEBAPP_URL,_fd);}
+        else{fetch(WEBAPP_URL,{method:'POST',body:_fd,mode:'no-cors',keepalive:true});}
+      }
+    }catch(_e){}
     toChinese(this);
     var b=document.getElementById('btnSubmit');
     b.textContent='送出中…';
