@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜辦公室選址評估備忘</title>
+<style>
+  :root{
+    --paper:#faf8f4; --card:#ffffff; --ink:#2b2b28; --line:#ddd6c9;
+    --accent:#8a6d4b; --accent-deep:#6f563a; --accent-light:#f1ebe0;
+    --muted:#8b8578; --on-accent:#fff; --red:#c0563c; --red-bg:#f7e7e1;
+    --green:#5c7a52; --green-bg:#e9f0e5; --amber:#b9762e; --amber-bg:#f6ead9;
+    --blue:#3f6ea3; --blue-bg:#e6eef6;
+    --shadow:0 1px 3px rgba(60,50,30,.06);
+  }
+  html[data-theme="dark"]{
+    --paper:#1c1a17; --card:#26231e; --ink:#ece7dd; --line:#423b2f;
+    --accent:#c9a15f; --accent-deep:#d9b476; --accent-light:#332d24;
+    --muted:#9a917f; --on-accent:#241d12; --red:#e08a6f; --red-bg:#3a2620;
+    --green:#9ab98c; --green-bg:#222c1e; --amber:#d9a869; --amber-bg:#352a1c;
+    --blue:#8fb3d6; --blue-bg:#1f2a34;
+    --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper); color:var(--ink); line-height:1.7;}
+  .wrap{max-width:780px; margin:0 auto; padding:22px 16px 70px;}
+  header{text-align:center; padding:26px 16px 10px; position:relative;}
+  header h1{font-size:22px; letter-spacing:1.5px; margin:0 0 4px;}
+  header .sub{color:var(--muted); font-size:13px; letter-spacing:1px;}
+  .theme-btn{position:absolute; top:14px; right:6px; width:40px; height:40px;
+    border-radius:50%; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); font-size:17px; cursor:pointer; box-shadow:var(--shadow);}
+
+  /* 兩案卡片 */
+  .duo{display:flex; gap:10px; margin:14px 0; flex-wrap:wrap;}
+  .opt{flex:1; min-width:250px; border-radius:14px; padding:14px 16px;
+    border:1.5px solid var(--line); background:var(--card); box-shadow:var(--shadow); font-size:13px;}
+  .opt.a{border-color:color-mix(in srgb,var(--amber) 50%,var(--line));}
+  .opt.b{border-color:var(--green); box-shadow:0 0 0 2px color-mix(in srgb,var(--green) 20%,transparent),var(--shadow);}
+  .opt .tag{display:inline-block; font-size:11px; padding:2px 10px; border-radius:20px; margin-bottom:6px;}
+  .opt.a .tag{background:var(--amber-bg); color:var(--amber); border:1px solid color-mix(in srgb,var(--amber) 40%,var(--line));}
+  .opt.b .tag{background:var(--green-bg); color:var(--green); border:1px solid color-mix(in srgb,var(--green) 40%,var(--line));}
+  .opt h3{font-size:15.5px; margin:0 0 6px; color:var(--accent-deep);}
+  .opt .price{font-size:21px; font-weight:700; color:var(--red); letter-spacing:.5px;}
+  .opt .price small{font-size:12px; color:var(--muted); font-weight:400;}
+  .opt ul{list-style:none; margin:8px 0 0; padding:0;}
+  .opt li{padding:3px 0; border-bottom:1px dashed var(--line);}
+  .opt li:last-child{border-bottom:0;}
+  .opt li b{color:var(--accent-deep);}
+
+  .verdict{border:1.8px solid var(--green); background:var(--green-bg);
+    border-radius:14px; padding:17px 18px; margin:14px 0; box-shadow:var(--shadow);}
+  .verdict h2{font-size:17.5px; margin:0 0 8px; color:var(--green); border:0; padding:0;}
+  .verdict .big{font-size:15.5px; font-weight:700; margin-bottom:8px;}
+  .verdict ol{margin:8px 0 4px; padding-left:20px; font-size:14px;}
+  .verdict li{margin-bottom:5px;}
+
+  section{background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 18px 12px; margin:14px 0; box-shadow:var(--shadow);}
+  section h2{font-size:16.5px; letter-spacing:.5px; border-left:4px solid var(--accent);
+    padding-left:11px; margin:0 0 6px; display:flex; align-items:center; gap:8px;}
+  section h2 .em{font-size:19px;}
+  .lead{font-size:12.5px; color:var(--muted); margin:0 0 12px 15px;}
+  section h3{font-size:14.5px; margin:16px 0 6px; color:var(--accent-deep);}
+  section p{font-size:14px; margin:8px 0;}
+
+  table{width:100%; border-collapse:collapse; font-size:13.5px; margin:8px 0 12px;}
+  th,td{padding:7px 8px; border-bottom:1px dashed var(--line); text-align:left; vertical-align:top;}
+  th{color:var(--accent-deep); font-size:12.5px; font-weight:700; white-space:nowrap;}
+  td.n,th.n{text-align:right; white-space:nowrap;}
+  tr.sum td{border-top:1.5px solid var(--line); border-bottom:0; font-weight:700;}
+  tr.hl td{background:var(--green-bg);}
+  tr.hlA td{background:var(--amber-bg);}
+  .scroll{overflow-x:auto;}
+  .win{color:var(--green); font-weight:700;}
+  .lose{color:var(--red);}
+
+  .calc{background:var(--accent-light); border:1px solid var(--line);
+    border-radius:12px; padding:14px 16px; margin:10px 0;}
+  .calc h4{margin:0 0 8px; font-size:13.5px; color:var(--accent-deep);}
+  .cols{display:flex; gap:12px; flex-wrap:wrap;}
+  .col{flex:1; min-width:230px;}
+  .calc .row{display:flex; align-items:center; gap:8px; margin:7px 0; font-size:13px;}
+  .calc .row label{flex:1; min-width:0;}
+  .calc .row input{width:88px; flex:none; padding:5px 7px; font-size:13.5px; font-family:inherit;
+    border:1px solid var(--line); border-radius:7px; background:var(--card); color:var(--ink);
+    text-align:right;}
+  .calc .row .u{flex:none; width:30px; font-size:11.5px; color:var(--muted);}
+  .out{background:var(--card); border:1px solid var(--line); border-radius:10px;
+    padding:12px 14px; margin-top:12px; font-size:13.5px;}
+  .out .l{display:flex; justify-content:space-between; gap:10px; padding:5px 0;
+    border-bottom:1px dashed var(--line);}
+  .out .l:last-child{border-bottom:0;}
+  .out .l b{color:var(--accent-deep); white-space:nowrap;}
+  .out .hi{font-size:16px; padding-top:8px;}
+  .out .hi b{color:var(--red);}
+
+  ul.chk{list-style:none; margin:0; padding:0;}
+  ul.chk li{display:flex; gap:11px; align-items:flex-start; padding:9px 4px;
+    border-bottom:1px dashed var(--line); font-size:14.5px; cursor:pointer;}
+  ul.chk li:last-child{border-bottom:0;}
+  ul.chk .box{flex:none; width:21px; height:21px; margin-top:1px; border:1.6px solid var(--accent);
+    border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:var(--on-accent); background:var(--card); transition:.12s;}
+  ul.chk li.done .box{background:var(--accent);}
+  ul.chk li.done .txt{color:var(--muted); text-decoration:line-through;}
+  ul.chk .txt small{display:block; color:var(--muted); font-size:12px; text-decoration:none; margin-top:1px;}
+  ul.chk .txt b{color:var(--accent-deep);}
+
+  .must{border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 20%,transparent),var(--shadow);}
+  .must h2{color:var(--accent-deep);}
+  .decide{border:1.4px solid var(--line); border-radius:11px; padding:12px 14px; margin:10px 0;}
+  .decide .q{font-weight:700; font-size:14.5px; margin-bottom:3px;}
+  .decide .q .em{margin-right:6px;}
+  .decide .a{font-size:13px; color:var(--muted);}
+  .decide .a b{color:var(--ink);}
+
+  .warn{background:var(--red-bg); border:1px solid color-mix(in srgb,var(--red) 40%,var(--line));
+    border-radius:14px; padding:16px 18px; margin:14px 0; font-size:14px;}
+  .warn h2{border:0; padding:0; margin:0 0 8px; color:var(--red); font-size:16px;}
+  .warn b{color:var(--red);}
+  .say{background:var(--card); border-left:3px solid var(--accent); padding:9px 12px;
+    margin-top:10px; font-size:13.5px; border-radius:0 8px 8px 0; font-style:italic;}
+  .note{background:var(--amber-bg); border:1px solid color-mix(in srgb,var(--amber) 40%,var(--line));
+    border-radius:11px; padding:12px 14px; margin:10px 0; font-size:13.5px;}
+  .note b{color:var(--amber);}
+  .good{background:var(--green-bg); border:1px solid color-mix(in srgb,var(--green) 40%,var(--line));
+    border-radius:11px; padding:12px 14px; margin:10px 0; font-size:13.5px;}
+  .good b{color:var(--green);}
+  .info{background:var(--blue-bg); border:1px solid color-mix(in srgb,var(--blue) 40%,var(--line));
+    border-radius:11px; padding:12px 14px; margin:10px 0; font-size:13.5px;}
+  .info b{color:var(--blue);}
+
+  .foot{text-align:center; font-size:12px; color:var(--muted); margin-top:18px; line-height:1.9;}
+  .reset{background:none; border:1px solid var(--line); color:var(--muted);
+    border-radius:8px; padding:6px 14px; font-size:12px; cursor:pointer; font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<button class="theme-btn" id="themeBtn" type="button" title="切換深淺色">🌙</button>
+<header>
+  <h1>禹合制所 · 辦公室選址評估</h1>
+  <div class="sub">林口店面 vs 龜山辦公室 · 含人力配置試算 · 2026/08/14</div>
+</header>
+
+<div class="duo">
+  <div class="opt a">
+    <span class="tag">方案 A · 店面</span>
+    <h3>林口四季悅店面</h3>
+    <div class="price">47,500<small> 元／月（開價）</small></div>
+    <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">目標談到 35,000</div>
+    <ul>
+      <li>使用坪數 <b>26.72 坪</b>（補挑空後約 33.4）</li>
+      <li><b>1F／2F 樓中樓</b>・7 米面寬門面</li>
+      <li>管理費 2,635 元／月</li>
+      <li>押金 2 個月・<b>含平面車位</b></li>
+      <li>可工商登記・可隔間</li>
+      <li>二樓<b>尚未完工</b>（水電已配）</li>
+      <li>需自費補挑空 15–30 萬</li>
+      <li>屋主＝阿緯媽媽・永慶委刊</li>
+      <li>林口 A9・運動中心站 561m</li>
+    </ul>
+  </div>
+  <div class="opt b">
+    <span class="tag">方案 B · 辦公室 ✔ 推薦</span>
+    <h3>龜山雲鼎 A8 長庚商圈</h3>
+    <div class="price">23,000<small> 元／月</small></div>
+    <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">767 元／坪・可再議</div>
+    <ul>
+      <li>使用坪數 <b>20 坪</b>・推薦工位 11–15</li>
+      <li><b>2F／11F 電梯大樓</b></li>
+      <li>管理費 1,500 元／月</li>
+      <li>押金 2 個月・<b>車位待確認</b></li>
+      <li>可工商登記・可隔間</li>
+      <li><b>高檔裝潢已完成</b>・隨時可用</li>
+      <li>幾乎免裝修投入</li>
+      <li>最短租期一年・免租期可談</li>
+      <li>龜山 A8・公園路口站 179m</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 結論 -->
+<div class="verdict">
+  <h2>✅ 結論：選 B，而且省下的錢剛好請得起一個助理</h2>
+  <div class="big">兩案的<b>每坪實質單價幾乎一樣</b>（A 約 1,656 元／坪、B 約 1,612 元／坪）。<br>
+  差別不在划算與否，在<b>你現在需不需要 33 坪</b>——以及那 13 坪值不值一年 27.7 萬。</div>
+  <ol>
+    <li><b>年成本差 27.7 萬，第一年含裝修差 72.7 萬。</b>
+    後者剛好是一個助理的年成本（54 萬）還有找。</li>
+    <li><b>營收及格線從 1,526 萬降到 890 萬。</b>
+    以量能 1,580 萬計，B 直接進入「舒適線」等級，A 只是勉強及格。</li>
+    <li><b>毛利率壓力測試下，只有 B 活得下來。</b>
+    毛利掉到 22% 時：A 三人配置剩 3 萬淨利，B 剩 31 萬。</li>
+    <li><b>B 沒有違建、管委會、專任委託、熟人人情這四個風險。</b></li>
+    <li><b>B 最短一年＝彈性。</b>現階段的禹合需要的是彈性，不是五年承諾。</li>
+  </ol>
+  <div style="font-size:13.5px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);">
+    唯一要先確認的是<b>車位</b>——A 含平面車位，B 的 591 頁沒提。
+    設計公司要跑工地、載樣品、工班來討論，這不是小事。
+  </div>
+</div>
+
+<!-- A. 財務對決 -->
+<section class="must">
+  <h2><span class="em">⚔️</span>A. 財務對決</h2>
+  <p class="lead">A 以談成 35,000 計（樂觀假設）；B 以刊登價 23,000 計</p>
+
+  <div class="scroll">
+  <table>
+    <tr><th>項目</th><th class="n">A · 林口店面</th><th class="n">B · 龜山辦公室</th><th class="n">差額</th></tr>
+    <tr><td>月租</td><td class="n">35,000</td><td class="n">23,000</td><td class="n win">-12,000</td></tr>
+    <tr><td>管理費</td><td class="n">2,635</td><td class="n">1,500</td><td class="n win">-1,135</td></tr>
+    <tr><td>水電網路清潔</td><td class="n">6,000</td><td class="n">4,000</td><td class="n win">-2,000</td></tr>
+    <tr><td>火險雜項</td><td class="n">833</td><td class="n">400</td><td class="n win">-433</td></tr>
+    <tr><td>裝修攤提（÷60 月）</td><td class="n">10,833<br><small>投入 65 萬</small></td>
+        <td class="n">3,333<br><small>投入 20 萬</small></td><td class="n win">-7,500</td></tr>
+    <tr class="sum"><td>月實質成本</td><td class="n">55,301</td><td class="n">32,233</td>
+        <td class="n win">-23,068</td></tr>
+    <tr class="sum"><td>年持有成本</td><td class="n">66.4 萬</td><td class="n">38.7 萬</td>
+        <td class="n win">-27.7 萬</td></tr>
+    <tr class="sum"><td>可用坪數</td><td class="n">33.4 坪</td><td class="n">20 坪</td><td class="n lose">-13.4 坪</td></tr>
+    <tr class="sum"><td>每坪實質單價</td><td class="n">1,656</td><td class="n">1,612</td>
+        <td class="n" style="color:var(--muted)">幾乎相同</td></tr>
+    <tr class="sum"><td>一次性投入</td><td class="n">65 萬</td><td class="n">20 萬</td>
+        <td class="n win">-45 萬</td></tr>
+    <tr class="sum"><td><b>第一年總現金差</b></td><td class="n" colspan="2"></td>
+        <td class="n win"><b>-72.7 萬</b></td></tr>
+    <tr class="sum"><td><b>五年總持有成本</b></td><td class="n">332 萬</td><td class="n">194 萬</td>
+        <td class="n win"><b>-138 萬</b></td></tr>
+  </table>
+  </div>
+
+  <div class="info">
+    <b>💡 注意這一行：每坪實質單價幾乎一樣。</b>
+    這代表 A 並沒有比較貴——它只是比較大。
+    <b>真正的問題是：現階段的禹合需要 33 坪嗎？</b>
+  </div>
+</section>
+
+<!-- B. 省下的錢 = 人 -->
+<section class="must">
+  <h2><span class="em">👥</span>B. 省下的錢＝一個助理（回答上一題）</h2>
+  <p class="lead">2026 雇主實際負擔：勞保 70%＋健保 60% 含眷屬＋勞退 6%，約月薪的 19%</p>
+
+  <div class="scroll">
+  <table>
+    <tr><th>項目</th><th class="n">月現金流出</th><th class="n">年總成本</th>
+        <th class="n">損益兩平<br>所需營收</th></tr>
+    <tr class="hlA"><td>方案 A 辦公室</td><td class="n">4.4 萬</td><td class="n">66.4 萬</td><td class="n">229 萬</td></tr>
+    <tr class="hl"><td>方案 B 辦公室</td><td class="n">2.7 萬</td><td class="n">38.7 萬</td><td class="n">133 萬</td></tr>
+    <tr><td>助理（月薪 3.5 萬）</td><td class="n">4.5 萬</td><td class="n">54 萬</td><td class="n">186 萬</td></tr>
+    <tr><td>專案設計師（月薪 5.5 萬）</td><td class="n">7.0 萬</td><td class="n">84 萬</td><td class="n">290 萬</td></tr>
+  </table>
+  </div>
+
+  <div class="good">
+    <b>✔ 換算結果：</b>方案 A 比方案 B 每年多花 27.7 萬、第一年多花 72.7 萬。<br>
+    <b>72.7 萬 ＞ 一個助理的年成本 54 萬。</b><br>
+    白話講：<b>選 B，你就請得起一個助理；選 A，你就請不起。</b>
+  </div>
+
+  <h3>毛利率壓力測試</h3>
+  <p>以滾動量能 1,580 萬、老闆薪 100 萬、其他營運 40 萬計，剩下的淨利：</p>
+  <div class="scroll">
+  <table>
+    <tr><th>配置</th><th class="n">毛利率 29%</th><th class="n">25%</th><th class="n">22%</th></tr>
+    <tr class="hlA"><td><b>A</b> ＋助理＋設計師</td><td class="n">114 萬</td><td class="n">51 萬</td>
+        <td class="n lose">3 萬</td></tr>
+    <tr class="hl"><td><b>B</b> ＋助理＋設計師</td><td class="n">141 萬</td><td class="n">78 萬</td>
+        <td class="n">31 萬</td></tr>
+    <tr class="hl"><td><b>B</b> ＋只請設計師</td><td class="n">195 萬</td><td class="n">132 萬</td>
+        <td class="n win">85 萬</td></tr>
+  </table>
+  </div>
+  <p><b>裝修統包毛利掉到 22% 一點都不罕見。</b>那一欄就是這張表的重點：
+  方案 A 撐三個人時幾乎等於白做一年，方案 B 還有 31 萬。</p>
+
+  <div class="note">
+    <b>⚠ 但這張表有個我不知道的數字：你目前有幾個人、自己領多少、實際毛利率多少。</b>
+    上面用的是老闆薪 100 萬、毛利率 29% 的假設。
+    <b>把你的真實數字填進下面的試算器</b>，結論才是你的，不是我的。
+  </div>
+
+  <h3>請人的順序建議</h3>
+  <div class="decide">
+    <div class="q"><span class="em">1️⃣</span>專案設計師優先於助理</div>
+    <div class="a">助理省的是你的時間，<b>設計師才是真正把案子執行完的人</b>。
+    忠泰湛 500 萬、130 工作天、跨到 2027/4，這種案子沒有專職的人盯，
+    出事的代價遠超過一年的薪水。</div>
+  </div>
+  <div class="decide">
+    <div class="q"><span class="em">2️⃣</span>先用配合制，不必一次上全職</div>
+    <div class="a">設計師<b>按案付協力費</b>（一案 8–15 萬），抓 4–5 案約 40–60 萬／年，
+    有案才付、沒案不養。助理用<b>兼職／工讀</b>（一週三天，月 1.5–2 萬），
+    記帳行政直接外包。跑順了再轉全職。</div>
+  </div>
+  <div class="decide">
+    <div class="q"><span class="em">3️⃣</span>人的固定成本比租金更硬</div>
+    <div class="a">租約還能談解約條款；<b>人請了要資遣有成本、有交接風險、有情感壓力</b>。
+    這是選「彈性」比選「便宜」更重要的原因。</div>
+  </div>
+</section>
+
+<!-- C. 試算器 -->
+<section>
+  <h2><span class="em">🧮</span>C. 互動試算：填你的真實數字</h2>
+  <div class="calc">
+    <div class="cols">
+      <div class="col">
+        <h4>🏢 辦公室</h4>
+        <div class="row"><label>月租</label><input id="i_rent" type="number" value="23000"><span class="u">元</span></div>
+        <div class="row"><label>管理費</label><input id="i_mgmt" type="number" value="1500"><span class="u">元</span></div>
+        <div class="row"><label>裝修投入</label><input id="i_fit" type="number" value="20"><span class="u">萬</span></div>
+        <div class="row"><label>攤提年限</label><input id="i_yr" type="number" value="5"><span class="u">年</span></div>
+        <div class="row"><label>其他月開銷</label><input id="i_misc" type="number" value="4400"><span class="u">元</span></div>
+      </div>
+      <div class="col">
+        <h4>👥 團隊與營運</h4>
+        <div class="row"><label>年營業額</label><input id="i_rev" type="number" value="1580"><span class="u">萬</span></div>
+        <div class="row"><label>綜合毛利率</label><input id="i_gm" type="number" value="29"><span class="u">%</span></div>
+        <div class="row"><label>老闆年薪</label><input id="i_boss" type="number" value="100"><span class="u">萬</span></div>
+        <div class="row"><label>設計師月薪 ×人數</label><input id="i_des" type="number" value="5.5"><span class="u">萬</span></div>
+        <div class="row"><label>助理月薪 ×人數</label><input id="i_asst" type="number" value="3.5"><span class="u">萬</span></div>
+        <div class="row"><label>其他年營運費</label><input id="i_ops" type="number" value="40"><span class="u">萬</span></div>
+      </div>
+    </div>
+    <div class="out">
+      <div class="l"><span>辦公室年成本</span><b id="o_office">—</b></div>
+      <div class="l"><span>人事年成本（含雇主負擔 19%）</span><b id="o_hr">—</b></div>
+      <div class="l"><span>年毛利</span><b id="o_gross">—</b></div>
+      <div class="l"><span>辦公室佔毛利</span><b id="o_ratio">—</b></div>
+      <div class="l hi"><span>預估年淨利</span><b id="o_net">—</b></div>
+      <div class="l"><span>損益兩平所需營收</span><b id="o_be">—</b></div>
+    </div>
+  </div>
+  <p style="font-size:12.5px; color:var(--muted);">
+  ※ 薪資欄位填「月薪」即代表一人；要算兩人請填兩倍。
+  年薪以 13 個月（含年終一個月）計，雇主負擔另加 19%。</p>
+</section>
+
+<!-- D. B 要問的 -->
+<section>
+  <h2><span class="em">❓</span>D. 選 B 之前要問清楚的六件事</h2>
+  <p class="lead">照片看起來很漂亮，但漂亮不等於適合設計公司</p>
+  <ul class="chk" data-k="D">
+    <li><span class="box">✓</span><span class="txt"><b>有沒有車位？月租多少？</b><small>最重要——要跑工地、載樣品、工班來討論。桃園龜山大樓車位月租約 2,000–3,000，A 案是含車位的</small></span></li>
+    <li><span class="box">✓</span><span class="txt"><b>既有裝潢動不動得了？退租要不要恢復原狀</b><small>那個線性燈天花＋深色鏡面＋地毯是前手的風格，591 標題寫「適合辦公美業健身房」——未必符合禹合的品牌調性</small></span></li>
+    <li><span class="box">✓</span><span class="txt"><b>20 坪放不放得下設計公司該有的東西</b><small>工作位、圖桌、會議區、材料樣品櫃、圖檔存放。推薦工位 11–15 是一般辦公室密集配置，設計公司實際坐 6–8 人比較舒服</small></span></li>
+    <li><span class="box">✓</span><span class="txt"><b>空調是獨立還是中央？水電費怎麼算</b><small>大樓常有公共電費分攤、中央空調有供應時間限制</small></span></li>
+    <li><span class="box">✓</span><span class="txt"><b>2F 搬運材料樣品方不方便</b><small>電梯載重、使用時段、有無貨梯</small></span></li>
+    <li><span class="box">✓</span><span class="txt"><b>仲介委託類型（有巢氏 駱小姐）</b><small>同樣要問專任還是一般，服務費怎麼算</small></span></li>
+  </ul>
+
+  <div class="note">
+    <b>⚠ 那個「高檔裝潢」是雙面刃。</b>省下你的裝修錢，但也<b>限制你的表達</b>。
+    對一家室內設計公司來說，辦公室本身就是作品集——
+    客戶來訪看到別人做的美業風裝潢，這件事要想清楚。<br><br>
+    <b>但也有解法：</b>用可拆式的方式疊上自己的東西（材料板牆、樣品櫃、燈具、家具、
+    軟裝陳設），成本 15–25 萬就能換掉調性，退租時全部帶走。這正是你們的專業。
+  </div>
+</section>
+
+<!-- E. 位置與門面 -->
+<section>
+  <h2><span class="em">📍</span>E. 位置與門面：值不值一年 27.7 萬</h2>
+
+  <h3>位置差異其實不大</h3>
+  <p>林口 A9 與龜山 A8 只差一站，都在機捷線上。
+  真正要看的是<b>你的客戶與工地在哪</b>——從案件看（忠泰湛、遠雄仰森、合雄鳳璽、
+  長堤天昀、鉅力高宇、合新合心、台北華府、中和地球村），客戶偏雙北，
+  兩個地點對你們都是「往台北跑」，差異有限。</p>
+
+  <h3>門面的價值：誠實評估</h3>
+  <p>方案 A 的核心賣點是<b>一樓 7 米面寬門面＋樓中樓挑高</b>，可以做 showroom。
+  一年多成交 1 案（平均 200 萬、毛利約 58 萬）就回本 27.7 萬的價差——聽起來划算。</p>
+  <p><b>但問題是你的客源不靠門面。</b>你的案子清一色是建案與社區
+  （鉅力高宇、遠雄仰森、忠泰湛、合雄鳳璽、長堤天昀），洽談地點在
+  <b>接待中心或社區會議室</b>，客戶來源是口碑、建商配合、社區介紹。
+  <b>路過看到店面而進來詢問的機率，對這種客源結構很低。</b></p>
+
+  <div class="good">
+    <b>✔ 更划算的 showroom 解法：</b>用<b>自己完成的案子當作品參觀點</b>——
+    跟業主談好，帶潛在客戶去看實績。成本幾乎為零，
+    <b>說服力比任何 showroom 都強</b>，而且這是裝修業行之有年的做法。
+    豐邑氧森已交屋、鉅力高宇 9/24 交屋、合新合心 10/1 交屋——
+    三個月內你會有三個可以帶看的完成案。
+  </div>
+</section>
+
+<!-- F. 案量與門檻 -->
+<section>
+  <h2><span class="em">📊</span>F. 案量與營收門檻</h2>
+  <p class="lead">依 repo 甘特圖／案件總覽 2026/08 快照＋忠泰湛 500 萬</p>
+
+  <div class="scroll">
+  <table>
+    <tr><th>案件</th><th>狀態</th><th class="n">金額</th><th>依據</th></tr>
+    <tr><td>鉅力高宇 D-2F</td><td>施工中</td><td class="n">115 萬</td><td>訂金 34.5 萬＝30%</td></tr>
+    <tr><td>合新合心</td><td>施工中</td><td class="n">122 萬</td><td>訂金 36.6 萬＝30%</td></tr>
+    <tr><td><b>忠泰湛 B2-22F</b></td><td>設計中</td><td class="n"><b>500 萬</b></td><td>130 工作天・9/29 進場</td></tr>
+    <tr><td>鉅力高宇 C-2F</td><td>設計中</td><td class="n">約 200 萬</td><td>8/31 報價簽約（估）</td></tr>
+    <tr><td>遠雄仰森 A3-22F</td><td>設計中</td><td class="n">約 250 萬</td><td>8/26 複驗後報價（估）</td></tr>
+    <tr><td>合雄鳳璽</td><td>洽談</td><td class="n">300–400 萬</td><td>業主口述（不含空調）</td></tr>
+    <tr><td>中和地球村</td><td>洽談</td><td class="n">250 萬</td><td>需求表預算</td></tr>
+    <tr><td>長堤天昀 A2-5F</td><td>洽談</td><td class="n">60 萬</td><td>客變案</td></tr>
+    <tr class="sum"><td colspan="2">已簽＋忠泰湛</td><td class="n">737 萬</td><td>確定性高</td></tr>
+    <tr class="sum"><td colspan="2">高機率（C-2F＋仰森）</td><td class="n">450 萬</td><td>報價階段</td></tr>
+    <tr class="sum"><td colspan="2">洽談池 660 萬 × 6 折</td><td class="n">396 萬</td><td>風險折扣</td></tr>
+    <tr class="sum"><td colspan="2">滾動 12 個月量能</td><td class="n">約 1,580 萬</td><td>不含台北華府設計費</td></tr>
+  </table>
+  </div>
+
+  <h3>兩案的營收門檻對照</h3>
+  <div class="scroll">
+  <table>
+    <tr><th>方案</th><th class="n">年成本</th><th class="n">絕對下限<br><small>佔毛利 20%</small></th>
+        <th class="n">及格線<br><small>佔毛利 15%</small></th><th class="n">舒適線<br><small>佔毛利 10%</small></th></tr>
+    <tr class="hlA"><td>A · 林口店面（租 3.5 萬）</td><td class="n">66.4 萬</td><td class="n">1,145 萬</td>
+        <td class="n">1,526 萬</td><td class="n">2,290 萬</td></tr>
+    <tr class="hl"><td>B · 龜山辦公室</td><td class="n">38.7 萬</td><td class="n">667 萬</td>
+        <td class="n win">890 萬</td><td class="n">1,334 萬</td></tr>
+  </table>
+  </div>
+  <p>量能 1,580 萬對照：<b>方案 A 剛好過及格線（1,526 萬），方案 B 已超過舒適線（1,334 萬）。</b>
+  這就是「B 請得起人、A 請不起」的來源。</p>
+
+  <div class="note">
+    <b>⚠ 忠泰湛還在「設計中」，工程約尚未簽。</b>8/29 才要提兩版 3D。
+    它單獨佔滾動量能的三分之一，<b>請先確認 500 萬是已簽約金額還是報價預估</b>。
+    若只是預估，方案 A 連及格線都不該假設過得了。
+  </div>
+</section>
+
+<!-- G. 現金流 -->
+<section>
+  <h2><span class="em">🏦</span>G. 現金流：9–10 月不要花錢</h2>
+  <div class="scroll">
+  <table>
+    <tr><th>案件</th><th>期別</th><th class="n">金額</th><th>甘特圖標記</th></tr>
+    <tr><td rowspan="3">鉅力高宇 D-2F</td><td>木作進場 30%</td><td class="n">34.5 萬</td><td>未收</td></tr>
+    <tr><td>油漆進場 30%</td><td class="n">34.5 萬</td><td>未收</td></tr>
+    <tr><td>尾款 10%（9/22）</td><td class="n">11.5 萬</td><td>未收</td></tr>
+    <tr><td rowspan="3">合新合心</td><td>木作進場 30%</td><td class="n">36.6 萬</td><td>未收</td></tr>
+    <tr><td>油漆進場 30%</td><td class="n">36.6 萬</td><td>未收</td></tr>
+    <tr><td>尾款 10%（10/1）</td><td class="n">12.2 萬</td><td>未收</td></tr>
+    <tr class="sum"><td colspan="2">帳面未收合計</td><td class="n">165.9 萬</td><td>請先核對實況</td></tr>
+  </table>
+  </div>
+
+  <div class="warn">
+    <h2>⚠️ 9/15、9/22、9/29 三案連續開工</h2>
+    鉅力 C-2F、遠雄仰森、忠泰湛（500 萬大案）——
+    保護／拆除／水電進場的墊款全部撞在一起。
+    <b>這正是方案 B 的另一個優勢：一次投入只要 20 萬，不是 65 萬。</b>
+    <div class="say">方案 B 幾乎可以立刻進場（高檔裝潢已完成、隨時可用），
+    但仍建議把<b>免租期起算談到 10 月</b>，
+    等鉅力 9/24、合新合心 10/1 兩筆交屋尾款進帳後再搬。</div>
+  </div>
+</section>
+
+<!-- H. 若仍要選 A -->
+<section>
+  <h2><span class="em">🅰️</span>H. 如果你還是想要那間店面</h2>
+  <p class="lead">A 不是壞選擇，只是現在太早。要選就把條件談到位</p>
+
+  <ul style="font-size:14px; padding-left:20px;">
+    <li><b>租金底線 35,000，超過 4 萬就別談。</b>開價 47,500 砍到 3 萬是 -36.8%，
+    她五年少收 105 萬——那是人情不是議價。</li>
+    <li><b>先問仲介委託類型。</b>永慶專任委託在期內自行成交照樣要付服務費。</li>
+    <li><b>挑空只補 2／3</b>，保留門面挑高，投入壓在 45 萬以內。</li>
+    <li><b>主動告知補挑空屬違建</b>（建築法 77-2 條），並在合約寫明被令拆除時我方免責。</li>
+    <li><b>取得管委會書面同意才動工</b>，社區店面的鄰居就是管委會成員。</li>
+    <li><b>五年不調漲＋辦公證</b>（民法 425 條，逾五年未公證不適用買賣不破租賃）。</li>
+    <li><b>二樓未完工的部分當議價籌碼</b>——燈具、面板、塗裝、收尾差 10–20 萬。</li>
+    <li><b>租期內出租人不得任意終止</b>，因出售／自用終止須按 60 個月攤提賠償未攤提餘額。</li>
+  </ul>
+
+  <div class="warn">
+    <h2>⚠️ 熟人租賃：這是二度關係</h2>
+    阿緯媽媽是<b>阿祥朋友的媽媽</b>，隔了兩層。出事時<b>阿祥跟阿緯都會被夾在中間</b>，
+    而你要談的是 -26% 到 -37% 的降幅，人情欠得不小。
+    <b>方案 B 完全沒有這個成本。</b>
+  </div>
+</section>
+
+<!-- I. 行動 -->
+<section class="must">
+  <h2><span class="em">🎯</span>I. 建議行動順序</h2>
+  <div class="decide">
+    <div class="q"><span class="em">1️⃣</span>本週：三個數字</div>
+    <div class="a">① 忠泰湛 500 萬<b>是已簽約還是報價預估</b>；
+    ② 鉅力 D-2F 與合新合心的<b>實際收款狀況</b>（帳面 165.9 萬未收）；
+    ③ 你的<b>實際綜合毛利率</b>與現有人事成本——填進 C 段試算器。</div>
+  </div>
+  <div class="decide">
+    <div class="q"><span class="em">2️⃣</span>本週：打電話問 B 的車位</div>
+    <div class="a">有巢氏駱小姐 0932-553-244。<b>車位、既有裝潢可否更動、
+    退租恢復原狀範圍、空調型式、委託類型</b>——一次問完。</div>
+  </div>
+  <div class="decide">
+    <div class="q"><span class="em">3️⃣</span>8 月下旬：兩間都去看</div>
+    <div class="a">同一天看完，感受差異。B 重點看<b>20 坪夠不夠、樣品放哪、
+    既有裝潢能不能接受</b>；A 重點量<b>挑空開口與兩層淨高</b>。</div>
+  </div>
+  <div class="decide">
+    <div class="q"><span class="em">4️⃣</span>9 月：談 B、簽 B、10 月進駐</div>
+    <div class="a">B 幾乎免裝修，談成後 2–3 週就能搬。
+    <b>省下的 72.7 萬，第一年拿去請一個專案設計師（配合制起步）</b>，
+    正好對上 9/29 忠泰湛進場的人力缺口。</div>
+  </div>
+  <div class="decide">
+    <div class="q"><span class="em">5️⃣</span>2027：營收站上 2,300 萬再考慮店面</div>
+    <div class="a">那時是方案 A 的「舒適線」。<b>先把人補齊、把忠泰湛做完、
+    把毛利率顧好，門面是水到渠成的事，不是現在該借力的事。</b></div>
+  </div>
+</section>
+
+<div style="text-align:center;">
+  <button class="reset" id="resetBtn" type="button">清除所有勾選</button>
+</div>
+<div class="foot">
+  禹合制所 YUHE DESIGN｜辦公室選址評估備忘<br>
+  A 案 591／R21369741 · B 案 591／R21633941 · 屋況判讀來自照片，一律以現場實測為準<br>
+  試算為概估，實際以正式報價、謄本與會計師意見為準<br>
+  勾選狀態自動存於本機，可離線使用
+</div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, tb=document.getElementById('themeBtn');
+  function setTheme(t){root.setAttribute('data-theme',t);tb.textContent=t==='dark'?'☀️':'🌙';
+    try{localStorage.setItem('yuhe_office_theme',t);}catch(e){}}
+  var s=null; try{s=localStorage.getItem('yuhe_office_theme');}catch(e){}
+  setTheme(s==='dark'?'dark':'light');
+  tb.onclick=function(){setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');};
+
+  /* ── 試算 ── */
+  var EMPLOYER=0.19;   /* 勞健保＋勞退雇主負擔 */
+  var MONTHS=13;       /* 年薪月數（含年終一個月） */
+  var ids=['i_rent','i_mgmt','i_fit','i_yr','i_misc','i_rev','i_gm','i_boss','i_des','i_asst','i_ops'];
+  function num(id){var v=parseFloat(document.getElementById(id).value);return isFinite(v)?v:0;}
+  function wan(n){return (n/10000).toFixed(1)+' 萬';}
+  function wanFromWan(n){return n.toFixed(0)+' 萬';}
+  function calc(){
+    var rent=num('i_rent'), mgmt=num('i_mgmt'), fit=num('i_fit')*10000,
+        yr=Math.max(num('i_yr'),0.5), misc=num('i_misc'),
+        rev=num('i_rev')*10000, gm=Math.max(num('i_gm'),1)/100,
+        boss=num('i_boss')*10000, des=num('i_des')*10000, asst=num('i_asst')*10000,
+        ops=num('i_ops')*10000;
+
+    var officeY=(rent+mgmt+misc+fit/(yr*12))*12;
+    /* 員工年成本＝月薪×13 ＋ 月薪×12×雇主負擔 */
+    function staff(m){return m*MONTHS + m*12*EMPLOYER;}
+    var hrY=boss+staff(des)+staff(asst);
+    var gross=rev*gm;
+    var net=gross-officeY-hrY-ops;
+    var ratio=gross>0?(officeY/gross*100):0;
+    var be=gm>0?((officeY+hrY+ops)/gm):0;
+
+    document.getElementById('o_office').textContent=wan(officeY);
+    document.getElementById('o_hr').textContent=wan(hrY);
+    document.getElementById('o_gross').textContent=wan(gross);
+    document.getElementById('o_ratio').textContent=ratio.toFixed(1)+' %';
+    var netEl=document.getElementById('o_net');
+    netEl.textContent=wan(net)+'（淨利率 '+(rev>0?(net/rev*100).toFixed(1):'0')+'%）';
+    netEl.style.color = net<0 ? 'var(--red)' : (net/Math.max(rev,1)<0.05 ? 'var(--amber)' : 'var(--green)');
+    document.getElementById('o_be').textContent=wan(be);
+  }
+  ids.forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+  calc();
+
+  /* ── 勾選 ── */
+  var KEY='yuhe_office_check';
+  var state={}; try{state=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  document.querySelectorAll('ul.chk').forEach(function(ul){
+    var g=ul.dataset.k;
+    Array.prototype.forEach.call(ul.children,function(li,i){
+      var id=g+i;
+      if(state[id]){li.classList.add('done');}
+      li.addEventListener('click',function(){
+        state[id]=li.classList.toggle('done'); save();
+      });
+    });
+  });
+  document.getElementById('resetBtn').onclick=function(){
+    if(!confirm('清除全部勾選？'))return;
+    state={}; save();
+    document.querySelectorAll('ul.chk li.done').forEach(function(li){li.classList.remove('done');});
+  };
+})();
+</script>
+</body>
+</html>
