@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜合雄凰璽 初談需求確認摘要</title>
+<style>
+  :root{
+    --paper:#faf8f4; --card:#ffffff; --ink:#2b2b28; --line:#ddd6c9;
+    --accent:#8a6d4b; --accent-deep:#6f563a; --accent-light:#f1ebe0;
+    --muted:#8b8578; --on-accent:#fff;
+    --teak:#9c6b3f; --teak-bg:#f5ede2;
+    --ask:#b0763a; --ask-bg:#fbf3e6;
+    --shadow:0 1px 3px rgba(60,50,30,.06);
+  }
+  html[data-theme="dark"]{
+    --paper:#1c1a17; --card:#26231e; --ink:#ece7dd; --line:#423b2f;
+    --accent:#c9a15f; --accent-deep:#d9b476; --accent-light:#332d24;
+    --muted:#9a917f; --on-accent:#241d12;
+    --teak:#d0a273; --teak-bg:#332920;
+    --ask:#d9b476; --ask-bg:#332b1e;
+    --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper); color:var(--ink); line-height:1.75;}
+  .wrap{max-width:740px; margin:0 auto; padding:20px 16px 70px;}
+
+  header{text-align:center; padding:34px 16px 6px; position:relative;}
+  header .brand{font-size:12px; letter-spacing:4px; color:var(--muted); margin-bottom:8px;}
+  header h1{font-size:23px; letter-spacing:2px; margin:0 0 6px;}
+  header .sub{color:var(--muted); font-size:13px;}
+  .theme-btn{position:absolute; top:14px; right:4px; width:40px; height:40px;
+    border-radius:50%; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); font-size:17px; cursor:pointer; box-shadow:var(--shadow);}
+
+  .intro{background:var(--accent-light); border:1px solid var(--line);
+    border-radius:14px; padding:16px 18px; margin:18px 0; font-size:14px; line-height:1.9;}
+
+  section{background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px 20px 14px; margin:16px 0; box-shadow:var(--shadow);}
+  section h2{font-size:17px; letter-spacing:1px; margin:0 0 4px;
+    display:flex; align-items:center; gap:10px;}
+  section h2 .n{flex:none; width:27px; height:27px; border-radius:50%;
+    background:var(--accent); color:var(--on-accent);
+    font-size:14px; display:flex; align-items:center; justify-content:center;}
+  .lead{font-size:12.5px; color:var(--muted); margin:0 0 14px 37px;}
+
+  .kv{display:grid; grid-template-columns:96px 1fr; gap:2px 14px;
+    padding:10px 2px; border-bottom:1px dashed var(--line); font-size:14.5px;}
+  .kv:last-child{border-bottom:0;}
+  .kv .k{color:var(--muted); font-size:13px;}
+  .kv .v b{color:var(--accent-deep);}
+
+  ul.plain{list-style:none; margin:0; padding:0;}
+  ul.plain li{padding:9px 2px 9px 22px; border-bottom:1px dashed var(--line);
+    font-size:14.5px; position:relative;}
+  ul.plain li:last-child{border-bottom:0;}
+  ul.plain li::before{content:"◆"; position:absolute; left:2px; color:var(--accent); font-size:11px; top:12px;}
+  ul.plain li b{color:var(--accent-deep);}
+  ul.plain li small{display:block; color:var(--muted); font-size:12.5px; margin-top:2px;}
+
+  .rooms{display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:10px;}
+  .room{border:1px solid var(--line); border-radius:11px; padding:12px 14px;}
+  .room .t{font-weight:700; font-size:14.5px; color:var(--accent-deep); margin-bottom:4px;}
+  .room .d{font-size:13px; color:var(--ink); line-height:1.7;}
+  .room .d em{font-style:normal; color:var(--muted); font-size:12.5px;}
+
+  .teak{background:var(--teak-bg); border:1px solid var(--teak);
+    border-radius:14px; padding:18px 20px; margin:16px 0;}
+  .teak h2{font-size:17px; color:var(--teak); margin:0 0 8px; letter-spacing:1px;}
+  .teak p{font-size:14px; line-height:1.95; margin:0;}
+  .teak p b{color:var(--teak);}
+
+  .ask{background:var(--ask-bg); border:1px solid var(--ask); border-radius:14px;
+    padding:18px 20px 12px; margin:16px 0;}
+  .ask h2{font-size:17px; color:var(--ask); margin:0 0 4px; letter-spacing:1px;
+    display:flex; align-items:center; gap:9px;}
+  .ask .lead{margin-left:0;}
+  .ask ol{margin:0; padding-left:20px;}
+  .ask ol li{font-size:14px; padding:7px 0; line-height:1.75;}
+  .ask ol li b{color:var(--ask);}
+
+  .steps{counter-reset:s; list-style:none; margin:0; padding:0;}
+  .steps li{counter-increment:s; position:relative; padding:11px 0 11px 42px;
+    border-bottom:1px dashed var(--line); font-size:14.5px;}
+  .steps li:last-child{border-bottom:0;}
+  .steps li::before{content:counter(s); position:absolute; left:2px; top:11px;
+    width:25px; height:25px; border-radius:50%; background:var(--accent-light);
+    border:1.5px solid var(--accent); color:var(--accent-deep);
+    font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center;}
+  .steps li b{color:var(--accent-deep);}
+  .steps li small{display:block; color:var(--muted); font-size:12.5px; margin-top:1px;}
+
+  .foot{text-align:center; font-size:12.5px; color:var(--muted);
+    margin-top:26px; line-height:2; border-top:1px solid var(--line); padding-top:18px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<button class="theme-btn" id="themeBtn" type="button" title="切換深淺色">🌙</button>
+
+<header>
+  <div class="brand">禹合制所 YUHE DESIGN</div>
+  <h1>合雄凰璽 · 初談需求確認摘要</h1>
+  <div class="sub">B1／7F ・ 2026 / 08 / 15（六）現場丈量與需求訪談</div>
+</header>
+
+<div class="intro">
+  感謝兩位撥空讓我們到府丈量，也謝謝您分享這個家的故事。
+  以下是我們今天現場確認的內容整理，<b>請您過目確認是否正確</b>，
+  若有理解錯誤或需要補充的地方，再麻煩您告訴我們，我們會據此進行後續規劃。
+</div>
+
+<!-- 1 -->
+<section>
+  <h2><span class="n">1</span>今日確認的居住成員與生活需求</h2>
+  <p class="lead">家庭結構與日常生活型態，是規劃的起點</p>
+
+  <div class="kv"><span class="k">居住人數</span><span class="v"><b>5 人</b>（夫妻＋兩位女兒＋幫傭）</span></div>
+  <div class="kv"><span class="k">家庭成員</span><span class="v">先生 48 歲｜太太 44 歲｜姊姊 9 歲｜妹妹 3 歲</span></div>
+  <div class="kv"><span class="k">重要期待</span><span class="v"><b>妹妹目前住在褓姆家，期待新家完成後接回一起同住</b></span></div>
+  <div class="kv"><span class="k">生活型態</span><span class="v">兩位皆週休二日；<b>經常邀請朋友到家中聚會</b></span></div>
+
+  <ul class="plain" style="margin-top:8px;">
+    <li><b>招待客人是重要的生活場景</b><small>需要能容納 6–8 人的餐桌，以及舒適的客餐廳動線</small></li>
+    <li><b>希望有家庭影音空間</b><small>客廳需可設置投影布幕</small></li>
+    <li><b>期待導入智能家電</b><small>希望新家能有智慧化的生活體驗</small></li>
+    <li><b>兩位女兒的成長考量</b><small>妹妹回家後，姊妹的空間需要被公平地對待</small></li>
+  </ul>
+</section>
+
+<!-- 2 -->
+<section>
+  <h2><span class="n">2</span>現況問題與希望改善項目</h2>
+  <p class="lead">您目前住起來最不順的地方，是我們優先解決的重點</p>
+
+  <ul class="plain">
+    <li><b>主臥衛浴沒有整合乾濕分離</b><small>您提到這是目前最在意的問題 —— 新規劃將優先處理</small></li>
+    <li><b>熱水不夠熱</b><small>主浴將改採電熱水器，改善出水溫度不穩的狀況</small></li>
+    <li><b>玄關與屏風空間過小</b><small>入口收納與落塵區不足，需重新配置</small></li>
+    <li><b>房間數不敷未來使用</b><small>現況 3 房，妹妹回家後需要 4 個房間</small></li>
+    <li><b>客浴希望增加浴缸</b><small>提升家庭泡澡與幼兒沐浴的便利性</small></li>
+    <li><b>整體規劃未考量有孩子的生活</b><small>現況為當年規劃，需依新的家庭成員重新調整</small></li>
+  </ul>
+</section>
+
+<!-- 柚木主軸 -->
+<div class="teak">
+  <h2>🏡 這個家的故事 · 延續爸爸的用心</h2>
+  <p>
+    我們了解到，現在這個家的裝修是<b>先生的爸爸當年親自規劃施工</b>的，
+    當時還沒有預想到日後會有孩子加入這個家。<br><br>
+    您希望在新的規劃裡<b>延續爸爸留下的東西</b> ——
+    可能是<b>整體的風格語彙</b>，也可能是<b>部分保留下來的石材</b>。
+    這不是把過去打掉重做，而是<b>讓爸爸的心意延續下去，陪著孩子一起長大</b>。<br><br>
+    這份心意我們收到了，也會把它<b>放在設計的核心</b>。
+    下一次到府時，我們會與兩位<b>逐項確認保留的方式與範圍</b>，
+    並讓新增的材質與它自然對話，而不是覆蓋它。
+  </p>
+</div>
+
+<!-- 3 -->
+<section>
+  <h2><span class="n">3</span>各空間規劃需求</h2>
+  <p class="lead">依今日討論整理，作為平面配置的依據</p>
+
+  <div class="rooms">
+    <div class="room"><div class="t">玄關</div>
+      <div class="d">落塵區＋屏風<br><em>現況過小，需重新規劃收納量</em></div></div>
+
+    <div class="room"><div class="t">客廳</div>
+      <div class="d">可設置<b>投影布幕</b><br><em>需預留電源、天花結構與投影距離</em></div></div>
+
+    <div class="room"><div class="t">餐廳・餐儲區</div>
+      <div class="d"><b>6–8 人餐桌</b>＋餐邊儲藏<br><em>招待朋友的主要場域</em></div></div>
+
+    <div class="room"><div class="t">廚房</div>
+      <div class="d"><b>ㄇ字型＋吧台</b><br><em>提升備餐動線與互動性</em></div></div>
+
+    <div class="room"><div class="t">主臥</div>
+      <div class="d">主臥房＋<b>更衣間</b></div></div>
+
+    <div class="room"><div class="t">女兒房 ×2</div>
+      <div class="d"><b>兩間面積相同</b><br><em>初期姊妹共用姊姊房，妹妹房先作遊戲間，日後各自使用</em></div></div>
+
+    <div class="room"><div class="t">幫傭房</div>
+      <div class="d">小房間，<b>兼作儲藏</b></div></div>
+
+    <div class="room"><div class="t">主浴</div>
+      <div class="d"><b>乾濕分離</b>＋<b>電熱水器</b><br><em>本次改善的首要重點</em></div></div>
+
+    <div class="room"><div class="t">客浴</div>
+      <div class="d">希望<b>增設浴缸</b></div></div>
+
+    <div class="room"><div class="t">全室</div>
+      <div class="d">保留<b>大門</b>不更換<br><em>空調延用現有壁掛機，由貴方廠商施作</em></div></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2><span class="n">4</span>丈量後的初步觀察</h2>
+  <p class="lead">現場實測與初步判讀，供您參考</p>
+
+  <div class="kv"><span class="k">坪數</span><span class="v">權狀 58 坪／室內實坪約 <b>40 坪</b>（公設約 3 成，屬大樓正常值）</span></div>
+  <div class="kv"><span class="k">屋齡</span><span class="v">約 12 年，現場<b>未見明顯漏水或壁癌</b></span></div>
+  <div class="kv"><span class="k">現況格局</span><span class="v">3 房 2 廳 2 衛 → 需調整為 <b>4 房</b>，將進行隔間重整</span></div>
+
+  <ul class="plain" style="margin-top:8px;">
+    <li><b>空間需求總量較大，平面階段需要一起取捨</b>
+      <small>4 房＋更衣間＋兩套衛浴＋ㄇ字型廚房＋大餐桌，在 40 坪內較為緊湊。
+      我們會提出不同配置方向，讓兩位比較後決定優先順序。</small></li>
+    <li><b>採光集中在前後兩側</b>
+      <small>中央新增的房間需特別留意採光與通風的分配</small></li>
+    <li><b>前後雙陽台可利用</b>
+      <small>洗曬、機能設備與空調室外機的配置將一併規劃</small></li>
+    <li><b>柚木元素需先盤點</b>
+      <small>拆除前會逐項確認保留範圍，並於現場標示，避免施工誤拆</small></li>
+    <li><b>社區施工規範</b>
+      <small>平日 09:00–17:00，週六可進行靜音工程（如木作貼皮、油漆批土、清潔）。
+      工期會依此條件據實估算。</small></li>
+  </ul>
+</section>
+
+<!-- 5 -->
+<div class="ask">
+  <h2>📝 <span>5. 待兩位確認的事項</span></h2>
+  <p class="lead">以下項目確認後，我們才能進入平面與水電的細部規劃</p>
+  <ol>
+    <li><b>延續爸爸心意的「方式」與「範圍」</b>（最優先）<br>
+      兩種做法可以單獨或並行，方向不同、施工與費用也不同：<br>
+      ・<b>延續風格</b>：以新材料重新詮釋原有的質感與語彙，整體更一致、規劃彈性大<br>
+      ・<b>實體保留部分石材</b>：保留爸爸當年實際使用的材料，情感連結最直接<br>
+      建議下次到府時，我們<b>逐項拍照建檔、一起圈選</b>要保留的品項。</li>
+    <li><b>各房床尺寸</b>：主臥、姊姊房、妹妹房、幫傭房
+      —— 直接影響隔間淨寬與走道規劃</li>
+    <li><b>全室水電管線是否更新</b>：12 年屋建議評估重拉，
+      我們會提供評估結果與費用差異供您決定</li>
+    <li><b>智能家電的範圍</b>：照明、窗簾、空調、影音或安防？
+      這部分需在水電階段就定案</li>
+    <li><b>空調廠商的配合方式</b>：貴方廠商的聯絡窗口與進場時程，
+      以便我們協調木作包管與線路預留</li>
+    <li><b>預算優先順序</b>：若需取捨，哪些是必做、哪些可分階段完成</li>
+    <li><b>搬遷與淨空時間</b>：全室翻新需要清空現場，
+      建議提早規劃搬遷與大型家具寄倉</li>
+  </ol>
+</div>
+
+<!-- 6 -->
+<section>
+  <h2><span class="n">6</span>禹合建議的下一步</h2>
+  <p class="lead">後續流程與時間安排</p>
+
+  <ol class="steps">
+    <li><b>現況圖整理與放樣</b>
+      <small>將今日丈量數據繪製為精確的現況平面圖</small></li>
+    <li><b>平面配置提案＋風格簡報</b>
+      <small>提出不同配置方向與風格方案，包含柚木元素的融合構想，與兩位討論後定案</small></li>
+    <li><b>簽訂設計合約</b>
+      <small>方向確認後正式展開設計作業</small></li>
+    <li><b>3D 空間提案</b>
+      <small>將平面轉為立體視覺，讓兩位實際感受空間氛圍</small></li>
+    <li><b>3D 修正與材質挑選</b>
+      <small>依您的回饋調整，並一起挑選材質與色系</small></li>
+    <li><b>施工圖繪製與工程估價</b>
+      <small>完成平面系列施工圖，據實提出工程報價</small></li>
+    <li><b>工程報價會議與簽約</b>
+      <small>逐項說明工程內容與費用，確認後簽訂工程合約</small></li>
+    <li><b>社區裝修申請、搬遷淨空、正式開工</b>
+      <small>開工日與完工日將明確載入合約，讓兩位安心規劃</small></li>
+  </ol>
+</section>
+
+<div class="intro" style="margin-top:18px;">
+  <b>關於完工時間</b><br>
+  我們理解兩位最希望的，是<b>讓妹妹早點回到家裡一起生活</b>。
+  正因如此，我們更不願意給出一個做不到的日期。<br>
+  工期會依社區施工規範（平日全日、週六靜音）據實估算，
+  並在報價會議時提出<b>明確的開工與完工日期</b>，白紙黑字寫進合約，
+  讓兩位能安心安排搬遷與孩子回家的時間。
+</div>
+
+<div class="foot">
+  禹合制所 YUHE DESIGN<br>
+  本摘要依 2026/08/15 現場丈量與訪談內容整理<br>
+  如有任何理解錯誤或需補充之處，敬請不吝告知
+</div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, tb=document.getElementById('themeBtn');
+  function setTheme(t){root.setAttribute('data-theme',t);tb.textContent=t==='dark'?'☀️':'🌙';
+    try{localStorage.setItem('yuhe_hx_brief_theme',t);}catch(e){}}
+  var s=null; try{s=localStorage.getItem('yuhe_hx_brief_theme');}catch(e){}
+  setTheme(s==='dark'?'dark':'light');
+  tb.onclick=function(){setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');};
+})();
+</script>
+</body>
+</html>
