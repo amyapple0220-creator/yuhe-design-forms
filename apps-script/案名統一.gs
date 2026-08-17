@@ -41,7 +41,7 @@ var CN_RULES = [
     label:   '鉅力高宇：單獨出現時視為 D-2F（不影響已寫明 C-2F / D-2F 者）',
     find:    /鉅力高宇(?!\s*[CD]-2F)/g,
     replace: '鉅力高宇D-2F',
-    enabled: false   // ⚠️ 確認「鉅力高宇」單獨出現時一律指 D-2F，再改成 true
+    enabled: true   // 2026/08/16 業主確認：單獨寫「鉅力高宇」一律指 D-2F
   },
   {
     label:   '合雄：統一為「合雄凰璽」（凰，不是鳳）',
