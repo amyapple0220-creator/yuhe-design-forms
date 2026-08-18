@@ -376,6 +376,7 @@
     </div>
     <button class="btn ghost" id="btnTpl">⬒ 套用範本</button>
     <button class="btn ghost" id="btnShare">📤 分享</button>
+    <button class="btn ghost" id="btnReseed" title="捨棄本機修改，改用檔案內建的最新工序">↺ 還原內建工序</button>
     <div class="spacer"></div>
     <div class="chip-note">點工項可編輯</div>
   </div>
@@ -1026,6 +1027,14 @@
       .catch(function(){return plain;})
       .then(function(p){return location.origin+location.pathname+'#d='+p;});
   }
+  $('btnReseed').onclick=function(){
+    if(!confirm('還原內建工序？\n\n這台裝置上手動改過的工項、進度、節點都會被捨棄，\n改用檔案內建的最新排程（含所有專案）。此動作無法復原。'))return;
+    try{localStorage.removeItem(KEY);}catch(e){}
+    state={cur:0,projects:[]};
+    seedRealProjects();   /* 內含節點/請款/連假回填 */
+    save(); render();
+    toast('已還原為內建最新工序 ✓');
+  };
   $('btnShare').onclick=function(){
     buildShareURL().then(function(url){
       function done(){toast('連結已複製！貼到 LINE 群組，大家點開就會看到目前的資料 ✓');}
