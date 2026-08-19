@@ -26,6 +26,11 @@ var C2F_SPREADSHEET_ID = '';
 // 不處理的分頁
 var C2F_SKIP_SHEETS = [];
 
+// 順便把 8/27 那筆「工程報價準備／報價會議」正名為「工程報價準備（內部作業）」。
+// 8/27 在行事曆上是內部作業，不是會議；會議一律以 9/1 10:30 為準。
+// 確認要改再改成 true。
+var C2F_ALSO_RENAME_0827 = false;
+
 // 舊日期 / 新日期
 var C2F_OLD = new Date(2026, 7, 31);  // 2026/08/31
 var C2F_NEW = new Date(2026, 8, 1);   // 2026/09/01
@@ -60,11 +65,14 @@ function c2f_run_(dryRun) {
 
     for (var r = 0; r < values.length; r++) {
       var row = values[r];
-      if (!c2f_isTargetRow_(row)) continue;
+      var isDateRow = c2f_isTargetRow_(row);
+      var isPrepRow = C2F_ALSO_RENAME_0827 && c2f_isPrepRow_(row);
+      if (!isDateRow && !isPrepRow) continue;
 
       for (var c = 0; c < row.length; c++) {
         var v = row[c];
-        var nv = c2f_fixCell_(v, row);
+        var nv = isDateRow ? c2f_fixCell_(v, row) : null;
+        if (nv === null && isPrepRow) nv = c2f_renamePrep_(v);
         if (nv === null) continue;
 
         report.push(
@@ -102,6 +110,26 @@ function c2f_isTargetRow_(row) {
          text.indexOf('報價') >= 0 &&
          text.indexOf('簽約') >= 0 &&
          (text.indexOf('2026/08/31') >= 0 || text.indexOf('2026/8/31') >= 0 || text.indexOf('8/31') >= 0);
+}
+
+
+/** 這一列是不是 8/27 那筆「工程報價準備／報價會議」 */
+function c2f_isPrepRow_(row) {
+  var text = row.map(function (v) {
+    return (v instanceof Date) ? Utilities.formatDate(v, 'Asia/Taipei', 'yyyy/MM/dd') : String(v);
+  }).join('|');
+
+  return text.indexOf('鉅力高宇C-2F') >= 0 &&
+         text.indexOf('報價會議') >= 0 &&
+         (text.indexOf('2026/08/27') >= 0 || text.indexOf('2026/8/27') >= 0);
+}
+
+
+/** 8/27 那筆的名稱正名；不需要改就回傳 null */
+function c2f_renamePrep_(v) {
+  if (typeof v !== 'string' || !v) return null;
+  var s = v.replace(/工程報價準備\s*[／\/]\s*報價會議/g, '工程報價準備（內部作業）');
+  return s === v ? null : s;
 }
 
 
