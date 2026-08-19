@@ -27,7 +27,8 @@
  *                   空調收尾1（設備安裝＋出迴風口丈量）8/24–8/25
  *                   空調收尾2（安裝出迴風口）        9/10–9/11
  *                 新增 垃圾清運 8/24（第二趟載運）
- *                 收尾點檢 9/30→9/29、DECO＆完工拍攝 9/29→9/30
+ *                 收尾點檢 9/30 → 併入 9/18–9/29（該列標記作廢，確認後可手動刪）
+ *                 DECO＆完工拍攝 9/29 → 9/30
  *   鉅力高宇D-2F  2026/08/19 收尾段整體前移：
  *                 玻璃＋鋁門 8/27–28 → 8/26｜空調收尾 9/3–4 → 8/27–28
  *                 水電收尾 9/7–11 → 8/31–9/1（開關面板＋燈具安裝）
@@ -46,6 +47,12 @@
  * 用法：
  *   1. 先跑 previewScheduleSync()   ── 唯讀，列出每一列會怎麼改
  *   2. 看過清單沒問題，再跑 applyScheduleSync()
+ *   3. 若記錄出現「找不到○○分頁」，跑 dumpSheetHeaders()（唯讀）
+ *      把每張分頁的前 6 列印出來，就能看出表頭欄名到底寫什麼。
+ *
+ * 重跑安全性：
+ *   這支可以重複跑。新增列會先比對「案件＋工項」，已存在就略過。
+ *   已改過名的工項，第二次跑會找不到舊名而列在「⚠️ 找不到」清單裡，屬正常。
  *
  * ⚠️ 動手前請先「檔案 → 建立副本」備份一份試算表。
  * ⚠️ 這支只改「人工欄位」的值（工項名稱、開始日、結束日、備註、負責人），
@@ -176,6 +183,17 @@ var SS_UPDATES = [
     name: '空調收尾1（設備安裝＋出迴風口丈量）',
     newStart: '2026/08/24', newEnd: '2026/08/25',
     note: '丈量後訂製風口，9/10–9/11 收尾2 安裝'
+  },
+  {
+    案: '合新合心', 工項: 'DECO＆完工拍攝',
+    newStart: '2026/09/30', newEnd: '2026/09/30',
+    note: '由 9/29 改期；DECO 佈置與攝影同日，交屋前一天'
+  },
+  {
+    案: '合新合心', 工項: '收尾點檢',
+    name: '收尾點檢（已併入 9/18–9/29，本列作廢可刪）',
+    newStart: '2026/09/29', newEnd: '2026/09/29',
+    note: '原 9/30 單日收尾點檢，已併入「收尾點檢＋家具家電進場 9/18–9/29」；此列保留僅為留痕，確認後可手動刪除'
   }
 ];
 
@@ -288,7 +306,10 @@ function ss_run_(preview) {
 
 /** 工程進度表：表頭為「案件 | 工項 | 開始日 | 結束日 | 備註」 */
 function ss_syncProgress_(ss, preview) {
-  var found = ss_findSheet_(ss, ['案件', '工項', '開始日', '結束日']);
+  var found = ss_findSheet_(ss,
+    [['案件', '案名', '專案'], ['工項', '工項名稱', '工作項目'],
+     ['開始日', '開始日期', '起日'], ['結束日', '結束日期', '迄日']],
+    /工程進度|進度與撞期/);
   if (!found) {
     Logger.log('⚠️ 找不到工程進度表（表頭需含 案件/工項/開始日/結束日），略過。');
     return { changed: 0, added: 0, missing: ['工程進度表整張分頁'] };
@@ -356,7 +377,11 @@ function ss_syncProgress_(ss, preview) {
 
 /** ERP_03_工作安排：表頭為「日期 | 案件 | 類型 | 工作內容 | 負責人 | …」 */
 function ss_syncTasks_(ss, preview) {
-  var found = ss_findSheet_(ss, ['日期', '案件', '工作內容']);
+  var found = ss_findSheet_(ss,
+    [['日期', '排程日期', '工作日期', '預定日期'],
+     ['案件', '案名', '專案'],
+     ['工作內容', '工作項目', '內容', '事項', '工項']],
+    /工作安排|ERP_03/);
   if (!found) {
     Logger.log('⚠️ 找不到工作安排分頁（表頭需含 日期/案件/工作內容），略過。');
     return { changed: 0, missing: ['ERP_03_工作安排整張分頁'] };
@@ -392,26 +417,70 @@ function ss_syncTasks_(ss, preview) {
 }
 
 
-/** 找出含指定表頭的分頁；回傳 sheet、values、表頭列索引、欄名→索引對照 */
-function ss_findSheet_(ss, mustHave) {
-  var hit = null;
+/**
+ * 找出含指定表頭的分頁；回傳 sheet、values、表頭列索引、欄名→索引對照。
+ * mustHave 每個元素可以是字串，或「同義詞陣列」（第一個是正式名稱）。
+ * nameHint 有給的話，分頁名符合的優先。
+ * 比對時會把空白去掉，表頭列也不再只看前 15 列。
+ */
+function ss_findSheet_(ss, mustHave, nameHint) {
+  var groups = mustHave.map(function (h) { return (typeof h === 'string') ? [h] : h; });
+  var best = null;
+
   ss.getSheets().forEach(function (sheet) {
-    if (hit) return;
     var values = sheet.getDataRange().getValues();
-    for (var r = 0; r < Math.min(values.length, 15); r++) {
-      var col = {}, ok = 0;
+    var limit = Math.min(values.length, 200);
+
+    for (var r = 0; r < limit; r++) {
+      var col = {};
       for (var c = 0; c < values[r].length; c++) {
-        var v = String(values[r][c]).trim();
-        if (v) col[v] = c;
+        var v = String(values[r][c]).replace(/\s+/g, '');
+        if (v && col[v] === undefined) col[v] = c;
       }
-      mustHave.forEach(function (h) { if (col[h] !== undefined) ok++; });
-      if (ok === mustHave.length) {
-        hit = { sheet: sheet, values: values, headRow: r, col: col };
-        return;
+
+      var resolved = {}, k;
+      for (k in col) resolved[k] = col[k];
+
+      var ok = 0;
+      groups.forEach(function (g) {
+        for (var i = 0; i < g.length; i++) {
+          var key = g[i].replace(/\s+/g, '');
+          if (col[key] !== undefined) { resolved[g[0]] = col[key]; ok++; return; }
+        }
+      });
+
+      if (ok === groups.length) {
+        var score = (nameHint && nameHint.test(sheet.getName())) ? 2 : 1;
+        if (!best || score > best.score) {
+          best = { sheet: sheet, values: values, headRow: r, col: resolved, score: score };
+        }
+        break;   // 這張分頁已找到表頭，換下一張
       }
     }
   });
-  return hit;
+
+  return best;
+}
+
+
+/**
+ * 診斷用（唯讀）：印出每張分頁的名稱與前 6 列，用來確認表頭到底長什麼樣。
+ * 只有在 previewScheduleSync() 說「找不到分頁」時才需要跑。
+ */
+function dumpSheetHeaders() {
+  var ss = SS_SPREADSHEET_ID
+    ? SpreadsheetApp.openById(SS_SPREADSHEET_ID)
+    : SpreadsheetApp.getActive();
+
+  ss.getSheets().forEach(function (sheet) {
+    var values = sheet.getDataRange().getValues();
+    Logger.log('▌' + sheet.getName() + '（共 ' + values.length + ' 列）');
+    for (var r = 0; r < Math.min(values.length, 6); r++) {
+      var row = values[r].map(function (v) { return String(v).trim(); });
+      while (row.length && !row[row.length - 1]) row.pop();
+      if (row.length) Logger.log('   第 ' + (r + 1) + ' 列：' + row.slice(0, 14).join(' | '));
+    }
+  });
 }
 
 /** 寫字串 */
