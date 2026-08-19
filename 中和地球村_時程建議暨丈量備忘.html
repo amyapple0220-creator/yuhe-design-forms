@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜中和地球村 時程建議暨丈量備忘</title>
+<style>
+  :root{
+    --paper:#faf8f4; --card:#ffffff; --ink:#2b2b28; --line:#ddd6c9;
+    --accent:#8a6d4b; --accent-deep:#6f563a; --accent-light:#f1ebe0;
+    --muted:#8b8578; --on-accent:#fff; --red:#c0563c; --red-bg:#f7e7e1;
+    --green:#5c7a52; --shadow:0 1px 3px rgba(60,50,30,.06);
+  }
+  html[data-theme="dark"]{
+    --paper:#1c1a17; --card:#26231e; --ink:#ece7dd; --line:#423b2f;
+    --accent:#c9a15f; --accent-deep:#d9b476; --accent-light:#332d24;
+    --muted:#9a917f; --on-accent:#241d12; --red:#e08a6f; --red-bg:#3a2620;
+    --green:#9ab98c; --shadow:0 1px 3px rgba(0,0,0,.3);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper); color:var(--ink); line-height:1.7;}
+  .wrap{max-width:720px; margin:0 auto; padding:22px 16px 70px;}
+  header{text-align:center; padding:26px 16px 10px; position:relative;}
+  header h1{font-size:23px; letter-spacing:2px; margin:0 0 4px;}
+  header .sub{color:var(--muted); font-size:13px; letter-spacing:1px;}
+  .theme-btn{position:absolute; top:14px; right:6px; width:40px; height:40px;
+    border-radius:50%; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); font-size:17px; cursor:pointer; box-shadow:var(--shadow);}
+
+  .snap{background:var(--accent-light); border:1px solid var(--line);
+    border-radius:14px; padding:14px 16px; margin:14px 0 6px; font-size:13.5px;}
+  .snap b{color:var(--accent-deep);}
+  .snap .g{display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:6px;}
+  .snap .g span{white-space:nowrap;}
+
+  section{background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 18px 14px; margin:14px 0; box-shadow:var(--shadow);}
+  section h2{font-size:16.5px; letter-spacing:.5px; border-left:4px solid var(--accent);
+    padding-left:11px; margin:0 0 6px; display:flex; align-items:center; gap:8px;}
+  section h2 .em{font-size:19px;}
+  .lead{font-size:12.5px; color:var(--muted); margin:0 0 12px 15px;}
+
+  table.sch{width:100%; border-collapse:collapse; font-size:14px;}
+  table.sch th{text-align:left; font-size:12px; color:var(--muted); font-weight:600;
+    border-bottom:1.4px solid var(--line); padding:6px 6px;}
+  table.sch td{border-bottom:1px dashed var(--line); padding:9px 6px; vertical-align:top;}
+  table.sch td.dt{white-space:nowrap; font-weight:700; color:var(--accent-deep); width:96px;}
+  table.sch td.dt small{display:block; font-weight:400; color:var(--muted); font-size:11.5px;}
+  table.sch tr.key td{background:var(--accent-light);}
+  table.sch td small.n{display:block; color:var(--muted); font-size:12px;}
+  .who{display:inline-block; font-size:11px; border-radius:6px; padding:1px 7px;
+    border:1px solid var(--line); color:var(--muted); margin-left:6px; white-space:nowrap;}
+  .who.cli{border-color:var(--accent); color:var(--accent-deep);}
+
+  ul.chk{list-style:none; margin:0; padding:0;}
+  ul.chk li{display:flex; gap:11px; align-items:flex-start; padding:9px 4px;
+    border-bottom:1px dashed var(--line); font-size:14.5px; cursor:pointer;}
+  ul.chk li:last-child{border-bottom:0;}
+  ul.chk .box{flex:none; width:21px; height:21px; margin-top:1px; border:1.6px solid var(--accent);
+    border-radius:6px; display:flex; align-items:center; justify-content:center;
+    font-size:14px; color:var(--on-accent); background:var(--card); transition:.12s;}
+  ul.chk li.done .box{background:var(--accent);}
+  ul.chk li.done .txt{color:var(--muted); text-decoration:line-through;}
+  ul.chk .txt small{display:block; color:var(--muted); font-size:12px; text-decoration:none; margin-top:1px;}
+
+  .warn{background:var(--red-bg); border:1px solid color-mix(in srgb,var(--red) 40%,var(--line));
+    border-radius:14px; padding:16px 18px; margin:14px 0; font-size:14px;}
+  .warn h2{border:0; padding:0; margin:0 0 8px; color:var(--red); font-size:16px;}
+  .warn b{color:var(--red);}
+  .say{background:var(--card); border-left:3px solid var(--accent); padding:8px 12px;
+    margin-top:10px; font-size:13.5px; border-radius:0 8px 8px 0;}
+  .tag{display:inline-block; font-size:11px; border-radius:6px; padding:1px 7px;
+    background:var(--accent-light); color:var(--accent-deep); border:1px solid var(--line);}
+  .foot{text-align:center; font-size:12px; color:var(--muted); margin-top:18px; line-height:1.9;}
+  .reset{background:none; border:1px solid var(--line); color:var(--muted);
+    border-radius:8px; padding:6px 14px; font-size:12px; cursor:pointer; font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<button class="theme-btn" id="themeBtn" type="button" title="切換深淺色">🌙</button>
+<header>
+  <h1>中和地球村 · 時程建議暨丈量備忘</h1>
+  <div class="sub">2026/08/19 重啟聯繫 · 全部日期為暫定，待交屋日確認後定案</div>
+</header>
+
+<div class="snap">
+  <b>案件快照</b>
+  <div class="g">
+    <span>◆ 業主 <b>AC・Amber</b></span><span>◆ 中和地球村（南勢角捷運站旁）</span>
+    <span>◆ 中古屋全室翻新</span><span>◆ 一手屋、屋齡較高</span>
+    <span>◆ 預算約 <b>250 萬</b>（不含空調、家具、家電）</span>
+    <span>◆ 原訂 2026 年 8 月中交屋</span><span>◆ 尚無圖面，交屋後丈量</span>
+    <span>◆ 客廳／廚房／玄關／浴室必做</span><span>◆ 小孩房、客房、儲藏室以簡單軟裝為主</span>
+    <span>◆ 格局有兩處希望微調（依費用評估）</span><span>◆ 基礎工程做到最好為前提</span>
+    <span>◆ 同社區不同樓層格局可參考</span>
+  </div>
+</div>
+
+<!-- 0 -->
+<section>
+  <h2><span class="em">📞</span>0. 這次先跟業主確認的四件事</h2>
+  <p class="lead">這四題沒回答，下面的時程都只能是暫定</p>
+  <ul class="chk" data-k="Q">
+    <li><span class="box">✓</span><span class="txt"><b>交屋日到底是哪一天？</b><small>原本說 8 月中，若已交屋就可以直接約丈量；若延後，整條時程一起順延</small></span></li>
+    <li><span class="box">✓</span><span class="txt"><b>預計何時要入住？</b><small>有沒有硬性期限（租約到期、小孩開學、長輩同住），這會決定要不要分階段施工</small></span></li>
+    <li><span class="box">✓</span><span class="txt"><b>兩位方便的時段</b><small>丈量與後續提案建議固定排週六下午，若平日晚上也可以請先說</small></span></li>
+    <li><span class="box">✓</span><span class="txt"><b>需求表還沒收到回填</b><small>丈量前先請兩位把線上需求表填一次，當天討論才有依據</small></span></li>
+  </ul>
+</section>
+
+<!-- 1 -->
+<section>
+  <h2><span class="em">🗓️</span>1. 建議時程（暫定版）</h2>
+  <p class="lead">以「8 月下旬可丈量」推算；每次與業主的會議都排在週六下午</p>
+  <table class="sch">
+    <tr><th>日期</th><th>工作內容</th></tr>
+    <tr class="key"><td class="dt">8/22<small>週六 14:00</small></td>
+      <td>現場丈量＋現況勘查＋需求訪談<span class="who cli">與業主</span>
+        <small class="n">交屋後第一次進場，同時拍照建檔；若交屋日延後則整段順延</small></td></tr>
+    <tr><td class="dt">8/24–9/3<small>內部</small></td>
+      <td>平面配置＋風格簡報製作<small class="n">同步向同社區樓層調閱可參考的格局資料</small></td></tr>
+    <tr class="key"><td class="dt">9/5<small>週六 14:00</small></td>
+      <td>平面暨風格提案 → 簽設計約<span class="who cli">與業主</span>
+        <small class="n">確認格局兩處微調的做法與費用影響</small></td></tr>
+    <tr><td class="dt">9/7–9/11<small>內部</small></td><td>3D 規劃</td></tr>
+    <tr class="key"><td class="dt">9/12<small>週六</small></td>
+      <td>第一次 3D 提案<span class="who cli">與業主</span></td></tr>
+    <tr><td class="dt">9/14–9/18<small>內部</small></td><td>3D 修改＋材質挑選</td></tr>
+    <tr class="key"><td class="dt">9/19<small>週六</small></td>
+      <td>3D 與材質定案<span class="who cli">與業主</span></td></tr>
+    <tr><td class="dt">9/21–10/1<small>內部</small></td><td>施工圖繪製＋工程估價作業</td></tr>
+    <tr class="key"><td class="dt">10/3<small>週六</small></td>
+      <td>工程報價會議<span class="who cli">與業主</span>
+        <small class="n">依「一定要做」與「可分階段完成」排優先順序</small></td></tr>
+    <tr class="key"><td class="dt">10/7<small>週三</small></td>
+      <td>簽工程約<span class="who cli">與業主</span></td></tr>
+    <tr><td class="dt">10/8–10/11</td><td>大樓裝修申請、水電與拆除備料</td></tr>
+    <tr class="key"><td class="dt">10/12<small>週一</small></td><td><b>開工（拆除進場）</b></td></tr>
+    <tr class="key"><td class="dt">2027/1/18</td>
+      <td><b>預計完工</b>（85 工作天，以週一至週六施工推算）
+        <small class="n">2027 除夕為 2/5，此版本可在農曆年前完工並交屋</small></td></tr>
+    <tr><td class="dt">2027/1/20</td><td>驗收交屋（暫）</td></tr>
+  </table>
+</section>
+
+<!-- 2 -->
+<div class="warn">
+  <h2>⚠ 時程上必須先講清楚的一件事</h2>
+  中古屋全室翻新的工期，<b>能不能在週六施工差很多</b>。<br><br>
+  ・週一～週六施工：85 工作天 → <b>2027/1/18 完工</b>，農曆年前可交屋。<br>
+  ・只能週一～週五施工：同樣 85 工作天要到 <b>2027/2/5（除夕當天）</b>，等於一定跨年，年後還要再收尾。<br><br>
+  所以丈量當天一定要拿到<b>大樓（或社區）的裝修管理規約</b>，確認施工時段。若不能週六施工，就要把開工往前拉到 9 月底、或把工程拆成兩階段。
+  <div class="say">對業主的說法：「這個時程是以年前完工回推的，中間任何一次提案延一週，年前交屋就會被吃掉，所以每一次會議的日期我們盡量不動。」</div>
+</div>
+
+<!-- 3 -->
+<section>
+  <h2><span class="em">🧰</span>2. 丈量當天帶齊 / 請業主先備</h2>
+  <ul class="chk" data-k="A">
+    <li><span class="box">✓</span><span class="txt">雷射測距儀、捲尺、相機、平面草稿紙</span></li>
+    <li><span class="box">✓</span><span class="txt">水分計、手電筒<small>屋齡高，漏水與壁癌是最大變數</small></span></li>
+    <li><span class="box">✓</span><span class="txt">向業主要：權狀、建物平面圖（有電子檔更好）</span></li>
+    <li><span class="box">✓</span><span class="txt">大樓裝修管理規約<small>施工時段、電梯保護、垃圾清運、裝修押金</small></span></li>
+    <li><span class="box">✓</span><span class="txt">確認管委會的裝修申請流程與工期限制</span></li>
+    <li><span class="box">✓</span><span class="txt">問清楚同社區可參考的樓層是哪一戶、能否進去看</span></li>
+  </ul>
+</section>
+
+<!-- 4 -->
+<section>
+  <h2><span class="em">🔍</span>3. 中古屋現況勘查重點</h2>
+  <p class="lead">這一段直接決定 250 萬夠不夠，基礎工程是業主明確要求做到最好的部分</p>
+  <ul class="chk" data-k="B">
+    <li><span class="box">✓</span><span class="txt">給排水管線材質與年份<small>屋齡高多半要全換，含衛浴排水孔位是否可移</small></span></li>
+    <li><span class="box">✓</span><span class="txt">總電量、配電箱迴路數、有無舊式線路<small>老屋常需申請增設容量、專迴</small></span></li>
+    <li><span class="box">✓</span><span class="txt">漏水、壁癌、天花水漬<small>窗邊、外牆、浴廁背牆、陽台交界一定要看</small></span></li>
+    <li><span class="box">✓</span><span class="txt">地磚膨拱、地坪是否需打除重做</span></li>
+    <li><span class="box">✓</span><span class="txt">窗戶氣密與隔音是否更換<small>臨捷運站，噪音要現場實聽一次</small></span></li>
+    <li><span class="box">✓</span><span class="txt">樑位、管道間、既有天花高度<small>老屋樓高常偏低，會限制天花與空調做法</small></span></li>
+    <li><span class="box">✓</span><span class="txt">格局希望微調的兩處：確認是否為結構牆<small>當場判斷可不可以動，再談費用</small></span></li>
+    <li><span class="box">✓</span><span class="txt">空調位置與冷媒管路徑<small>空調雖由業主自理，仍要預留管線與迴路</small></span></li>
+    <li><span class="box">✓</span><span class="txt">大樓有無限制拆除時段、廢棄物清運方式</span></li>
+  </ul>
+</section>
+
+<!-- 5 -->
+<section>
+  <h2><span class="em">💰</span>4. 預算 250 萬的說明方向</h2>
+  <p class="lead">先講清楚錢會花在哪，避免提案後才發現落差</p>
+  <ul class="chk" data-k="C">
+    <li><span class="box">✓</span><span class="txt">基礎工程（拆除、水電、泥作、防水）優先滿足<small>業主已明確表示基礎做到最好為前提</small></span></li>
+    <li><span class="box">✓</span><span class="txt">必做區：客廳、廚房、玄關、浴室</span></li>
+    <li><span class="box">✓</span><span class="txt">小孩房、客房、儲藏室以簡單軟裝為主，可分階段</span></li>
+    <li><span class="box">✓</span><span class="txt">空調、家具、家電不在 250 萬內，估價單上要另列提醒</span></li>
+    <li><span class="box">✓</span><span class="txt">預留追加預備金（老屋拆除後常有隱藏問題）<small>建議在報價會議先講，不要等施工中才追加</small></span></li>
+  </ul>
+</section>
+
+<div class="foot">
+  禹合制所 YUHE DESIGN｜中和地球村 時程建議暨丈量備忘<br>
+  版本 2026/08/19 · 交屋日確認後改為確認版<br><br>
+  <button class="reset" id="resetBtn" type="button">清除所有勾選</button>
+</div>
+</div>
+
+<script>
+(function(){
+  var KEY='yuhe_zhonghe_memo';
+  var st={};
+  try{ st=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ st={}; }
+  var lists=document.querySelectorAll('ul.chk');
+  lists.forEach(function(ul){
+    var k=ul.getAttribute('data-k');
+    ul.querySelectorAll('li').forEach(function(li,i){
+      var id=k+'-'+i;
+      if(st[id]) li.classList.add('done');
+      li.addEventListener('click',function(){
+        li.classList.toggle('done');
+        st[id]=li.classList.contains('done');
+        try{ localStorage.setItem(KEY,JSON.stringify(st)); }catch(e){}
+      });
+    });
+  });
+  document.getElementById('resetBtn').addEventListener('click',function(){
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    document.querySelectorAll('ul.chk li').forEach(function(li){ li.classList.remove('done'); });
+    st={};
+  });
+  var tb=document.getElementById('themeBtn');
+  var saved=null;
+  try{ saved=localStorage.getItem(KEY+'_theme'); }catch(e){}
+  if(saved==='dark') document.documentElement.setAttribute('data-theme','dark');
+  tb.textContent=document.documentElement.getAttribute('data-theme')==='dark'?'☀️':'🌙';
+  tb.addEventListener('click',function(){
+    var dark=document.documentElement.getAttribute('data-theme')==='dark';
+    if(dark) document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme','dark');
+    tb.textContent=dark?'🌙':'☀️';
+    try{ localStorage.setItem(KEY+'_theme',dark?'light':'dark'); }catch(e){}
+  });
+})();
+</script>
+</body>
+</html>
