@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜工法知識庫</title>
+<style>
+  :root{
+    --paper:#faf8f4; --card:#ffffff; --ink:#2b2b28; --line:#ddd6c9;
+    --accent:#8a6d4b; --accent-deep:#6f563a; --accent-light:#f1ebe0;
+    --muted:#8b8578; --on-accent:#fff; --shadow:0 1px 3px rgba(60,50,30,.06);
+    --build:#b9762e; --build-bg:#f6ead9; --build-b:#e0b483;
+    --design:#3f6ea3; --design-bg:#e6eef6; --design-b:#a9c2de;
+    --talk:#5c7a52; --talk-bg:#e9f0e5; --talk-b:#a9c79c;
+    --done:#7a7a72; --done-bg:#eeece6; --done-b:#cfc9bc;
+    --hot:#c0563c; --hot-bg:#f7e7e1; --hot-b:#e2b3a5;
+  }
+  html[data-theme="dark"]{
+    --paper:#1c1a17; --card:#26231e; --ink:#ece7dd; --line:#423b2f;
+    --accent:#c9a15f; --accent-deep:#d9b476; --accent-light:#332d24;
+    --muted:#9a917f; --on-accent:#241d12; --shadow:0 1px 3px rgba(0,0,0,.3);
+    --build:#d9a869; --build-bg:#352a1c; --build-b:#6a5230;
+    --design:#8fb3d6; --design-bg:#1f2a34; --design-b:#3d566d;
+    --talk:#9ab98c; --talk-bg:#222c1e; --talk-b:#42592f;
+    --done:#a49f92; --done-bg:#2a2822; --done-b:#4a4638;
+    --hot:#e08a6f; --hot-bg:#3a2620; --hot-b:#6b3d2e;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper); color:var(--ink); line-height:1.72;}
+  .wrap{max-width:860px; margin:0 auto; padding:22px 16px 80px;}
+  header{text-align:center; padding:26px 16px 6px; position:relative;}
+  header h1{font-size:23px; letter-spacing:2px; margin:0 0 4px;}
+  header .sub{color:var(--muted); font-size:12.5px; letter-spacing:1px;}
+  .theme-btn{position:absolute; top:12px; right:4px; width:40px; height:40px;
+    border-radius:50%; border:1px solid var(--line); background:var(--card);
+    color:var(--ink); font-size:17px; cursor:pointer; box-shadow:var(--shadow);}
+
+  .tools{position:sticky; top:0; z-index:20; background:var(--paper);
+    padding:10px 0 8px; border-bottom:1px solid var(--line); margin-bottom:6px;}
+  .search{width:100%; padding:11px 14px; font-size:15px; border-radius:11px;
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    font-family:inherit; box-shadow:var(--shadow);}
+  .search::placeholder{color:var(--muted);}
+  .navchips{display:flex; flex-wrap:wrap; gap:6px; margin-top:9px;}
+  .navchips a{font-size:12px; text-decoration:none; color:var(--accent-deep);
+    background:var(--accent-light); border:1px solid var(--line);
+    border-radius:20px; padding:3px 11px; white-space:nowrap;}
+  .hint{font-size:11.5px; color:var(--muted); margin-top:7px;}
+  .noresult{display:none; text-align:center; color:var(--muted); font-size:13.5px; padding:26px 0;}
+
+  .part{margin:26px 0 8px; font-size:13px; font-weight:700; letter-spacing:2px;
+    color:var(--muted); border-bottom:1px dashed var(--line); padding-bottom:5px;}
+
+  .sec{background:var(--card); border:1px solid var(--line); border-left:5px solid var(--accent);
+    border-radius:13px; padding:16px 18px 14px; margin:12px 0; box-shadow:var(--shadow);
+    scroll-margin-top:120px;}
+  .sec > h2{font-size:17px; margin:0 0 3px; letter-spacing:.5px;
+    display:flex; align-items:baseline; gap:9px; flex-wrap:wrap;}
+  .sec > h2 .no{font-size:12px; color:var(--on-accent); background:var(--accent);
+    border-radius:7px; padding:2px 8px; letter-spacing:1px; flex:none;}
+  .sec > h2 small{font-weight:400; font-size:12px; color:var(--muted);}
+  .seq{font-size:12px; color:var(--muted); background:var(--accent-light);
+    border:1px solid var(--line); border-radius:8px; padding:5px 10px; margin:9px 0 12px;}
+  .seq b{color:var(--accent-deep);}
+
+  .blk{margin:13px 0 0;}
+  .blk > h3{font-size:13.5px; margin:0 0 6px; letter-spacing:.5px;
+    display:flex; align-items:center; gap:7px; color:var(--accent-deep);}
+  .blk > h3 .ic{font-size:14px;}
+  ul{margin:0; padding-left:19px;}
+  li{margin:4px 0; font-size:14px;}
+  li b{color:var(--accent-deep);}
+  .num{font-size:12.5px; color:var(--build); background:var(--build-bg);
+    border:1px solid var(--build-b); border-radius:5px; padding:0 6px; white-space:nowrap;}
+  .warn{color:var(--hot); font-weight:700;}
+
+  .chk li{list-style:none; margin-left:-19px; padding-left:22px; position:relative;}
+  .chk li::before{content:"☐"; position:absolute; left:2px; color:var(--talk); font-size:14px;}
+  .trap{background:var(--hot-bg); border:1px solid var(--hot-b); border-radius:9px;
+    padding:9px 12px 9px; margin-top:12px;}
+  .trap h3{color:var(--hot);}
+  .trap li{font-size:13.5px;}
+  .note{background:var(--design-bg); border:1px solid var(--design-b); border-radius:9px;
+    padding:9px 12px; margin-top:12px;}
+  .note h3{color:var(--design);}
+  .note li{font-size:13.5px;}
+
+  table{width:100%; border-collapse:collapse; font-size:13px; margin-top:8px;}
+  th,td{border:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top;}
+  th{background:var(--accent-light); color:var(--accent-deep); font-weight:700; white-space:nowrap;}
+  .tblwrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+
+  .foot{text-align:center; font-size:12px; color:var(--muted); margin-top:26px; line-height:1.9;}
+  .top-link{display:block; text-align:center; margin-top:14px; font-size:12px;
+    color:var(--accent-deep); text-decoration:none;}
+  @media print{
+    .tools,.theme-btn,.top-link{display:none;}
+    .sec{break-inside:avoid; box-shadow:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="top">
+<button class="theme-btn" id="themeBtn" type="button" title="切換深淺色">🌙</button>
+<header>
+  <h1>禹合制所 · 工法知識庫</h1>
+  <div class="sub">各工種工法建議 · 查驗重點 · 常見缺失　｜　版本 2026/08/19</div>
+</header>
+
+<div class="tools">
+  <input class="search" id="q" type="search" placeholder="搜尋工項或關鍵字（例：防水、洩水、甲醛、空心、隔音）">
+  <div class="navchips" id="chips"></div>
+  <div class="hint">輸入關鍵字即時篩選；查驗重點的 ☐ 可直接列印當現場查驗表。</div>
+</div>
+<div class="noresult" id="noresult">找不到相符的工項，換個關鍵字試試。</div>
+
+<div class="part">壹 · 總則</div>
+
+<div class="sec" id="s00" data-key="總則 標準工序 排程 介面 進場順序 統包 監工">
+  <h2><span class="no">00</span>標準工序與工種介面 <small>排程與放樣的總綱</small></h2>
+  <div class="seq"><b>全室翻新標準順序：</b>保護 → 拆除清運 → 泥作打底／防水 → 水電配管 → 空調配管 → 輕隔間 → 天花木作 → 櫃體木作 → 系統櫃 → 油漆批土面漆 → 玻璃／壁紙 → 地板 → 廚具衛浴設備 → 燈具開關五金 → 窗簾家具 → 細清驗收</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>放樣先於一切</b>：拆除後先在地坪彈出隔間線、櫃體線、門片開口線，並標出完成面高程基準線（離地 <span class="num">100 公分</span> 水平墨線），後面所有工種都以這條線為準，不各量各的。</li>
+    <li><b>套圖會議定介面</b>：水電進場前把平面、天花、燈具迴路、空調、櫃體立面、廚具衛浴設備圖疊在一起確認一次；出線位置一旦封板就是破壞性修改。</li>
+    <li><b>先濕後乾、先上後下、先隱蔽後表面</b>：泥作與防水這類濕式工程排最前，天花在櫃體前，地板永遠排在油漆之後、設備之前。</li>
+    <li><b>交叉搭接的重疊日要寫進排程</b>：水電與空調通常同時在場（互相閃管路），木作末期與系統櫃丈量重疊，油漆末期與玻璃壁紙重疊。排程要標「共場日」而不是各排各的。</li>
+    <li><b>估價與丈量一律以實坪為準</b>，不用權狀坪數；圖說標示的面積要與估價單同一套數字。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>進場首日：現況全室拍照存證（含既有裂縫、地磚破損、公設保護）</li>
+    <li>各工種進場前：確認前一工種的驗收單已簽</li>
+    <li>封板前：天花內、牆內管線全面拍照（含捲尺比對距離），存進案件相簿</li>
+    <li>每次收款節點前：對照估價單逐項確認完成度</li>
+  </ul></div>
+
+  <div class="trap"><h3><span class="ic">⚠️</span>常見缺失</h3><ul>
+    <li>沒有共同高程基準線，導致地板、櫃體踢腳、門片下緣三個工種各自為政。</li>
+    <li>設備型號未定就先配管，冷氣排水、洗碗機進排水、暖風機排風位置事後全部要改。</li>
+    <li>封板前沒拍照，日後鑽孔打到冷媒管或給水管。</li>
+  </ul></div>
+</div>
+
+<div class="part">貳 · 隱蔽工程</div>
+
+<div class="sec" id="s01" data-key="拆除 清運 保護 打除 見底 結構牆 剪力牆 石綿 太空包">
+  <h2><span class="no">01</span>拆除與清運 <small>錯一步後面全要補</small></h2>
+  <div class="seq"><b>位置：</b>保護工程之後、泥作之前　｜　<b>常見工期：</b>3～6 個工作天（40 坪全室約 4 天）</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>拆除前三件事</b>：水錶電錶總開關關閉並拍照抄表、瓦斯關斷並確認無殘壓、全戶現況錄影一次。</li>
+    <li><b>不可拆清單先標記</b>：剪力牆、樑柱、樓板、管道間、消防灑水與偵煙頭、外牆與陽台結構。拆除前用紅漆在現場標「保留」，不靠口頭交代。</li>
+    <li><b>涉及固定隔間、天花板、防火避難設施的變更，必須先取得室內裝修許可再動工</b>，社區另需申請施工許可與繳交保證金。</li>
+    <li><b>浴室與廚房拆到見底</b>：地壁磚連同舊粉刷層一併打除至結構體，才能重做防水；只打磁磚保留舊底層，是日後滲水與膨拱的主因。</li>
+    <li><b>保留原有落水頭與糞管位置</b>，拆除時用布團加膠帶封口，避免碎料掉入造成日後阻塞。</li>
+    <li><b>公設保護不能省</b>：電梯轎廂、梯間牆面、大廳動線鋪瓦楞板加防撞條，戶內門框、電箱、對外窗框先包覆。</li>
+    <li><b>清運分兩段</b>：大型廢料當日出清不落地堆放，細碎料裝太空包，注意單袋重量與電梯載重限制。</li>
+    <li><b>老屋要留意管線材質</b>：舊鍍鋅鐵管、舊石綿類板材（早年浪板、隔熱材）遇到時停手另案處理，不可直接破碎。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>公設與電梯保護是否完整、無破損（每日開工前確認）</li>
+    <li>保留項目是否誤拆（門窗、既有石材、要留用的設備）</li>
+    <li>浴廚是否確實打除見底、樓板無裂損</li>
+    <li>排水孔洞是否封口、無碎料掉落</li>
+    <li>結構樓板／牆面若有滲水痕、裂縫，立即拍照回報並列入追加評估</li>
+    <li>清運後現場清掃見底，方便後續放樣</li>
+  </ul></div>
+
+  <div class="trap"><h3><span class="ic">⚠️</span>常見缺失</h3><ul>
+    <li>浴室只拆磁磚沒拆到底，防水做在舊層上，交屋後樓下滲水。</li>
+    <li>拆窗與換窗的日期沒銜接，開口暴露遇雨造成室內泡水。</li>
+    <li>破碎機作業時間違反社區規約被停工，整條排程往後推。</li>
+  </ul></div>
+
+  <div class="note"><h3><span class="ic">💡</span>禹合作法</h3><ul>
+    <li>合雄凰璽社區：拆除與所有震動、切割作業只能排平日 09:00–17:00；<span class="warn">週六不可安排拆除</span>。</li>
+    <li>拆除當日由阿祥全程在場，重點拍「拆到見底」與「保留項目」兩組照片回傳。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s02" data-key="泥作 防水 彈性水泥 洩水 蓄水試驗 打底 粉光 整平 砌磚 白磚 紅磚 塞水路">
+  <h2><span class="no">02</span>泥作與防水 <small>全案漏水風險的源頭</small></h2>
+  <div class="seq"><b>位置：</b>拆除之後；濕區防水完成並試水通過，才可接續　｜<b>常見工期：</b>10～18 個工作天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>防水塗佈範圍</b>：淋浴區牆面上翻至天花或至少 <span class="num">180 公分</span>；其餘濕區牆面至少 <span class="num">30 公分</span>；地坪全面並上翻至牆面。陽台、洗衣區、廚房水槽下方同樣要做。</li>
+    <li><b>防水做法</b>：素地整理乾淨含水率降低後，先塗底油封固，彈性水泥<b>兩底兩塗</b>、每道十字交錯施作；角隅、管根、落水頭周邊加貼玻纖網補強一道。</li>
+    <li><b>蓄水試驗必做</b>：防水完成後蓄水 <span class="num">24～48 小時</span>，水位標記於牆面拍照，同時檢查樓下天花是否有滲痕，通過才可鋪磚。這一關不能為了趕工跳過。</li>
+    <li><b>洩水坡度</b>：浴室地坪坡度約 <span class="num">1/100～1/50</span>（每公尺落差 1～2 公分）順向落水頭；乾濕分離的乾區也要微幅洩水，避免積水。</li>
+    <li><b>打底粉光</b>：水泥砂比例約 <span class="num">1:3</span>，打底後養護灑水 3～7 天再上粉光，急著上料會產生收縮裂縫。</li>
+    <li><b>全室地坪齊平的做法</b>：在泥作階段就把各區「完成面高程」算清楚——磁磚區＝黏著層＋磚厚，木地板區＝墊材＋板厚，兩者以回填或整平砂漿補足差值，讓最終完成面同高、取消門檻。浴室仍保留洩水與擋水設計（用截水溝或降板取代高門檻）。</li>
+    <li><b>砌牆材料選擇</b>：紅磚面密度高、隔音較好、可直接吊掛，但重；輕質磚快又輕，但吊掛承重差，須在預定吊掛處預埋木心板或加強片。<b>臥室與衛浴共牆優先用紅磚</b>。</li>
+    <li><b>鋁窗塞水路</b>：換窗後窗框與結構體之間必須以防水砂漿確實填塞（塞水路），外部再打防水矽利康收邊。只打矽利康不塞水路，是換窗後漏水的第一名。</li>
+    <li><b>磁磚工法</b>：60×60 公分以上大尺寸一律<b>硬底施工</b>（益膠泥齒刮＋背面滿塗），不用軟底；填縫在鋪貼 24 小時後施作，濕區用抗污防霉填縫材。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>防水塗佈是否連續無漏塗，角隅與管根有無補強</li>
+    <li>蓄水試驗照片：水位標記、起訖時間、樓下天花檢查</li>
+    <li>潑水測試洩水方向，水是否全數流向落水頭、無積窪</li>
+    <li>牆面垂直、陰陽角方正（靠尺與角尺各量一次）</li>
+    <li>磁磚敲擊聽空心，動線區與壁面不允許空心</li>
+    <li>各區完成面高程是否符合齊平設定（雷射水平儀複核）</li>
+    <li>窗框塞水路是否確實、外牆矽利康連續飽滿</li>
+  </ul></div>
+
+  <div class="trap"><h3><span class="ic">⚠️</span>常見缺失</h3><ul>
+    <li>防水只塗一道或未上翻，淋浴牆背面的臥室牆長壁癌。</li>
+    <li>沒做蓄水試驗直接鋪磚，漏水時已無法回頭，只能整間打掉。</li>
+    <li>大磚用軟底施工，一年後膨拱翹起。</li>
+    <li>養護不足造成粉光龜裂，油漆完仍浮現裂紋。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s03" data-key="水電 給水 排水 配電 迴路 專用迴路 試壓 弱電 網路 插座高度 掃地機器人 機器人基地">
+  <h2><span class="no">03</span>水電工程 <small>封板前唯一能改的機會</small></h2>
+  <div class="seq"><b>位置：</b>泥作打底後與空調同場配管，天花封板前必須完成試壓　｜<b>常見工期：</b>配管 5～8 天，收尾 3 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>給水管</b>：全面更新為不鏽鋼壓接管，取代舊鍍鋅鐵管；熱水管加保溫披覆；冷熱水管保持間距避免熱交換。</li>
+    <li><b>給水試壓</b>：配管完成加壓約 <span class="num">10 公斤</span>保壓 <span class="num">24 小時</span>不掉壓，壓力錶拍照存證，通過才可埋設封閉。</li>
+    <li><b>排水管</b>：糞管 4 吋、一般排水 2 吋，橫管洩水坡度不小於 <span class="num">1/100</span>；每個排水點都要有存水彎防臭；洗衣機排水加設防溢與可清理的落水設計。</li>
+    <li><b>專用迴路</b>：冷氣（每台獨立）、電熱水器、烤箱蒸爐、洗碗機、烘衣機、浴室暖風機、免治馬桶、電陶爐或感應爐（220 伏特）皆須獨立迴路；配電箱預留 <span class="num">2～4 迴</span>備用位置。</li>
+    <li><b>線徑</b>：照明迴路 1.6 或 2.0 公厘，一般插座 2.0 公厘，大功率專用迴路依負載提升至 5.5 或 8 平方公厘；浴室、廚房、陽台迴路加裝漏電斷路器。</li>
+    <li><b>弱電</b>：每個房間至少一組網路孔（Cat.6 以上），弱電集線位置預留插座與散熱空間，不要塞在密閉櫃體最深處。</li>
+    <li><b>出線高度基準</b>（皆以完成面計）：一般插座離地 <span class="num">30 公分</span>、開關 <span class="num">120 公分</span>、床頭插座 <span class="num">65～75 公分</span>、餐邊 <span class="num">90～110 公分</span>、廚房檯面上方 <span class="num">110～115 公分</span>。</li>
+    <li><b>掃拖機器人基地預留</b>：專用插座＋冷水給水＋排水三件一起留，位置避開門片開闔與主要動線，並確認機型的迴轉半徑與充電退位空間。</li>
+    <li><b>封板前全室管線拍照建檔</b>：每面牆拍一張含捲尺參考，日後鑽孔前先查照片。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>給水試壓壓力錶照片（起始值／24 小時後）</li>
+    <li>排水以大量水量實測，確認排水順暢無回堵、無滲漏</li>
+    <li>出線盒位置與櫃體、廚具、家具圖套圖比對，高度水平一致</li>
+    <li>配電箱迴路標示清楚、與現場實測相符（逐迴斷電測試）</li>
+    <li>絕緣電阻與接地測試紀錄</li>
+    <li>封板前管線照片是否齊全（每室每面）</li>
+  </ul></div>
+
+  <div class="trap"><h3><span class="ic">⚠️</span>常見缺失</h3><ul>
+    <li>插座高度以「粗胚面」計算，貼完磚或鋪完地板後高度全部跑掉。</li>
+    <li>專用迴路不足，入住後同時使用即跳電。</li>
+    <li>排水橫管坡度不足或反坡，日後阻塞且無法檢修。</li>
+    <li>機器人基地只留插座沒留給排水，自動集塵與自動洗拖功能廢掉。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s04" data-key="空調 冷氣 冷媒管 真空 氮氣 保壓 排水 吊隱 維修口 出風口 結露">
+  <h2><span class="no">04</span>空調工程 <small>配管在前、掛機在後</small></h2>
+  <div class="seq"><b>位置：</b>配管與水電同期、天花封板前完成；主機安裝排在油漆完成之後　｜<b>常見工期：</b>配管 2～3 天、收尾 2 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>冷媒配管</b>：銅管全程加保溫披覆並以束帶固定，穿樑或轉折處避免壓扁；管長與室內外機落差需在原廠允許範圍內，超過要追加冷媒量。</li>
+    <li><b>氮氣保壓＋真空</b>：配管完成以氮氣加壓保壓 <span class="num">24 小時</span>檢漏，安裝前真空抽取 <span class="num">30 分鐘以上</span>。這兩道是冷氣不冷與日後漏冷媒的分水嶺，要求廠商提供壓力錶照片。</li>
+    <li><b>冷凝排水</b>：排水管坡度 <span class="num">1/100 以上</span>連續順下，不可與污水共管；長距離段中間不得有積水彎；完工後注水實測，觀察是否於預定出水口順暢排出。</li>
+    <li><b>吊隱式機</b>：維修口不小於 <span class="num">45×45 公分</span>且正對機體檢修面；回風口面積要足夠，濾網須能單手取出清洗。</li>
+    <li><b>出風口配置</b>：出風口離牆面與窗簾盒至少 <span class="num">30 公分</span>，避免長期吹拂造成天花與牆面積垢發黑；出風口周邊天花做防結露處理。</li>
+    <li><b>壁掛機</b>：機體上方留 5～10 公分、左右各留 5 公分維修空間；室外機須有散熱與檢修空間，基座加防震墊避免共振傳音。</li>
+    <li><b>與木作介面</b>：天花高度須先確認機身厚度＋排水坡降＋風管，木作放樣前由空調提供實際尺寸，不用型錄尺寸估算。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>氮氣保壓壓力錶照片（起始／24 小時後）</li>
+    <li>排水管坡度與注水實測影片</li>
+    <li>維修口位置正對機體、開闔順暢</li>
+    <li>冷媒管保溫是否完整無裸露</li>
+    <li>室外機基座穩固、防震墊到位、排水不落至他戶</li>
+    <li>試運轉：各室出風溫度、噪音、無異常震動</li>
+  </ul></div>
+
+  <div class="trap"><h3><span class="ic">⚠️</span>常見缺失</h3><ul>
+    <li>排水管反坡，夏天冷氣滴水滲到天花與牆面。</li>
+    <li>維修口做在裝飾造型考量的位置，實際打開摸不到機體。</li>
+    <li>出風口正對窗簾盒，窗簾一年就髒一條黑線。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s05" data-key="輕隔間 隔音 岩棉 矽酸鈣板 石膏板 面密度 實心門 氣密條 落塵條 管道間">
+  <h2><span class="no">05</span>輕隔間與隔音 <small>面密度、斷連、封縫三件事</small></h2>
+  <div class="seq"><b>位置：</b>水電空調配管後、木作天花前　｜<b>常見工期：</b>3～6 個工作天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>隔音只有三個變數</b>：牆體<b>面密度</b>（愈重愈隔音）、<b>斷絕剛性連接</b>（兩側板材不要靠同一根骨料硬接）、<b>縫隙密封</b>（任何孔洞都會讓隔音歸零）。三者缺一，加再多棉都沒用。</li>
+    <li><b>標準隔音牆做法</b>：立柱間距 <span class="num">40～45 公分</span>，內填 <span class="num">60K 岩棉</span>（隔音優於同厚度玻璃棉且耐燃），兩側各鋪雙層板材並錯縫，接縫以彈性填縫材密封。</li>
+    <li><b>牆一定要做到結構樓板</b>，不可只做到天花板高度；天花上方留空等於留了一條聲音通道。</li>
+    <li><b>插座不對穿</b>：兩側插座盒錯開至少一個立柱間距，盒背面補塞隔音棉。</li>
+    <li><b>門是隔音最弱的一環</b>：實心門片＋門框全周邊氣密條＋門底自動落塵條，這一組的改善幅度通常大於加厚牆體。</li>
+    <li><b>管道間包覆</b>：排水立管以隔音棉包覆後再雙層板封閉，特別是與臥室、書房相鄰的管道間，可解決半夜沖水聲。</li>
+    <li><b>與衛浴相鄰的臥室牆</b>：優先用紅磚或加做一道獨立輕隔間（雙層牆中間留空氣層），效果最好。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>封板前拍岩棉填充照片（是否填滿無空隙、無下墜）</li>
+    <li>牆體是否確實砌至結構樓板</li>
+    <li>板材接縫是否錯縫、縫隙是否密封</li>
+    <li>插座盒兩側是否錯位</li>
+    <li>完工後實測：一人在房內講話／播放音樂，另一人在房外聽</li>
+  </ul></div>
+
+  <div class="note"><h3><span class="ic">💡</span>禹合作法</h3><ul>
+    <li>合雄凰璽主臥有明確隔音加強需求：牆做到頂＋60K 岩棉＋雙層板錯縫＋實心門加氣密條與落塵條，四項一起做才報得出效果。</li>
+  </ul></div>
+</div>
+
+<div class="part">參 · 裝修工程</div>
+
+<div class="sec" id="s06" data-key="木作 天花 矽酸鈣板 吊筋 角料 櫃體 木心板 層板 跨距 收邊 分隔溝 甲醛 F1 防倒">
+  <h2><span class="no">06</span>木作工程 <small>造型、整合、與現場修正的主力</small></h2>
+  <div class="seq"><b>位置：</b>隱蔽工程全部驗收後進場，是全案工期最長的工種　｜<b>常見工期：</b>15～25 個工作天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>天花結構</b>：主骨料間距 <span class="num">30～45 公分</span>，吊筋間距 <span class="num">90～120 公分</span>並固定於結構樓板（不可只固定在既有天花或輕質層）；重物（吊燈、投影機、電動窗簾）位置事先加強補板。</li>
+    <li><b>天花板材</b>：使用 6 公厘以上矽酸鈣板，板與板之間留 <span class="num">3～5 公厘</span>接縫，以彈性補土＋纖維帶處理，可大幅降低日後接縫裂痕。</li>
+    <li><b>板材甲醛等級</b>：全案指定 <span class="num">F1（或 F☆☆☆☆）</span>等級板材，接著劑使用水性低甲醛白膠。這是本所對親子與健康需求案件的最低標準，估價單上要寫明等級，不是口頭承諾。</li>
+    <li><b>層板跨距</b>：一般收納層板跨距超過 <span class="num">90 公分</span>就要加中隔或加厚；書櫃、放置重物者層板厚度 2.4 公分以上或內嵌鐵件補強，避免三年後中央下垂。</li>
+    <li><b>收邊留分隔溝</b>：木作與天花、牆面、不同材質交界處預留分隔溝或收邊條，讓材料熱脹冷縮有去處，比硬接更耐久也更好維修。</li>
+    <li><b>木作與系統櫃的分工原則</b>：異形、與天花整合、需要現場修正的造型交木作；規格化的收納櫃體交系統櫃（成本較低、工期短、板材等級標示明確）。同一空間兩者並用時，先確認面材同色號並取樣比對。</li>
+    <li><b>親子安全細節</b>：檯面與櫃角導圓角、抽屜與門片全面用緩衝五金、高於 120 公分的高櫃一律以結構固定件鎖至牆體防傾倒。</li>
+    <li><b>封板前再拍一次照</b>：木作封板會蓋掉水電空調的管線，這是最後一次留紀錄的機會。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>吊筋是否固定於結構樓板、間距是否足夠</li>
+    <li>天花水平（雷射水平儀全室掃一次）、無波浪起伏</li>
+    <li>維修口、燈孔、空調出風口開孔位置與圖面相符</li>
+    <li>櫃體垂直水平、門片縫隙均勻（一般要求 2～3 公厘且上下一致）</li>
+    <li>板材標籤拍照存證（確認甲醛等級與圖說相符）</li>
+    <li>高櫃固定件是否鎖至牆體</li>
+    <li>封板前管線照片補齊</li>
+  </ul></div>
+
+  <div class="trap"><h3><span class="ic">⚠️</span>常見缺失</h3><ul>
+    <li>吊筋固定在舊天花或輕質磚上，日後整片下沉。</li>
+    <li>板材接縫直接補土沒貼纖維帶，一個換季就裂一條線。</li>
+    <li>櫃體深度沒扣掉背板與踢腳，實際可用尺寸比圖面小。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s07" data-key="系統櫃 塑合板 防潮板 封邊 ABS 五金 緩衝鉸鍊 滑軌 複丈 F1 低甲醛">
+  <h2><span class="no">07</span>系統櫃 <small>丈量精度決定成敗</small></h2>
+  <div class="seq"><b>位置：</b>木作後段丈量，油漆批土完成後安裝　｜<b>常見工期：</b>丈量後 3～4 週交貨、安裝 3～6 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>複丈時機</b>：一定要等牆面拉平、木作立面完成後再複丈，誤差控制在 <span class="num">±2 公厘</span>；用初步平面圖下單必定產生縫隙或塞不進去。</li>
+    <li><b>板材選擇</b>：主體用低甲醛塑合板（F1 或 F☆☆☆☆）；廚房、浴室周邊、洗衣區改用<b>防潮板</b>，價差不高但能省下五年後的膨脹更換。</li>
+    <li><b>封邊工法</b>：門片與側板採 ABS 封邊，潮濕區建議無縫封邊，杜絕水氣從邊緣滲入造成板材膨脹。</li>
+    <li><b>五金一次到位</b>：緩衝鉸鍊、三節式或隱藏式滑軌、上掀式氣壓桿。五金是日後最常故障的部分，選可單獨更換的通用規格，不用特殊尺寸。</li>
+    <li><b>與水電的介面</b>：櫃內插座、感應燈電源、電視櫃走線孔，必須在水電階段就留好，安裝當天才發現只能走明線。</li>
+    <li><b>安裝順序</b>：若地板為後鋪，櫃體下方要先確認踢腳高度與地板厚度的關係，避免地板卡不進去或櫃體懸空。</li>
+    <li><b>吊櫃承重</b>：吊掛於輕隔間者，必須落在預埋補強處，不可只鎖板材。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>板材與封邊樣品是否與簽認樣一致（拍照比對）</li>
+    <li>櫃體垂直水平、與牆面縫隙以矽利康或收邊條收乾淨</li>
+    <li>每個門片、抽屜逐一開闔測試 20 次，緩衝正常無異音</li>
+    <li>層板孔位是否對稱、可調整</li>
+    <li>櫃內插座與燈具通電測試</li>
+    <li>吊櫃鎖點是否落在補強處（拉扯測試）</li>
+  </ul></div>
+
+  <div class="trap"><h3><span class="ic">⚠️</span>常見缺失</h3><ul>
+    <li>提早丈量下單，牆面拉平後尺寸不符，只能現場切割破壞封邊。</li>
+    <li>濕區用一般板材，兩年後底板發脹掉屑。</li>
+    <li>櫃內沒留電源，掃地機器人、電器櫃只能拉延長線。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s08" data-key="石材 大理石 花崗 磁磚 大板磚 硬底 空心 填縫 環氧樹脂 防護劑 結晶 損耗 舊石材保留">
+  <h2><span class="no">08</span>石材與磁磚 <small>硬底、防護、空心率</small></h2>
+  <div class="seq"><b>位置：</b>泥作階段（地壁磚）／木作階段（檯面、端景）　｜<b>常見工期：</b>依面積 5～12 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>大尺寸磚一律硬底</b>：60×60 公分以上或大板磚，採益膠泥齒刮＋背面滿塗（雙面塗佈），黏著率要求 <span class="num">90% 以上</span>；軟底鋪大磚是膨拱的主因。</li>
+    <li><b>空心率標準</b>：驗收以硬物敲擊全面聽測，主要動線與壁面不允許空心，其餘區域空心比例控制在 <span class="num">5% 以內</span>並標記追蹤。</li>
+    <li><b>伸縮縫</b>：大面積地磚每 6 公尺左右、與牆面交接處保留伸縮縫（以彈性填縫材填塞），不要用硬質水泥填滿。</li>
+    <li><b>石材背塗防水</b>：淺色大理石、洞石鋪貼前背面與側邊塗佈防水膠，避免水泥中的水分與礦物質造成日後表面水斑、白華。</li>
+    <li><b>石材養護</b>：完工後施作滲透型防護劑；廚房檯面、洗手檯等易污區可再做結晶處理，並提醒業主避免酸性清潔劑。</li>
+    <li><b>轉角處理</b>：石材檯面與台度轉角採 45 度對接導角，比直接留斷面漂亮且不易崩角；家中有幼童者導 R 角。</li>
+    <li><b>填縫材選擇</b>：濕區與廚房建議環氧樹脂填縫，抗污防霉、不易吃色；一般乾區用防霉水泥系填縫即可。</li>
+    <li><b>保留舊石材再利用</b>：拆除保存的損耗率通常 <span class="num">20～30%</span>，且厚度與尺寸限制多。建議先小樣試切試磨確認拋光後的色澤，再決定使用位置——改作局部端景、桌面、門檻或壁面拼接，比整片重鋪務實得多；設計簡報時要同時提供「保留」與「新料」兩種效果，讓業主看得到差異再決定。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>全面敲擊聽空心，異常處以標籤紙貼標拍照</li>
+    <li>平整度：3 公尺直規檢查，落差控制在 3 公厘內</li>
+    <li>磚縫寬度一致、對縫是否依圖（對縫或亂縫）</li>
+    <li>陰陽角方正、切割邊平整無崩角</li>
+    <li>石材色差與紋理排列是否依現場排版圖</li>
+    <li>防護劑施作紀錄</li>
+  </ul></div>
+
+  <div class="trap"><h3><span class="ic">⚠️</span>常見缺失</h3><ul>
+    <li>大板磚未做雙面塗佈，兩年內邊角翹起。</li>
+    <li>石材未背塗，白華從縫隙浮出且無法根治。</li>
+    <li>沒留伸縮縫，整排地磚在氣溫變化後拱起。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s09" data-key="玻璃 強化玻璃 膠合 長虹 淋浴拉門 鋁窗 氣密 水密 隔音窗 塞水路 外牆規約">
+  <h2><span class="no">09</span>玻璃與鋁窗 <small>安全標章與塞水路</small></h2>
+  <div class="seq"><b>位置：</b>鋁窗在泥作階段（需塞水路）；室內玻璃在油漆完成後　｜<b>常見工期：</b>各 1～3 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>強化玻璃須有標章</b>：淋浴拉門、無框玻璃隔間、玻璃門一律強化，並要求出示標章；淋浴區另加防爆膜，萬一自爆時不飛散。</li>
+    <li><b>厚度參考</b>：室內固定隔間 8～10 公厘、玻璃門 10 公厘、淋浴拉門 8 公厘、櫃體門片 5 公厘。</li>
+    <li><b>透光不透視選項</b>：長虹玻璃、夾紗玻璃、噴砂玻璃可在採光與隱私間取得平衡，是暗房與更衣室的常用解法。</li>
+    <li><b>鋁窗隔音</b>：以膠合玻璃（如 5＋5 或 8＋8 膠合）搭配氣密良好的窗框效果最佳；單純加厚單片玻璃的改善有限。臨路面的臥室值得升級。</li>
+    <li><b>換窗必須塞水路</b>：窗框與結構之間以防水砂漿填實，外部再打防水矽利康，內部收邊。這是換窗漏水與否的關鍵，驗收要看施工照片。</li>
+    <li><b>社區規約先查</b>：更換外窗涉及外觀，多數社區規定窗框顏色與樣式須一致，動工前先向管委會確認並取得同意。</li>
+    <li><b>矽利康選用</b>：室內濕區用中性防霉型，外牆用耐候型，玻璃與石材接觸面避免用酸性矽利康（會侵蝕石材）。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>強化標章拍照存證</li>
+    <li>塞水路施工過程照片（未收邊前）</li>
+    <li>窗框水平垂直、開闔順暢、五金無異音</li>
+    <li>潑水測試窗周邊無滲漏</li>
+    <li>矽利康連續飽滿、無氣泡斷點</li>
+    <li>玻璃無刮痕、無崩邊，邊緣已磨邊處理</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s10" data-key="油漆 批土 乳膠漆 底漆 噴漆 烤漆 纖維網 濕度 低甲醛 水性 靜音">
+  <h2><span class="no">10</span>油漆工程 <small>成敗七成在批土</small></h2>
+  <div class="seq"><b>位置：</b>木作完成後進場，是後續所有安裝工項的前置條件　｜<b>常見工期：</b>15～20 個工作天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>批土是關鍵</b>：全面批土 2～3 道並逐道砂磨，板材接縫先貼纖維網再批。批土道數與砂磨細度直接決定牆面在側光下的表現，報價時就要講清楚做幾道。</li>
+    <li><b>塗裝層次</b>：封固底漆一道＋面漆兩道，不可省底漆直接刷面漆（吸收不均會產生花斑）。</li>
+    <li><b>塗料選擇</b>：全案指定水性低揮發塗料，優先取得綠建材或低逸散標章者；有幼童的空間選可擦拭等級，日後好維護。</li>
+    <li><b>木作噴漆</b>：染色或烤漆面須在保護完善的環境施作，噴漆日不可與粉塵工種同場；噴漆前確認色板在現場光線下複核，不用型錄看色。</li>
+    <li><b>環境條件</b>：相對濕度過高（約 85% 以上）或雨天不施作面漆，否則易起泡、霧化、附著不良。</li>
+    <li><b>收邊分色</b>：天花與牆面分色時使用美紋膠帶並在漆膜未乾前撕除，可得到俐落分界。</li>
+    <li><b>可安排在靜音日的工項</b>：手工批土、手工砂磨、貼皮、遮蔽保護，這些不產生衝擊噪音，適合排在只能靜音施工的日子。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>側光檢視法：關燈後以手電筒斜打牆面，檢查波浪、批土痕、砂磨不足</li>
+    <li>接縫處是否貼網（批土前拍照）</li>
+    <li>色號與簽認色板比對（在現場光線下）</li>
+    <li>塗料桶身標示拍照（確認品項與低甲醛等級）</li>
+    <li>五金、開關面板、地板保護是否確實，無沾漆</li>
+    <li>陰陽角俐落、分色線平直</li>
+  </ul></div>
+
+  <div class="trap"><h3><span class="ic">⚠️</span>常見缺失</h3><ul>
+    <li>批土道數不足，入住後開燈才發現整面牆坑疤。</li>
+    <li>省略底漆，面漆吸收不均出現色差塊。</li>
+    <li>雨季趕工上漆，漆膜起泡剝落要整面重做。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s11" data-key="壁紙 無紡布 基層 封固 環保壁紙 濕區 收邊 拼花">
+  <h2><span class="no">11</span>壁紙與特殊塗料 <small>基層平整度要求高於油漆</small></h2>
+  <div class="seq"><b>位置：</b>油漆完成後、地板之前　｜<b>常見工期：</b>2～4 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>基層先做到位</b>：壁紙不會遮醜，反而會把不平整照實反映。貼前牆面須批土砂磨並上封固底漆，讓吸水率一致。</li>
+    <li><b>材質選擇</b>：無紡布基材壁紙透氣性較佳、施工與日後撕除都較容易；有健康考量的案件避開含塑化劑的低價膠面壁紙，並選用低甲醛環保膠。</li>
+    <li><b>避開濕區</b>：浴室、洗衣區、易結露的外牆面不建議貼壁紙，改以塗料或板材處理。</li>
+    <li><b>拼花與對花</b>：有圖案者施工前先排版，決定起始牆面，讓接縫落在不顯眼處（例如門後、櫃體背側）。</li>
+    <li><b>與櫃體介面</b>：壁紙先貼、櫃體後裝，避免日後移動櫃體時留下明顯破口。</li>
+    <li><b>特殊塗料</b>（礦物塗料、藝術漆）：一定要先做 A4 以上現場試作樣板，在該面牆的實際光線下確認質感，不用小色卡決定。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>接縫是否密合、無翹邊、無氣泡</li>
+    <li>對花是否連續、圖案方向一致</li>
+    <li>轉角與開關孔位收邊是否俐落</li>
+    <li>膠料溢出是否清除乾淨（乾後會反光）</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s12" data-key="地板 超耐磨 SPC 石塑 海島型 實木 平整度 伸縮縫 防潮布 靜音墊 收邊條 齊平">
+  <h2><span class="no">12</span>地板工程 <small>平整度與伸縮縫</small></h2>
+  <div class="seq"><b>位置：</b>油漆與壁紙完成後、設備安裝前　｜<b>常見工期：</b>2～4 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>鋪設前先驗地坪</b>：3 公尺直規檢查落差須在 <span class="num">±3 公厘</span>內，不平處先以自平泥或墊材處理。地坪不平會造成踩踏異音與卡扣崩開，這是木地板客訴第一名。</li>
+    <li><b>下墊材</b>：先鋪防潮布（一樓、有濕氣疑慮處必做），再鋪靜音墊；樓上有小孩跑跳者可升級加厚靜音墊。</li>
+    <li><b>伸縮縫</b>：牆邊、柱邊、門框邊預留 <span class="num">8～12 公厘</span>伸縮縫，以收邊條或矽利康收；大面積連續超過約 8 公尺應斷開處理。<b>踢腳板壓住伸縮縫但不可將地板釘死</b>。</li>
+    <li><b>材質比較</b>：超耐磨卡扣式最泛用、CP 值高；石塑地板防水耐潮、適合有寵物或潮濕環境但觸感偏硬冷；海島型與實木質感最佳但對含水率與平整度最敏感。</li>
+    <li><b>全室齊平的收邊</b>：磁磚區與木地板區交界，若完成面同高可用平接不鏽鋼條收，比 T 型條俐落；若有微幅高差，用斜面收邊條避免絆腳。</li>
+    <li><b>浴室門口</b>：即使全室齊平，浴室仍應保留擋水（截水溝或降板），不要為了齊平犧牲擋水機能。</li>
+    <li><b>鋪設方向</b>：一般順著長邊或順著主要採光方向鋪，視覺上空間較長；決定前在現場擺幾片實際看過。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>鋪設前地坪平整度實測（直規照片）</li>
+    <li>防潮布與靜音墊是否鋪設（鋪板前拍照）</li>
+    <li>四周伸縮縫是否預留（收邊條裝上前拍照）</li>
+    <li>全室踩踏一遍，聽是否有異音、彈跳感</li>
+    <li>板材色差分佈是否均勻（同批號、混料鋪設）</li>
+    <li>收邊條、踢腳板接合處是否密合</li>
+  </ul></div>
+
+  <div class="trap"><h3><span class="ic">⚠️</span>常見缺失</h3><ul>
+    <li>沒留伸縮縫，梅雨季後整片地板拱起。</li>
+    <li>地坪未整平就鋪，走起來嘎吱作響且卡扣陸續崩開。</li>
+    <li>為了追求無門檻而取消浴室擋水，水漫到木地板。</li>
+  </ul></div>
+</div>
+
+<div class="part">肆 · 設備與收尾</div>
+
+<div class="sec" id="s13" data-key="廚具 檯面高度 水槽 抽油煙機 洗碗機 IH 感應爐 人造石 石英石 複丈">
+  <h2><span class="no">13</span>廚具工程 <small>人體工學與電力先決</small></h2>
+  <div class="seq"><b>位置：</b>地壁磚完成、油漆完成後安裝　｜<b>常見工期：</b>複丈後 3～4 週交貨、安裝 2～3 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>檯面高度</b>：以主要使用者身高的一半再加約 5 公分為基準（常見 <span class="num">85～90 公分</span>）；洗滌區可略高、備餐區可略低，做高低檯面對長時間下廚者差很多。</li>
+    <li><b>黃金三角</b>：水槽、爐具、冰箱三點動線總長控制在合理範圍，水槽與爐具之間至少留 <span class="num">60 公分</span>備餐檯面。</li>
+    <li><b>抽油煙機高度</b>：離檯面 <span class="num">65～75 公分</span>，排煙管路愈短愈直愈好，轉折過多會嚴重降低排煙效率；排氣出口須確認能通至室外且符合社區規定。</li>
+    <li><b>電力先決</b>：洗碗機、烘碗機、蒸烤箱、電陶爐或感應爐（220 伏特）在水電階段就要依實際型號留專用迴路與出線位置，設備型號未定不要先封牆。</li>
+    <li><b>檯面材質</b>：石英石耐刮耐污、接縫較明顯；人造石可無縫拼接、易修復但硬度較低；不鏽鋼耐用好清潔但易留刮痕。依業主使用習慣建議，不用單一標準答案。</li>
+    <li><b>水槽安裝</b>：下嵌式清潔最方便（檯面可直接抹入），但需檯面材質支援；接合處防霉矽利康收好。</li>
+    <li><b>複丈時機</b>：牆面完成面（含磁磚）確認後才複丈，並確認地坪水平；地不平會造成檯面高低差。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>檯面水平、無高低差（水平儀量測）</li>
+    <li>櫃體與牆面縫隙收邊，矽利康連續無霉點</li>
+    <li>水槽排水試水、下方無滲漏</li>
+    <li>各設備通電測試、專用迴路確認</li>
+    <li>抽油煙機排煙實測（以紙片測吸力）</li>
+    <li>門片抽屜開闔順暢、拉籃滑順</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s14" data-key="衛浴 暖風機 免治馬桶 花灑 龍頭 高度 排風 乾濕分離 防霉矽利康 存水彎">
+  <h2><span class="no">14</span>衛浴設備 <small>高度與排風</small></h2>
+  <div class="seq"><b>位置：</b>地壁磚與防水完成後安裝　｜<b>常見工期：</b>2～3 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>常用高度</b>（完成面計）：淋浴龍頭中心 <span class="num">100～110 公分</span>、頂式花灑出水口 <span class="num">200～210 公分</span>、洗面檯面 <span class="num">80～85 公分</span>、鏡櫃下緣離檯面 <span class="num">25～30 公分</span>、毛巾桿 <span class="num">120 公分</span>。有孩童的家庭可加設低位掛桿。</li>
+    <li><b>暖風機</b>：需獨立迴路，排風管路須確實通至室外或既有排風管道，不可只排到天花內部（等於把濕氣悶在天花裡養黴）。</li>
+    <li><b>免治馬桶</b>：插座位置預留在馬桶側後方並使用防濺蓋，配合漏電斷路器。</li>
+    <li><b>乾濕分離</b>：淋浴區以玻璃或浴簾分隔，地坪洩水獨立導向落水頭；門檻或截水溝要確實擋住外溢。</li>
+    <li><b>矽利康</b>：全室濕區用中性防霉型，施作前基材務必乾燥；填縫前先貼美紋膠帶，收線才會直。</li>
+    <li><b>存水彎與地排</b>：每個排水點都要有存水彎，長期不用的落水頭建議選附防臭芯的產品。</li>
+    <li><b>設備固定</b>：面盆、馬桶與壁掛設備的鎖點須落在實心結構或預埋補強處，輕隔間必須事先加強。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>馬桶安裝後試沖 3 次、周邊無滲漏</li>
+    <li>面盆、浴缸排水試水，下方檢查滲漏</li>
+    <li>淋浴地坪潑水測試，水完全流向落水頭</li>
+    <li>暖風機各段功能測試、排風確實到室外</li>
+    <li>矽利康連續平整、無發霉基材殘留</li>
+    <li>五金鎖固牢靠、無鬆動</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s15" data-key="燈具 崁燈 色溫 顯色性 調光 開關 五金 門把 304 不鏽鋼 插座安全蓋">
+  <h2><span class="no">15</span>燈具、開關與五金 <small>統一色溫與試開闔</small></h2>
+  <div class="seq"><b>位置：</b>油漆完成、地板鋪設後　｜<b>常見工期：</b>2～3 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>色溫全案統一</b>：公共區與臥室建議 <span class="num">3000K</span>（暖白）；書房、廚房工作面可用 <span class="num">4000K</span>。同一空間內絕不混用色溫，這是最容易被看出來的低級失誤。</li>
+    <li><b>顯色性</b>：主要生活空間選 <span class="num">Ra 90 以上</span>，衣物、餐點、木皮的顏色才會正確。</li>
+    <li><b>崁燈開孔</b>：木作開孔尺寸須依實際燈具規格，孔徑過大只能加大燈框補救；燈具在木作放樣前就要選定。</li>
+    <li><b>調光</b>：需調光者必須燈具、驅動器、開關三者相容，缺一會閃爍；下單前確認整組規格。</li>
+    <li><b>光源可更換</b>：優先選光源可單獨更換的燈具，避免整組報廢。</li>
+    <li><b>五金材質</b>：潮濕區與陽台使用 304 不鏽鋼，避免生鏽流鏽痕污染石材與磁磚。</li>
+    <li><b>親子安全</b>：低位插座加安全蓋、可調式門擋避免夾手、門片加緩衝。</li>
+    <li><b>安裝後逐一測試</b>：所有門把、鉸鍊、滑軌開闔 20 次以上，並確認開關迴路與燈具對應正確（開關標示要與實際相符）。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>全室開燈檢查色溫是否一致、無色差</li>
+    <li>各開關迴路對應正確（逐一開闔紀錄）</li>
+    <li>調光是否全區間平順、無閃爍</li>
+    <li>崁燈是否與天花齊平、無歪斜</li>
+    <li>面板水平、與牆面密合無縫隙</li>
+    <li>五金開闔測試、鎖點牢固</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s16" data-key="窗簾 窗簾盒 電動窗簾 遮光 家具 進場 保護">
+  <h2><span class="no">16</span>窗簾與家具進場 <small>預留尺寸與電源</small></h2>
+  <div class="seq"><b>位置：</b>細清前後（窗簾）／細清後（家具）　｜<b>常見工期：</b>各 1～2 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>窗簾盒深度</b>：單層約 <span class="num">15 公分</span>、雙層（紗簾＋遮光）<span class="num">20～25 公分</span>；深度不足會導致簾片無法完全收攏或摩擦窗框。木作放樣前就要定。</li>
+    <li><b>電動窗簾</b>：軌道電源須在水電階段預留（含充電式的插座位置），並確認遙控或智慧家庭的訊號涵蓋。</li>
+    <li><b>遮光需求</b>：主臥若需全暗，除了遮光布還要處理側漏光——加大簾寬使兩側各多蓋 15 公分以上，或做上下軌道包覆式窗簾盒。</li>
+    <li><b>丈量時機</b>：地板鋪設完成後才丈量長度，否則落地簾下襬長度會全部錯。</li>
+    <li><b>家具進場</b>：一律排在細清之後，並在動線鋪設保護；大件家具進場前先確認電梯尺寸與轉彎半徑。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>軌道水平、開闔順暢、無卡頓</li>
+    <li>簾布下襬離地高度一致（一般離地 1～2 公分）</li>
+    <li>電動窗簾行程設定正確、遙控正常</li>
+    <li>遮光效果實測（白天關簾檢查漏光）</li>
+    <li>家具進場後牆面、地板、門框無碰撞損傷</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="s17" data-key="清潔 細清 粗清 驗收 交屋 保固 除甲醛 通風 缺失表">
+  <h2><span class="no">17</span>清潔、驗收與交屋 <small>把缺失表變成流程</small></h2>
+  <div class="seq"><b>位置：</b>全案最後　｜<b>常見工期：</b>粗清 1 天、細清 2 天、驗收與複驗 2～3 天</div>
+
+  <div class="blk"><h3><span class="ic">🔧</span>工法建議</h3><ul>
+    <li><b>清潔分兩段</b>：粗清（殘料、保護材、大面積灰塵）先做，讓缺失現形；再安排細清（玻璃、櫃內、五金、軌道、地板）。順序顛倒等於白洗一次。</li>
+    <li><b>缺失表制度</b>：驗收當天以逐室逐項表格記錄，每項標註「工種、位置、現況照片、負責人、完成期限」，複驗時逐項勾銷。口頭交辦一定會漏。</li>
+    <li><b>自主驗收先於業主驗收</b>：業主到場前，先由現場負責人依同一份表走過一輪，把明顯缺失清掉再請業主看，這是專業感的來源。</li>
+    <li><b>交屋文件包</b>：竣工圖（含封板前管線照片）、設備保固書與說明書、塗料與板材品項清單、保養建議、緊急聯絡流程。</li>
+    <li><b>入住前通風</b>：建議交屋後持續開窗對流通風 <span class="num">2～4 週</span>再入住，並在裝修期間就要求各工種每日結束前通風；有幼童或過敏成員者更應加長。</li>
+    <li><b>保固說明要寫清楚</b>：一般工程項目保固期、防水相關項目保固期、設備依原廠保固三者分開列，並註明不屬保固的使用不當情形，避免日後認知落差。</li>
+  </ul></div>
+
+  <div class="blk"><h3><span class="ic">📷</span>查驗重點</h3><ul class="chk">
+    <li>全室給水試水、排水順暢、無滲漏</li>
+    <li>全室迴路通電、開關對應正確</li>
+    <li>門片、抽屜、窗戶逐一開闔</li>
+    <li>磁磚空心複驗、牆面側光複驗</li>
+    <li>矽利康完整、無發霉與斷點</li>
+    <li>櫃內、軌道、五金縫隙清潔到位</li>
+    <li>缺失表全數勾銷並經業主簽認</li>
+    <li>交屋文件包點交簽收</li>
+  </ul></div>
+</div>
+
+<div class="part">伍 · 附錄</div>
+
+<div class="sec" id="a01" data-key="健康建材 低甲醛 F1 綠建材 親子 無障礙 防倒 圓角 附錄">
+  <h2><span class="no">附A</span>健康建材與親子安全準則 <small>本所最優先原則</small></h2>
+  <div class="blk"><h3><span class="ic">🔧</span>指定標準</h3><ul>
+    <li><b>板材</b>：木作與系統櫃一律指定 F1 或同等最低甲醛等級，估價單與圖說皆須載明，進場時拍板材標籤存證。</li>
+    <li><b>接著劑</b>：使用水性低甲醛白膠與環保接著劑，避免高揮發溶劑型。</li>
+    <li><b>塗料</b>：水性低揮發塗料，優先具低逸散或綠建材標章者。</li>
+    <li><b>矽利康</b>：選中性、防霉、低氣味產品，避免長期釋放刺激性氣味。</li>
+    <li><b>壁紙與軟裝</b>：無紡布基材、環保膠；地毯與布飾選可清洗材質。</li>
+    <li><b>施工期通風</b>：每日收工前開窗對流，木作粉塵階段加設集塵與隔離。</li>
+  </ul></div>
+  <div class="blk"><h3><span class="ic">🧒</span>親子安全細節</h3><ul>
+    <li>檯面、櫃角、窗台導圓角或加防撞條。</li>
+    <li>高於 120 公分的櫃體一律以固定件鎖至結構牆體，防傾倒。</li>
+    <li>抽屜與門片全面採緩衝五金，加裝可拆式安全鎖。</li>
+    <li>低位插座加安全蓋；電線集中收納，避免垂落。</li>
+    <li>玻璃隔間貼防爆膜或加貼視覺提示；落地窗與樓梯加設防護。</li>
+    <li>地板選防滑等級足夠者，濕區加設防滑處理。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="a02" data-key="靜音施工 週六 社區 噪音 合雄凰璽 排程 附錄">
+  <h2><span class="no">附B</span>靜音施工日可安排的工項 <small>合雄凰璽適用</small></h2>
+  <div class="seq"><b>社區條件：</b>平日 09:00–17:00 正常施工；<b>週六可靜音施工</b>；週日休。98 個工作天的排程已把週六算入，因此週六排什麼工項，直接影響能否如期在 2027/2/2 完工。</div>
+  <div class="tblwrap"><table>
+    <tr><th>可排（靜音）</th><th>不可排（有衝擊或高噪音）</th></tr>
+    <tr>
+      <td>木作貼皮、木皮修整<br>油漆批土、手工砂磨<br>油漆面漆滾塗<br>壁紙施作<br>系統櫃內部組裝（不含鑽擊）<br>矽利康施打與收邊<br>清潔、保護、材料進場<br>丈量、放樣、拍照紀錄<br>燈具與五金安裝（少量鎖付）</td>
+      <td>拆除、破碎、打鑿<br>電鑽鑽孔、打牆<br>圓鋸、切割機、磨石機<br>泥作打底大面積作業<br>震動類工具全部<br>搬運重物撞擊地面</td>
+    </tr>
+  </table></div>
+  <div class="blk"><h3><span class="ic">📐</span>排程原則</h3><ul>
+    <li>週六生產力以平日的 5～6 成估算，重工序（拆除、泥作、水電打鑿）一律排平日。</li>
+    <li>把「批土＋砂磨」這種長時間、低噪音的工項刻意留給週六，可有效壓縮總工期。</li>
+    <li>每次靜音日前一天，由現場負責人與工班確認隔日工項清單，避免師傅到場才發現不能做。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="a03" data-key="查驗 拍照 阿祥 現場 節點 附錄 紀錄">
+  <h2><span class="no">附C</span>現場查驗與拍照節點 <small>阿祥的固定動作</small></h2>
+  <div class="tblwrap"><table>
+    <tr><th>節點</th><th>必拍內容</th></tr>
+    <tr><td>進場首日</td><td>全室現況、既有缺陷、公設保護</td></tr>
+    <tr><td>拆除完成</td><td>浴廚拆到見底、保留項目、樓板狀況、排水孔封口</td></tr>
+    <tr><td>防水完成</td><td>塗佈全景、角隅補強、蓄水試驗水位（起／訖）、樓下天花</td></tr>
+    <tr><td>水電配管完成</td><td>給水試壓錶（起／訖）、排水實測、出線位置含捲尺</td></tr>
+    <tr><td>空調配管完成</td><td>氮氣保壓錶（起／訖）、排水坡度、維修口位置</td></tr>
+    <tr><td>隔間封板前</td><td>岩棉填充、牆做到樓板、插座錯位</td></tr>
+    <tr><td>木作封板前</td><td>每室每面牆的管線全景（最後一次機會）</td></tr>
+    <tr><td>木作完成</td><td>板材標籤、天花水平、門縫均勻、高櫃固定件</td></tr>
+    <tr><td>油漆完成</td><td>側光檢視、色板比對、塗料桶身標示</td></tr>
+    <tr><td>地板鋪設前</td><td>地坪平整度直規、防潮布與靜音墊、伸縮縫</td></tr>
+    <tr><td>設備安裝後</td><td>試水試電紀錄、矽利康收邊</td></tr>
+    <tr><td>驗收與複驗</td><td>缺失表逐項照片、複驗後對照照片</td></tr>
+  </table></div>
+  <div class="blk"><h3><span class="ic">🗂️</span>紀錄規則</h3><ul>
+    <li>照片統一以「案名＿日期＿工項＿位置」命名，當日回傳，不累積到週末。</li>
+    <li>試壓、保壓、蓄水三項必須拍「起始」與「結束」兩張，只有一張不算數。</li>
+    <li>發現異常先拍照再回報，不要先動手處理掉現場。</li>
+  </ul></div>
+</div>
+
+<div class="sec" id="a04" data-key="速查 數據 表 尺寸 高度 標準 附錄">
+  <h2><span class="no">附D</span>關鍵數據速查 <small>現場對答用</small></h2>
+  <div class="tblwrap"><table>
+    <tr><th>項目</th><th>建議值</th></tr>
+    <tr><td>浴室防水上翻（淋浴區／其餘）</td><td>至天花或 180 公分／30 公分以上</td></tr>
+    <tr><td>蓄水試驗</td><td>24～48 小時，含樓下檢查</td></tr>
+    <tr><td>浴室地坪洩水坡度</td><td>1/100～1/50</td></tr>
+    <tr><td>給水試壓</td><td>約 10 公斤，保壓 24 小時</td></tr>
+    <tr><td>排水橫管坡度</td><td>不小於 1/100</td></tr>
+    <tr><td>冷媒管氮氣保壓</td><td>保壓 24 小時；安裝前真空 30 分鐘以上</td></tr>
+    <tr><td>空調維修口</td><td>不小於 45×45 公分，正對機體</td></tr>
+    <tr><td>隔間立柱間距／填充</td><td>40～45 公分／60K 岩棉</td></tr>
+    <tr><td>天花吊筋間距</td><td>90～120 公分，固定於結構樓板</td></tr>
+    <tr><td>層板無支撐跨距上限</td><td>約 90 公分</td></tr>
+    <tr><td>系統櫃複丈誤差</td><td>±2 公厘</td></tr>
+    <tr><td>地坪平整度（鋪木地板前）</td><td>3 公尺直規 ±3 公厘</td></tr>
+    <tr><td>木地板伸縮縫</td><td>8～12 公厘</td></tr>
+    <tr><td>磁磚空心容許</td><td>整體 5% 以內，動線與壁面不允許</td></tr>
+    <tr><td>插座／開關高度</td><td>30 公分／120 公分（完成面計）</td></tr>
+    <tr><td>廚具檯面高度</td><td>85～90 公分（身高／2＋5）</td></tr>
+    <tr><td>抽油煙機離檯面</td><td>65～75 公分</td></tr>
+    <tr><td>淋浴龍頭／頂式花灑</td><td>100～110 公分／200～210 公分</td></tr>
+    <tr><td>窗簾盒深度（單層／雙層）</td><td>15 公分／20～25 公分</td></tr>
+    <tr><td>主要空間燈具顯色性</td><td>Ra 90 以上</td></tr>
+    <tr><td>入住前通風</td><td>建議 2～4 週</td></tr>
+  </table></div>
+  <div class="note"><h3><span class="ic">💡</span>使用說明</h3><ul>
+    <li>表中數值為本所慣用的施工與驗收基準，實際仍以各案設計圖說、廠商規範與原廠安裝手冊為準；兩者衝突時以較嚴格者執行。</li>
+    <li>估價與丈量一律以實坪計算。</li>
+  </ul></div>
+</div>
+
+<a class="top-link" href="#top">↑ 回到最上方</a>
+<div class="foot">
+  禹合制所 YUHE DESIGN｜工法知識庫<br>
+  共 18 個工項單元＋4 份附錄 · 內容依實際案場經驗持續更新
+</div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, tb=document.getElementById('themeBtn');
+  function setTheme(t){root.setAttribute('data-theme',t);tb.textContent=t==='dark'?'☀️':'🌙';
+    try{localStorage.setItem('yuhe_kb_theme',t);}catch(e){}}
+  var s=null; try{s=localStorage.getItem('yuhe_kb_theme');}catch(e){}
+  setTheme(s==='dark'?'dark':'light');
+  tb.onclick=function(){setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');};
+
+  var secs=[].slice.call(document.querySelectorAll('.sec'));
+  var chips=document.getElementById('chips');
+  secs.forEach(function(sec){
+    var h=sec.querySelector('h2');
+    var no=h.querySelector('.no').textContent;
+    var name=h.childNodes[1]?h.childNodes[1].textContent.trim():'';
+    var a=document.createElement('a');
+    a.href='#'+sec.id; a.textContent=name||no;
+    chips.appendChild(a);
+  });
+
+  var q=document.getElementById('q'), nores=document.getElementById('noresult');
+  var parts=[].slice.call(document.querySelectorAll('.part'));
+  q.addEventListener('input',function(){
+    var v=q.value.trim().toLowerCase();
+    var hit=0;
+    secs.forEach(function(sec){
+      var txt=(sec.textContent+' '+(sec.getAttribute('data-key')||'')).toLowerCase();
+      var show=!v||txt.indexOf(v)>-1;
+      sec.style.display=show?'':'none';
+      if(show) hit++;
+    });
+    parts.forEach(function(p){p.style.display=v?'none':'';});
+    nores.style.display=hit?'none':'block';
+  });
+})();
+</script>
+</body>
+</html>
