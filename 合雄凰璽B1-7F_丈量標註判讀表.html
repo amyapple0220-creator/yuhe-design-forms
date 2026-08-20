@@ -1,0 +1,194 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>合雄凰璽 B1／7F 丈量標註判讀表</title>
+<style>
+:root{--paper:#faf8f4;--card:#fff;--ink:#2b2b28;--line:#ddd6c9;--accent:#8a6d4b;
+--accent-deep:#6f563a;--accent-light:#f1ebe0;--muted:#8b8578;--red:#c0563c;
+--red-bg:#f7e7e1;--green:#5c7a52;--green-bg:#eef3ea;--amber:#b8912f;--amber-bg:#f7f0dd;
+--shadow:0 1px 3px rgba(60,50,30,.06);}
+html[data-theme="dark"]{--paper:#1c1a17;--card:#26231e;--ink:#ece7dd;--line:#423b2f;
+--accent:#c9a15f;--accent-deep:#d9b476;--accent-light:#332d24;--muted:#9a917f;
+--red:#e08a6f;--red-bg:#3a2620;--green:#9ab98c;--green-bg:#243020;
+--amber:#d9b476;--amber-bg:#332d24;--shadow:0 1px 3px rgba(0,0,0,.3);}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+background:var(--paper);color:var(--ink);line-height:1.7}
+.wrap{max-width:820px;margin:0 auto;padding:20px 15px 70px}
+header{text-align:center;padding:28px 16px 8px;position:relative}
+header h1{font-size:22px;letter-spacing:2px;margin:0 0 4px}
+header .sub{color:var(--muted);font-size:13px;letter-spacing:1px}
+.theme-btn{position:absolute;top:12px;right:4px;width:40px;height:40px;border-radius:50%;
+border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:17px;cursor:pointer}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;
+padding:18px 18px 12px;margin:14px 0;box-shadow:var(--shadow)}
+section h2{font-size:16.5px;letter-spacing:.5px;border-left:4px solid var(--accent);
+padding-left:11px;margin:0 0 6px;display:flex;align-items:center;gap:8px}
+.lead{font-size:12.5px;color:var(--muted);margin:0 0 14px 15px}
+.warn{background:var(--red-bg);border:1px solid color-mix(in srgb,var(--red) 40%,var(--line));
+border-radius:14px;padding:16px 18px;margin:14px 0;font-size:14px}
+.warn h2{border:0;padding:0;margin:0 0 8px;color:var(--red);font-size:16px}
+.warn b{color:var(--red)}
+.ok{background:var(--green-bg);border:1px solid var(--green);border-radius:12px;
+padding:12px 15px;font-size:13.5px;margin:12px 0}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+th,td{border-bottom:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+th{background:var(--accent-light);color:var(--accent-deep);font-weight:700;white-space:nowrap}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.c{display:inline-block;padding:1px 9px;border-radius:20px;font-size:12px;white-space:nowrap}
+.c-hi{background:var(--green-bg);color:var(--green);border:1px solid var(--green)}
+.c-mid{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber)}
+.c-lo{background:var(--red-bg);color:var(--red);border:1px solid var(--red)}
+.pen{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;
+vertical-align:-1px;border:1px solid rgba(0,0,0,.25)}
+.p-b{background:#2f6fd0}.p-r{background:#c0392b}.p-g{background:#1e8449}
+code{background:var(--accent-light);border-radius:5px;padding:1px 6px;font-size:12.5px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 2px}
+.chip{padding:4px 11px;border-radius:20px;font-size:13px;background:var(--accent-light);
+border:1px solid var(--line);color:var(--accent-deep);font-variant-numeric:tabular-nums}
+ol{padding-left:20px;font-size:14px}ol li{margin-bottom:9px}
+.foot{text-align:center;font-size:12px;color:var(--muted);margin-top:20px;line-height:1.9}
+</style>
+<div class="wrap">
+<header>
+  <button class="theme-btn" id="themeBtn">🌙</button>
+  <h1>合雄凰璽 B1／7F · 丈量標註判讀表</h1>
+  <div class="sub">2026/08/15 現場丈量手寫標註 → 數位化　·　單位 cm</div>
+</header>
+
+<div class="warn">
+  <h2>⚠ 這份表要你核對</h2>
+  資料來源是丈量圖的<b>照片</b>（斜拍、有摺痕），字跡由我判讀，<b>不是你打的字</b>。
+  下面每一筆都標了判讀信心。<b>請先核對「信心中／低」那幾筆</b>，確認後我才把數字寫進 CAD。<br><br>
+  另外：照片上的數字我讀得出來，但<b>大部分無法確定它量的是哪一道牆</b>。
+  這是目前 CAD 還不能定案的唯一原因 —— 見最後一段「我需要你補的東西」。
+</div>
+
+<section>
+  <h2><span>🔤</span>你的標註體系（已解讀）</h2>
+  <p class="lead">從圖上反推出來的縮寫規則，之後我照這套讀就不會錯</p>
+  <div class="scroll"><table>
+    <tr><th>寫法</th><th>意思</th><th>例</th></tr>
+    <tr><td class="num"><code>W###</code></td><td>窗寬</td><td class="num">W238.4</td></tr>
+    <tr><td class="num"><code>⊥ 上／下</code></td><td>上＝窗高，下＝窗台高</td><td class="num">191.8 ／ 39+4.5</td></tr>
+    <tr><td class="num"><code>DW##</code></td><td>門寬</td><td class="num">DW90</td></tr>
+    <tr><td class="num"><code>DH###</code></td><td>門高</td><td class="num">DH215</td></tr>
+    <tr><td class="num"><code>H:###</code></td><td>樑下淨高</td><td class="num">H:262.3</td></tr>
+    <tr><td class="num"><code>CH:###</code></td><td>樓板結構高</td><td class="num">CH:291.6</td></tr>
+    <tr><td class="num"><code>a+b+c</code></td><td>尺寸鏈（含牆厚）</td><td class="num">50.3+18.5+314.1+20</td></tr>
+  </table></div>
+  <div class="ok">
+    窗台高一律寫成 <b>39+4.5</b>（＝43.5），推測是 39 的結構台 加 4.5 的窗框／檯面。
+    有一處寫 <b>44</b>，兩者實質相同，之後統一用 <b>43.5</b> 或 <b>44</b> 請你定一個。
+  </div>
+</section>
+
+<section>
+  <h2><span>🪟</span>窗（信心高，已寫進 CAD）</h2>
+  <div class="scroll"><table>
+    <tr><th>代號</th><th>筆色</th><th>窗寬</th><th>窗高</th><th>窗台高</th><th>位置</th><th>信心</th></tr>
+    <tr><td>W1</td><td><span class="pen p-r"></span>紅</td><td class="num">238.4</td><td class="num">191.8</td><td class="num">39+4.5</td><td>上方外牆</td><td><span class="c c-hi">高</span></td></tr>
+    <tr><td>W2</td><td><span class="pen p-b"></span>藍</td><td class="num">237.3</td><td class="num">192</td><td class="num">39+4.5</td><td>下方外牆</td><td><span class="c c-hi">高</span></td></tr>
+    <tr><td>W3</td><td><span class="pen p-b"></span>藍</td><td class="num">237.3</td><td class="num">191.5</td><td class="num">44</td><td>右上外牆</td><td><span class="c c-hi">高</span></td></tr>
+    <tr><td>W4</td><td><span class="pen p-g"></span>綠</td><td class="num">331</td><td class="num">—</td><td class="num">—</td><td>位置待確認</td><td><span class="c c-mid">中</span></td></tr>
+    <tr><td>W5</td><td><span class="pen p-b"></span>藍</td><td class="num">118</td><td class="num">—</td><td class="num">—</td><td>左下角，可能是後陽台</td><td><span class="c c-lo">低</span></td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2><span>🚪</span>門與高度（信心高，已寫進 CAD）</h2>
+  <div class="scroll"><table>
+    <tr><th>項目</th><th>數值</th><th>說明</th><th>信心</th></tr>
+    <tr><td>室內門</td><td class="num">DW 90 ／ DH 215</td><td>標準室內門</td><td><span class="c c-hi">高</span></td></tr>
+    <tr><td>主浴門</td><td class="num">DW 78</td><td>比室內門窄 12</td><td><span class="c c-hi">高</span></td></tr>
+    <tr><td>樓板結構高</td><td class="num">CH 291.6</td><td>客廳實測</td><td><span class="c c-hi">高</span></td></tr>
+    <tr><td>樑下淨高</td><td class="num">H 262.3</td><td>實測</td><td><span class="c c-hi">高</span></td></tr>
+    <tr><td>另一處樑下高</td><td class="num">H 232.1 或 332.1</td><td>主浴附近，字跡不確定</td><td><span class="c c-lo">低</span></td></tr>
+    <tr><td>紅筆高度</td><td class="num">H 225</td><td>位置待確認</td><td><span class="c c-mid">中</span></td></tr>
+  </table></div>
+  <div class="ok">
+    <b>CH 291.6 − 樑下 262.3 ＝ 樑深約 29.3</b>。這對「全室地坪齊平」很關鍵：
+    地坪若墊高，天花淨高會再被吃掉，樑下 262.3 是天花設計的硬上限。
+  </div>
+</section>
+
+<section>
+  <h2><span>📏</span>尺寸鏈（唯一一條讀得完整的）</h2>
+  <div class="chips">
+    <span class="chip">50.3</span><span class="chip">＋ 18.5</span>
+    <span class="chip">＋ 314.1</span><span class="chip">＋ 20</span>
+    <span class="chip" style="background:var(--green-bg);color:var(--green);border-color:var(--green)">＝ 402.9</span>
+  </div>
+  <p class="lead" style="margin-top:10px">
+    寫在主臥／客廳之間那道牆旁，沿垂直向。<b>18.5 與 20 應該是牆厚</b>，
+    50.3 與 314.1 是淨跨距。這條可以直接用。
+  </p>
+</section>
+
+<section>
+  <h2><span>❓</span>讀得出數字、但不確定量哪道牆</h2>
+  <p class="lead">共 28 筆。字我有把握，位置沒把握 —— 硬填進 CAD 會做出錯的施工圖，所以我沒填</p>
+  <div class="chips">
+    <span class="chip">166.6</span><span class="chip">147.7</span><span class="chip">85.3</span>
+    <span class="chip">170.5</span><span class="chip">251.2</span><span class="chip">209.5</span>
+    <span class="chip">467.2</span><span class="chip">197</span><span class="chip">86.5</span>
+    <span class="chip">116.5</span><span class="chip">91.6</span><span class="chip">206.9</span>
+    <span class="chip">143.1</span><span class="chip">104</span><span class="chip">106.5</span>
+    <span class="chip">352.8</span><span class="chip">317.2</span><span class="chip">96.3</span>
+    <span class="chip">83.5</span><span class="chip">88.9</span><span class="chip">37.2</span>
+    <span class="chip">30.6</span><span class="chip">25.6</span><span class="chip">73.5</span>
+    <span class="chip">60.1</span><span class="chip">43.1</span><span class="chip">43.3</span>
+    <span class="chip">58.6</span>
+  </div>
+  <p class="lead" style="margin-top:12px">
+    另有零星片段：<span class="chip">64+72</span><span class="chip">20.9+1</span>
+    <span class="chip">311.6</span><span class="chip">10</span><span class="chip">28.5</span>
+    <span class="chip">60.8</span><span class="chip">18.7</span><span class="chip">61.5</span>
+    ，以及紅筆的 <span class="chip">46.7</span><span class="chip">49.5</span>
+    <span class="chip">45.5</span><span class="chip">57</span><span class="chip">196.1</span>
+    （紅筆多半標在牆角或樑，像是樑寬／柱寬）。
+  </p>
+</section>
+
+<div class="warn">
+  <h2>📮 我需要你補的東西（只要兩樣）</h2>
+  <ol>
+    <li><b>橫向開間尺寸鏈</b> —— 從左外牆外緣量到右外牆，逐段列出（含牆厚），
+      像 <code>50.3+18.5+314.1+20</code> 那樣。</li>
+    <li><b>縱向進深尺寸鏈</b> —— 從下外牆外緣量到上外牆，同樣逐段列出。</li>
+  </ol>
+  有這兩條，牆的軸線位置就全定了，剩下的 28 筆數字我可以自己對回去，
+  CAD 當天就能出正式版。<br><br>
+  <b>如果現場沒量到完整的鏈</b>，那就告訴我上面那幾個大數字各是哪一道牆：
+  <span class="chip">467.2</span><span class="chip">352.8</span>
+  <span class="chip">317.2</span><span class="chip">314.1</span>
+  <span class="chip">251.2</span><span class="chip">209.5</span>
+  —— 這六個應該就是主要房間的跨距。
+</div>
+
+<section>
+  <h2><span>🔍</span>另外三件現場沒量到的</h2>
+  <p class="lead">複勘（交屋前後、空屋狀態）要補，施工圖與估價會用到</p>
+  <ol>
+    <li><b>樑位平面</b>：只有兩個高度（CH 291.6／樑下 262.3），沒有樑的位置與寬度。
+      天花造型、空調包管、窗簾盒都卡這個。</li>
+    <li><b>管道間與糞管落點</b>：主浴要做乾濕分離、客浴要加浴缸，兩間都要動排水，
+      沒有落點就無法確認可不可行。</li>
+    <li><b>配電箱位置與迴路數</b>：12 年屋、要導入智能家電＋電熱水器，
+      幾乎確定要增設專迴，這是預算變數。</li>
+  </ol>
+</section>
+
+<div class="foot">
+  禹合制所 YUHE DESIGN｜合雄凰璽 B1／7F<br>
+  判讀自 2026/08/15 現場丈量標註．數值單位 cm．核對後即可產生正式 CAD
+</div>
+</div>
+<script>
+(function(){var r=document.documentElement,b=document.getElementById('themeBtn');
+function set(t){r.setAttribute('data-theme',t);b.textContent=t==='dark'?'☀️':'🌙';
+try{localStorage.setItem('yuhe_cad_theme',t)}catch(e){}}
+var s=null;try{s=localStorage.getItem('yuhe_cad_theme')}catch(e){}
+set(s||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'));
+b.onclick=function(){set(r.getAttribute('data-theme')==='dark'?'light':'dark')};})();
+</script>
