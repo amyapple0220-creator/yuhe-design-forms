@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禹合制所 YUHE DESIGN｜請款單</title>
+<style>
+  :root{
+    --paper:#faf8f4; --card:#ffffff; --ink:#2b2b28; --line:#ddd6c9;
+    --accent:#8a6d4b; --accent-deep:#6f563a; --accent-light:#f1ebe0;
+    --muted:#8b8578; --on-accent:#fff; --shadow:0 1px 3px rgba(60,50,30,.06);
+    --paid:#5c7a52; --paid-bg:#e9f0e5; --paid-b:#a9c79c;
+    --now:#b9762e;  --now-bg:#f8efe1;  --now-b:#e0b483;
+    --wait:#8b8578; --wait-bg:#f2efe9; --wait-b:#ddd6c9;
+    --ready:#3f6ea3; --ready-bg:#e6eef6; --ready-b:#a9c2de;
+    --red:#c0563c; --red-bg:#f7e7e1;
+  }
+  html[data-theme="dark"]{
+    --paper:#1c1a17; --card:#26231e; --ink:#ece7dd; --line:#423b2f;
+    --accent:#c9a15f; --accent-deep:#d9b476; --accent-light:#332d24;
+    --muted:#9a917f; --on-accent:#241d12; --shadow:0 1px 3px rgba(0,0,0,.3);
+    --paid:#9ab98c; --paid-bg:#222c1e; --paid-b:#42592f;
+    --now:#d9a869;  --now-bg:#352a1c;  --now-b:#6a5230;
+    --wait:#8f887a; --wait-bg:#242119; --wait-b:#3a352b;
+    --ready:#8fb3d6; --ready-bg:#1f2a34; --ready-b:#3d566d;
+    --red:#e08a6f; --red-bg:#3a2620;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;
+    background:var(--paper); color:var(--ink); line-height:1.6;
+    font-variant-numeric:tabular-nums;}
+  .wrap{max-width:860px; margin:0 auto; padding:16px 14px 80px;}
+
+  /* ── 工具列（不列印） ── */
+  .bar{display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    margin:6px 0 14px; font-size:13px;}
+  .bar .grow{flex:1;}
+  button{font-family:inherit; font-size:13px; padding:8px 14px; border-radius:9px;
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    cursor:pointer; box-shadow:var(--shadow);}
+  button.pri{background:var(--accent); border-color:var(--accent); color:var(--on-accent);}
+  button:active{transform:translateY(1px);}
+
+  /* ── 單據本體 ── */
+  .doc{background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:26px 28px 22px; box-shadow:var(--shadow);}
+
+  .head{display:flex; justify-content:space-between; align-items:flex-start;
+    gap:16px; border-bottom:2px solid var(--ink); padding-bottom:12px;}
+  .head .mark{font-size:30px; font-weight:700; letter-spacing:-1px; line-height:1;
+    color:var(--ink);}
+  .head .co{text-align:right; font-size:13px; line-height:1.5;}
+  .head .co b{font-size:14.5px; letter-spacing:1px;}
+  .head .co .en{color:var(--muted); font-size:11px; letter-spacing:1.5px;}
+
+  .title{text-align:center; margin:18px 0 16px;}
+  .title h1{margin:0; font-size:25px; letter-spacing:12px; text-indent:12px; font-weight:700;}
+  .title .en{color:var(--muted); font-size:10.5px; letter-spacing:3px;}
+
+  .meta{display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--line);
+    border-radius:8px; overflow:hidden;}
+  .meta .c{padding:9px 12px; border-right:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .meta .c:nth-child(3n){border-right:0;}
+  .meta .c:nth-child(n+4){border-bottom:0;}
+  .meta .k{font-size:11px; color:var(--muted); letter-spacing:1px;}
+  .meta .v{font-size:14.5px; margin-top:1px;}
+  .meta .v b{letter-spacing:.5px;}
+
+  /* ── 分期表 ── */
+  .tscroll{overflow-x:auto; -webkit-overflow-scrolling:touch; margin-top:18px;}
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  thead th{background:var(--accent-light); color:var(--accent-deep); font-weight:600;
+    padding:7px 8px; text-align:left; border-bottom:1px solid var(--line);
+    font-size:11.5px; letter-spacing:.5px; white-space:nowrap;}
+  tbody td{padding:8px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  .num{text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums;}
+  tr.grp td{background:var(--accent-light); font-weight:600; font-size:12.5px;
+    color:var(--accent-deep); letter-spacing:.5px;}
+  tr.grp td .r{float:right; font-weight:400; color:var(--muted);}
+  tr.dim td{color:var(--muted);}
+  tr.hi td{background:var(--now-bg); font-weight:600;}
+  tr.hi td:first-child{box-shadow:inset 3px 0 0 var(--now);}
+
+  .tag{display:inline-block; padding:2px 9px; border-radius:20px; font-size:11.5px;
+    white-space:nowrap; border:1px solid;}
+  .t-paid{background:var(--paid-bg); border-color:var(--paid-b); color:var(--paid);}
+  .t-now{background:var(--now-bg);  border-color:var(--now-b);  color:var(--now);}
+  .t-wait{background:var(--wait-bg);border-color:var(--wait-b); color:var(--wait);}
+  .t-ready{background:var(--ready-bg);border-color:var(--ready-b);color:var(--ready);}
+
+  /* ── 時間軸 ── */
+  .tl-wrap{margin-top:22px;}
+  .sec-t{font-size:11.5px; letter-spacing:3px; color:var(--muted); margin-bottom:10px;}
+  .tl{display:flex; align-items:flex-start; overflow-x:auto; padding-bottom:6px;}
+  .tl .n{flex:1 0 92px; text-align:center; position:relative; padding-top:16px;}
+  .tl .n::before{content:""; position:absolute; top:5px; left:0; right:0; height:1px;
+    background:var(--line);}
+  .tl .n:first-child::before{left:50%;}
+  .tl .n:last-child::before{right:50%;}
+  .tl .dot{position:absolute; top:0; left:50%; margin-left:-5px; width:11px; height:11px;
+    border-radius:50%; border:2px solid var(--line); background:var(--card);}
+  .tl .n.paid .dot{background:var(--paid); border-color:var(--paid);}
+  .tl .n.now .dot{background:var(--now); border-color:var(--now);
+    box-shadow:0 0 0 3px var(--now-bg);}
+  .tl .n.ready .dot{background:var(--card); border-color:var(--ready);}
+  .tl .lb{font-size:11.5px; font-weight:600;}
+  .tl .am{font-size:12px; margin-top:1px;}
+  .tl .dt{font-size:10.5px; color:var(--muted); line-height:1.45; margin-top:2px;}
+  .tl .n.dim .lb,.tl .n.dim .am{color:var(--muted); font-weight:400;}
+  .legend{display:flex; gap:14px; justify-content:flex-end; font-size:11px;
+    color:var(--muted); margin-top:6px; flex-wrap:wrap;}
+  .legend i{display:inline-block; width:8px; height:8px; border-radius:50%;
+    margin-right:4px; vertical-align:middle;}
+
+  /* ── 核對區 ── */
+  .recon{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:22px;}
+  .rc{border:1px solid var(--line); border-radius:8px; padding:12px 14px;}
+  .rc h3{margin:0 0 8px; font-size:11.5px; letter-spacing:3px; color:var(--muted); font-weight:600;}
+  .rc .ln{display:flex; justify-content:space-between; padding:4px 0; font-size:13px;
+    border-bottom:1px dashed var(--line);}
+  .rc .ln:last-child{border-bottom:0;}
+  .rc .ln.b{font-weight:700; color:var(--accent-deep);}
+  .rc .ln .k{color:var(--muted);}
+
+  .total{display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+    margin-top:20px; padding:14px 16px; border-top:2px solid var(--ink);
+    border-bottom:2px solid var(--ink); flex-wrap:wrap;}
+  .total .lb{font-size:13px; letter-spacing:2px;}
+  .total .lb small{display:block; letter-spacing:0; color:var(--muted); font-size:11.5px;
+    margin-top:3px; font-weight:400;}
+  .total .am{font-size:26px; font-weight:700; letter-spacing:.5px; white-space:nowrap;}
+
+  .foot{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:20px;}
+  .foot h3{margin:0 0 7px; font-size:11.5px; letter-spacing:3px; color:var(--muted); font-weight:600;}
+  .foot .kv{display:grid; grid-template-columns:56px 1fr; gap:2px 10px; font-size:13px; padding:2px 0;}
+  .foot .kv .k{color:var(--muted);}
+  .foot ul{margin:0; padding-left:17px; font-size:12px; color:var(--ink); line-height:1.75;}
+  .foot .note{font-size:11.5px; color:var(--muted); margin-top:8px; line-height:1.6;}
+
+  .sign{display:flex; justify-content:space-between; margin-top:22px; padding-top:10px;
+    border-top:1px solid var(--line); font-size:11px; color:var(--muted);}
+
+  .banner{border-radius:10px; padding:11px 15px; font-size:13px; margin-bottom:12px;
+    background:var(--red-bg); border:1px solid var(--red); color:var(--red);}
+  .banner.info{background:var(--ready-bg); border-color:var(--ready-b); color:var(--ready);}
+  .hide{display:none !important;}
+
+  #paste{width:100%; min-height:180px; font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:12px; padding:10px; border-radius:9px; border:1px solid var(--line);
+    background:var(--paper); color:var(--ink);}
+
+  @media (max-width:640px){
+    .doc{padding:18px 16px;}
+    .meta{grid-template-columns:1fr 1fr;}
+    .meta .c{border-right:1px solid var(--line); border-bottom:1px solid var(--line);}
+    .meta .c:nth-child(3n){border-right:1px solid var(--line);}
+    .meta .c:nth-child(2n){border-right:0;}
+    .recon,.foot{grid-template-columns:1fr;}
+    .title h1{font-size:21px; letter-spacing:8px; text-indent:8px;}
+    .tscroll table{min-width:600px;}
+    table{font-size:12px;} tbody td{padding:7px 5px;}
+    .total .am{font-size:22px;}
+  }
+
+  @media print{
+    @page{size:A4; margin:12mm;}
+    /* 列印一律用淺色，避免深色模式印出黑底 */
+    html[data-theme="dark"]{
+      --paper:#fff; --card:#fff; --ink:#000; --line:#ccc4b5;
+      --accent:#8a6d4b; --accent-deep:#6f563a; --accent-light:#f1ebe0;
+      --muted:#6f6a60; --on-accent:#fff; --shadow:none;
+      --paid:#4a6642; --paid-bg:#eef3ea; --paid-b:#a9c79c;
+      --now:#a5661f;  --now-bg:#f8efe1;  --now-b:#e0b483;
+      --wait:#6f6a60; --wait-bg:#f2efe9; --wait-b:#ddd6c9;
+      --ready:#33608f; --ready-bg:#e6eef6; --ready-b:#a9c2de;
+    }
+    html,body{background:#fff; line-height:1.45;}
+    .noprint{display:none !important;}
+    .wrap{max-width:none; padding:0;}
+    .doc{border:0; border-radius:0; box-shadow:none; padding:0;}
+
+    .head{padding-bottom:8px;} .head .mark{font-size:24px;} .head .co{font-size:11px;}
+    .title{margin:10px 0;} .title h1{font-size:20px; letter-spacing:9px; text-indent:9px;}
+    .title .en{font-size:9px;}
+    .meta .c{padding:5px 9px;} .meta .k{font-size:9.5px;} .meta .v{font-size:12px;}
+
+    .tscroll{overflow:visible; margin-top:10px;}
+    .tscroll table{min-width:0;}
+    table{font-size:10.5px;}
+    thead th{padding:4px 6px; font-size:9.5px;}
+    tbody td{padding:3.5px 6px;}
+    tr.grp td{font-size:10.5px;}
+    .tag{padding:1px 7px; font-size:9.5px;}
+
+    .tl-wrap{margin-top:12px;} .sec-t{font-size:9.5px; margin-bottom:6px;}
+    .tl{overflow:visible;} .tl .n{padding-top:13px; flex-basis:70px;}
+    .tl .lb{font-size:10px;} .tl .am{font-size:10.5px;}
+    .tl .dt{font-size:9px; line-height:1.35;}
+    .legend{font-size:9.5px; margin-top:4px;}
+
+    .recon{margin-top:12px; gap:10px;} .rc{padding:8px 10px;}
+    .rc h3{font-size:9.5px; margin-bottom:5px;} .rc .ln{padding:2px 0; font-size:10.5px;}
+
+    .total{margin-top:12px; padding:9px 12px;}
+    .total .lb{font-size:11px;} .total .lb small{font-size:9.5px; margin-top:2px;}
+    .total .am{font-size:20px;}
+
+    .foot{margin-top:12px; gap:14px;}
+    .foot h3{font-size:9.5px; margin-bottom:5px;} .foot .kv{font-size:10.5px;}
+    .foot ul{font-size:9.8px; line-height:1.55;} .foot .note{font-size:9.5px; margin-top:5px;}
+    .sign{margin-top:12px; padding-top:7px; font-size:9px;}
+
+    tr,.rc,.tl-wrap,.total{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="bar noprint">
+    <button class="pri" onclick="window.print()">🖨 列印／存成 PDF</button>
+    <button onclick="togglePaste()">📋 貼上資料</button>
+    <button onclick="setupApi()">🔗 連線設定</button>
+    <span class="grow"></span>
+    <button id="themeBtn" title="切換深淺色">🌙</button>
+  </div>
+
+  <div id="msg" class="banner hide noprint"></div>
+
+  <div id="pasteBox" class="hide noprint" style="margin-bottom:14px;">
+    <textarea id="paste" placeholder="把試算表產生的請款單 JSON 貼在這裡，然後按「套用」。"></textarea>
+    <div class="bar" style="margin-top:8px;">
+      <button class="pri" onclick="applyPaste()">套用</button>
+      <button onclick="copyDemo()">複製一份範例格式</button>
+    </div>
+  </div>
+
+  <div class="doc" id="doc"></div>
+</div>
+
+<script>
+/* ==================================================================
+   禹合制所 請款單
+   資料來源優先序：
+     1. 網址 ?id=<文件編號>&k=<金鑰>   → 打 Apps Script Web App 取單
+     2. 網址 #data=<base64 JSON>       → 離線帶資料（不連網也能開）
+     3. 瀏覽器貼上的 JSON（📋 貼上資料）
+     4. 以上皆無 → 顯示範例，並標明「範例」
+   API_URL 一律留空，不寫進這個公開 repo。
+   育瑄自己用：按「🔗 連線設定」貼一次，存在瀏覽器 localStorage。
+   給業主的連結：...請款單.html?api=<WebApp網址>&id=<文件編號>&k=<金鑰>
+   ================================================================== */
+var API_URL = '';
+
+/* ── 範例資料（純虛構，不是任何真實案件） ───────────────────── */
+var DEMO = {
+  demo:true,
+  no:'YH-INV-20260820-001', date:'2026-08-20', dueDays:5,
+  project:'範例社區 A1（範例）', payer:'王 先生',
+  company:{ name:'禹合制所室內裝修有限公司', en:'YUHE DESIGN', tax:'',
+            bank:'—', acctName:'—', acct:'—' },
+  contracts:[
+    { kind:'設計', total:180000, signed:'2026-03-01', items:[
+      {stage:'第一期', cond:'簽約款',            pct:70, amount:126000, billed:'2026-03-01', paid:'2026-03-03', status:'已收款'},
+      {stage:'第二期', cond:'交付第一版工程報價後', pct:30, amount:54000,  billed:'2026-05-10', paid:'2026-05-12', status:'已收款'}
+    ]},
+    { kind:'工程', total:2400000, signed:'2026-05-20', taxIncluded:true, items:[
+      {stage:'第一期', cond:'開工款',              pct:20, amount:480000, billed:'2026-05-22', paid:'2026-05-24', status:'已收款', note:'隨約'},
+      {stage:'第二期', cond:'泥作進場',            pct:20, amount:480000, billed:'2026-06-20', paid:'2026-06-22', status:'已收款'},
+      {stage:'第三期', cond:'泥作退場・木作開場',   pct:20, amount:480000, billed:'2026-08-20', paid:'',           status:'本次請款', note:'條件成就'},
+      {stage:'第四期', cond:'木作退場・油漆進場',   pct:30, amount:720000, billed:'2026-08-20', paid:'',           status:'本次請款', note:'條件成就'},
+      {stage:'第五期', cond:'油漆退場・細清開工',   pct:5,  amount:120000, billed:'',           paid:'',           status:'未到期'},
+      {stage:'第六期', cond:'雙方確認・尾款',       pct:5,  amount:120000, billed:'',           paid:'',           status:'未到期'}
+    ]}
+  ],
+  basis:[
+    '依委託工程契約（2026-05-20 簽訂）分期條款：開工 20%／泥作進場 20%／泥作退場・木作開場 20%／木作退場・油漆進場 30%／油漆退場・細清開工 5%／雙方確認 5%。',
+    '第三期條件「泥作退場・木作開場」已於 2026-07-15 成就。',
+    '第四期條件「木作退場・油漆進場」已於 2026-08-14 成就。',
+    '本單金額均為含稅價；電子發票於收款後開立並寄送。'
+  ]
+};
+
+/* ── 小工具 ─────────────────────────────────────────────── */
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function n(v){ var x=Number(String(v==null?0:v).replace(/[^0-9.\-]/g,'')); return isFinite(x)?x:0; }
+function money(v){ return n(v).toLocaleString('en-US',{maximumFractionDigits:0}); }
+function md(s){ if(!s) return ''; var p=String(s).slice(0,10).split('-');
+  return p.length===3 ? (p[1].replace(/^0/,'')+'-'+p[2]) : String(s); }
+function roc(s){
+  if(!s) return '';
+  var p=String(s).slice(0,10).split('-'); if(p.length!==3) return String(s);
+  return '民國 '+(Number(p[0])-1911)+' 年 '+Number(p[1])+' 月 '+Number(p[2])+' 日';
+}
+function show(t,cls){ var b=$('msg'); b.className='banner noprint'+(cls?' '+cls:''); b.textContent=t; }
+
+/* 狀態正規化：已收款 / 本次請款 / 條件成就 / 未到期 */
+function normStatus(it){
+  var s=String(it.status||'').trim();
+  if(s) return s;
+  if(it.paid) return '已收款';
+  if(it.billed) return '本次請款';
+  return '未到期';
+}
+function statusClass(s){
+  if(s.indexOf('已收')===0) return 't-paid';
+  if(s.indexOf('本次')===0) return 't-now';
+  if(s.indexOf('條件')===0) return 't-ready';
+  return 't-wait';
+}
+
+/* ── 主渲染 ─────────────────────────────────────────────── */
+function render(d){
+  var co = d.company || {};
+  var contracts = (d.contracts||[]).filter(function(c){ return c && (c.items||[]).length; });
+
+  /* 各合約統計 */
+  var thisTotal = 0, tlNodes = [];
+  contracts.forEach(function(c){
+    var total = n(c.total) || (c.items||[]).reduce(function(a,i){ return a+n(i.amount); },0);
+    var paid=0, now=0, billedNotPaid=0, lastPaid='';
+    (c.items||[]).forEach(function(it){
+      var s = normStatus(it), a = n(it.amount);
+      if(s.indexOf('已收')===0){ paid+=a; if(it.paid && it.paid>lastPaid) lastPaid=it.paid; }
+      else if(s.indexOf('本次')===0){ now+=a; }
+      if(it.billed && !it.paid) billedNotPaid+=a;
+      tlNodes.push({ lb:c.kind+(it.stage||'').replace(/^第/,'').replace(/期$/,'期'),
+                     amount:a, billed:it.billed, paid:it.paid, status:s, note:it.note });
+    });
+    c._total=total; c._paid=paid; c._now=now; c._lastPaid=lastPaid;
+    c._after=paid+now; c._rest=total-paid-now;
+    thisTotal += now;
+  });
+
+  var due = d.dueDays ? ('本單開立日起 '+d.dueDays+' 日內') : (d.due || '—');
+
+  var h = '';
+
+  /* 抬頭 */
+  h += '<div class="head">'
+    +   '<div class="mark">'+esc(co.logoText||'禹合')+'</div>'
+    +   '<div class="co"><b>'+esc(co.name||'禹合制所室內裝修有限公司')+'</b><br>'
+    +     '<span class="en">'+esc(co.en||'YUHE DESIGN')+'</span>'
+    +     (co.tax ? '　統一編號 '+esc(co.tax) : '')
+    +   '</div>'
+    + '</div>';
+
+  /* 標題 */
+  h += '<div class="title"><h1>請款單</h1>'
+    +  '<div class="en">STATEMENT OF ACCOUNT</div></div>';
+
+  /* 表頭資訊 */
+  h += '<div class="meta">'
+    + cell('文件編號', esc(d.no||'—'))
+    + cell('請款日期', esc(roc(d.date)||'—'))
+    + cell('付款期限', esc(due))
+    + cell('案場名稱', '<b>'+esc(d.project||'—')+'</b>')
+    + cell('付款人',   '<b>'+esc(d.payer||'—')+'</b>')
+    + cell('本次請款', '<b>NT$ '+money(thisTotal)+'</b>')
+    + '</div>';
+
+  /* 分期表 */
+  h += '<div class="tscroll"><table><thead><tr>'
+    +  '<th style="width:52px">合約</th><th style="width:60px">期數</th>'
+    +  '<th>請款階段・條件</th><th class="num" style="width:48px">比例</th>'
+    +  '<th class="num" style="width:88px">金額</th>'
+    +  '<th class="num" style="width:66px">請款日</th><th class="num" style="width:66px">收款日</th>'
+    +  '<th style="width:74px">狀態</th><th style="width:74px">備註</th>'
+    +  '</tr></thead><tbody>';
+
+  contracts.forEach(function(c){
+    h += '<tr class="grp"><td colspan="9">'+esc(c.kind)+'合約'
+      +  '<span class="r">總額 NT$ '+money(c._total)
+      +  (c.taxIncluded?'（含稅）':'')
+      +  (c.signed?'・簽約日 '+esc(c.signed):'')
+      +  (c._rest<=0 && c._now===0 ? '・已結清':'')
+      +  '</span></td></tr>';
+    (c.items||[]).forEach(function(it){
+      var s = normStatus(it);
+      var cls = s.indexOf('本次')===0 ? 'hi' : (s==='未到期' ? 'dim' : '');
+      h += '<tr'+(cls?' class="'+cls+'"':'')+'>'
+        +  '<td>'+esc(c.kind)+'</td>'
+        +  '<td>'+esc(it.stage||'')+'</td>'
+        +  '<td>'+esc(it.cond||'')+'</td>'
+        +  '<td class="num">'+(it.pct!=null&&it.pct!==''?esc(it.pct)+'%':'—')+'</td>'
+        +  '<td class="num">'+money(it.amount)+'</td>'
+        +  '<td class="num">'+esc(md(it.billed)||'—')+'</td>'
+        +  '<td class="num">'+esc(md(it.paid)||'—')+'</td>'
+        +  '<td><span class="tag '+statusClass(s)+'">'+esc(s)+'</span></td>'
+        +  '<td>'+esc(it.note||'—')+'</td>'
+        +  '</tr>';
+    });
+  });
+  h += '</tbody></table></div>';
+
+  /* 時間軸 */
+  if(tlNodes.length){
+    h += '<div class="tl-wrap"><div class="sec-t">收 款 進 度 時 間 軸</div><div class="tl">';
+    tlNodes.forEach(function(t){
+      var k = t.status.indexOf('已收')===0 ? 'paid'
+            : t.status.indexOf('本次')===0 ? 'now'
+            : t.status.indexOf('條件')===0 ? 'ready' : 'dim';
+      var dt = '';
+      if(t.billed) dt += '請 '+md(t.billed);
+      if(t.paid)   dt += (dt?'<br>':'')+'收 '+md(t.paid);
+      else if(t.billed) dt += '<br>待收';
+      if(!dt) dt = (t.note?esc(t.note):'未到期');
+      h += '<div class="n '+k+'"><div class="dot"></div>'
+        +  '<div class="lb">'+esc(t.lb)+'</div>'
+        +  '<div class="am">'+money(t.amount)+'</div>'
+        +  '<div class="dt">'+dt+'</div></div>';
+    });
+    h += '</div><div class="legend">'
+      +  '<span><i style="background:var(--paid)"></i>已收款</span>'
+      +  '<span><i style="background:var(--now)"></i>本次請款</span>'
+      +  '<span><i style="background:var(--card);border:1px solid var(--line)"></i>尚未到期</span>'
+      +  '</div></div>';
+  }
+
+  /* 核對區 */
+  h += '<div class="recon">';
+  contracts.forEach(function(c){
+    h += '<div class="rc"><h3>'+esc(c.kind)+' 合 約  核 對</h3>'
+      +  ln('合約總額', money(c._total))
+      +  ln('累計已收', money(c._paid))
+      +  ln('本次請款', money(c._now), c._now>0)
+      +  ln('本次收訖後累計', money(c._after), true)
+      +  ln('尚未請款', money(c._rest))
+      +  ln('最後收款日', c._lastPaid||'—')
+      +  '</div>';
+  });
+  h += '</div>';
+
+  /* 應付金額 */
+  var parts = contracts.filter(function(c){return c._now>0;}).map(function(c){
+    return c.kind+' '+money(c._now);
+  }).join('　＋　');
+  h += '<div class="total"><div class="lb">本 次 應 付 金 額'
+    +  (parts?'<small>'+esc(parts)+'（均為含稅價）</small>':'')
+    +  '</div><div class="am">NT$ '+money(thisTotal)+'</div></div>';
+
+  /* 匯款 + 依據 */
+  h += '<div class="foot">'
+    +  '<div><h3>匯 款 資 訊</h3>'
+    +    kv('金融機構', co.bank||'—')
+    +    kv('戶名',     co.acctName||co.name||'—')
+    +    kv('帳號',     co.acct||'—')
+    +    '<div class="note">※ 匯款完成後煩請告知末五碼，我們將立即開立收款單與電子發票。</div>'
+    +  '</div>'
+    +  '<div><h3>請 款 依 據</h3><ul>'
+    +    (d.basis||[]).map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('')
+    +  '</ul></div>'
+    + '</div>';
+
+  h += '<div class="sign"><span>'+esc(co.name||'禹合制所室內裝修有限公司')
+    +  (co.tax?'　統編 '+esc(co.tax):'')+'</span>'
+    +  '<span>本單一式一份　如有疑問請洽本公司窗口</span></div>';
+
+  $('doc').innerHTML = h;
+  document.title = '禹合制所 YUHE DESIGN｜請款單 '+(d.project||'');
+
+  if(d.demo){
+    show('目前顯示的是「範例」內容，不是真實案件。按「🔗 連線設定」接上試算表，或按「📋 貼上資料」帶入實際資料。','info');
+    $('msg').classList.remove('hide');
+  }
+}
+function cell(k,v){ return '<div class="c"><div class="k">'+k+'</div><div class="v">'+v+'</div></div>'; }
+function ln(k,v,bold){ return '<div class="ln'+(bold?' b':'')+'"><span class="k">'+k+'</span><span>'+v+'</span></div>'; }
+function kv(k,v){ return '<div class="kv"><span class="k">'+esc(k)+'</span><span>'+esc(v)+'</span></div>'; }
+
+/* ── 資料來源 ───────────────────────────────────────────── */
+function qs(k){
+  var m = new RegExp('[?&]'+k+'=([^&#]*)').exec(location.search);
+  return m ? decodeURIComponent(m[1].replace(/\+/g,' ')) : '';
+}
+function apiUrl(){
+  return qs('api') || API_URL || (function(){
+    try{ return localStorage.getItem('yuhe_inv_api')||''; }catch(e){ return ''; }
+  })();
+}
+function apiKey(){
+  return qs('k') || (function(){
+    try{ return localStorage.getItem('yuhe_inv_key')||''; }catch(e){ return ''; }
+  })();
+}
+
+function boot(){
+  /* 2. #data= 離線資料 */
+  var hd = /[#&]data=([^&]+)/.exec(location.hash);
+  if(hd){
+    try{
+      var json = decodeURIComponent(escape(atob(hd[1].replace(/-/g,'+').replace(/_/g,'/'))));
+      render(JSON.parse(json)); return;
+    }catch(e){ show('網址帶的資料解不開，改用範例顯示。'); $('msg').classList.remove('hide'); }
+  }
+  /* 1. API */
+  var id = qs('id'), url = apiUrl();
+  if(id && url){
+    show('讀取中…','info'); $('msg').classList.remove('hide');
+    var u = url + (url.indexOf('?')<0?'?':'&') + 'id=' + encodeURIComponent(id)
+          + '&k=' + encodeURIComponent(apiKey());
+    fetch(u).then(function(r){ return r.json(); }).then(function(j){
+      if(j && j.ok && j.invoice){ $('msg').classList.add('hide'); render(j.invoice); }
+      else { show('讀不到這張請款單：'+((j&&j.msg)||'未知錯誤')+'　先顯示範例。');
+             $('msg').classList.remove('hide'); render(DEMO); }
+    }).catch(function(err){
+      show('連不上試算表（'+err+'）。先顯示範例，或按「📋 貼上資料」手動帶入。');
+      $('msg').classList.remove('hide'); render(DEMO);
+    });
+    return;
+  }
+  /* 4. 範例 */
+  render(DEMO);
+}
+
+/* ── 工具列動作 ─────────────────────────────────────────── */
+function togglePaste(){ $('pasteBox').classList.toggle('hide'); }
+function applyPaste(){
+  try{
+    var d = JSON.parse($('paste').value);
+    if(d.invoice) d = d.invoice;
+    delete d.demo;
+    $('msg').classList.add('hide'); $('pasteBox').classList.add('hide');
+    render(d);
+  }catch(e){
+    show('JSON 格式有問題：'+e.message); $('msg').classList.remove('hide');
+  }
+}
+function copyDemo(){
+  $('paste').value = JSON.stringify(DEMO, null, 2);
+  $('pasteBox').classList.remove('hide');
+}
+function setupApi(){
+  var cur='', ck='';
+  try{ cur=localStorage.getItem('yuhe_inv_api')||''; ck=localStorage.getItem('yuhe_inv_key')||''; }catch(e){}
+  var u = prompt('貼上 Apps Script Web App 網址（/exec 結尾）。\n留空並確定＝清除設定。', cur);
+  if(u===null) return;
+  var k = prompt('貼上讀取金鑰（Script Properties 的 INVOICE_KEY）。', ck);
+  if(k===null) return;
+  try{
+    localStorage.setItem('yuhe_inv_api', u.trim());
+    localStorage.setItem('yuhe_inv_key', k.trim());
+  }catch(e){ show('這台裝置不允許儲存設定。'); $('msg').classList.remove('hide'); return; }
+  show('已存到這台裝置的瀏覽器（沒有寫進 repo）。網址加上 ?id=文件編號 即可讀取。','info');
+  $('msg').classList.remove('hide');
+}
+
+/* ── 深淺色 ─────────────────────────────────────────────── */
+(function(){
+  var root=document.documentElement, tb=$('themeBtn');
+  function setTheme(t){ root.setAttribute('data-theme',t); tb.textContent=t==='dark'?'☀️':'🌙';
+    try{ localStorage.setItem('yuhe_invoice_theme',t); }catch(e){} }
+  var s=null; try{ s=localStorage.getItem('yuhe_invoice_theme'); }catch(e){}
+  setTheme(s==='dark'?'dark':'light');
+  tb.onclick=function(){ setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark'); };
+})();
+
+boot();
+</script>
+</body>
+</html>
